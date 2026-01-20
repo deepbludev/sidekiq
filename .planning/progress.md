@@ -106,9 +106,38 @@
 
 ---
 
+## Verification Commands
+
+To verify the implementation is working correctly:
+
+```bash
+# Navigate to webapp directory
+cd sidekiq-webapp
+
+# 1. Type check (should pass with no errors)
+pnpm tsc --noEmit
+
+# 2. Production build (should complete successfully)
+pnpm build
+
+# 3. Run dev server
+pnpm dev
+# Then visit http://localhost:3000
+
+# 4. Browse database tables
+pnpm drizzle-kit studio
+# Opens at https://local.drizzle.studio
+
+# 5. Verify shadcn/ui components installed
+ls -la src/components/ui/
+# Should show 16 component files
+```
+
+---
+
 ## Next Steps
-1. Phase 0.1: Complete authentication (Email/Password UI, password reset, protected routes middleware)
-2. Phase 0.2: Build core chat functionality
+1. **Phase 0.1**: Complete authentication (Email/Password UI, password reset, protected routes middleware)
+2. **Phase 0.2**: Build core chat functionality
 
 ---
 

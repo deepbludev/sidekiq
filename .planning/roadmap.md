@@ -1,18 +1,18 @@
 # 9. Implementation Roadmap
 
 ## Version 0. MVP
-### Phase 0.0. Foundation
-- [ ] 0.0.1. Scaffolding Next.js + shadcn/ui + tailwindcss + better-auth base setup
-- [ ] 0.0.2. tRPC setup with type-safe routes and Zod validation
-- [ ] 0.0.3. Database setup (PostgreSQL) with Drizzle ORM
-- [ ] 0.0.4. Drizzle migrations for core data models (Users, Teams, TeamMembers, TeamInvites, Sidekiqs, Threads, Messages)
-- [ ] 0.0.6. Vercel Blob Storage setup for avatar uploads
+### Phase 0.0. Foundation ✅
+- [x] 0.0.1. Scaffolding Next.js + shadcn/ui + tailwindcss + better-auth base setup
+- [x] 0.0.2. tRPC setup with type-safe routes and Zod validation
+- [x] 0.0.3. Database setup (PostgreSQL) with Drizzle ORM
+- [x] 0.0.4. Drizzle migrations for core data models (Users, Teams, TeamMembers, TeamInvites, Sidekiqs, Threads, Messages)
+- [x] 0.0.6. Vercel Blob Storage setup for avatar uploads
 
-### Phase 0.1. Authentication
-- [ ] 0.1.1. Better-Auth integration
+### Phase 0.1. Authentication 🟡
+- [x] 0.1.1. Better-Auth integration (GitHub OAuth configured)
 - [ ] 0.1.2. Email/Password authentication with validation
 - [ ] 0.1.3. Password reset flow with email tokens (1-hour expiration)
-- [ ] 0.1.4. Protected routes and middleware for authenticated pages
+- [~] 0.1.4. Protected routes and middleware for authenticated pages (tRPC procedures done, page middleware pending)
 
 ### Phase 0.2. Core Chat
 - [ ] 0.2.1. Basic chat UI with sidebar (history) and main chat area
