@@ -2,34 +2,25 @@ import { relations } from "drizzle-orm";
 import {
   boolean,
   index,
+  integer,
+  jsonb,
+  pgEnum,
   pgTable,
-  pgTableCreator,
   text,
   timestamp,
+  uniqueIndex,
+  varchar,
 } from "drizzle-orm/pg-core";
 
-export const createTable = pgTableCreator((name) => `pg-drizzle_${name}`);
-
-export const posts = createTable(
-  "post",
-  (d) => ({
-    id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
-    name: d.varchar({ length: 256 }),
-    createdById: d
-      .varchar({ length: 255 })
-      .notNull()
-      .references(() => user.id),
-    createdAt: d
-      .timestamp({ withTimezone: true })
-      .$defaultFn(() => new Date())
-      .notNull(),
-    updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
-  }),
-  (t) => [
-    index("created_by_idx").on(t.createdById),
-    index("name_idx").on(t.name),
-  ]
-);
+/**
+ * Enums
+ */
+export const teamRoleEnum = pgEnum("team_role", ["owner", "member"]);
+export const messageRoleEnum = pgEnum("message_role", [
+  "user",
+  "assistant",
+  "system",
+]);
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -91,9 +82,184 @@ export const verification = pgTable("verification", {
   ),
 });
 
+/**
+ * Teams - For team-based collaboration
+ */
+export const teams = pgTable(
+  "team",
+  {
+    id: text("id").primaryKey(),
+    name: varchar("name", { length: 100 }).notNull(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .$defaultFn(() => new Date())
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (t) => [index("team_owner_idx").on(t.ownerId)]
+);
+
+/**
+ * Team Members - Junction table for team membership
+ */
+export const teamMembers = pgTable(
+  "team_member",
+  {
+    teamId: text("team_id")
+      .notNull()
+      .references(() => teams.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    role: teamRoleEnum("role").notNull().default("member"),
+    joinedAt: timestamp("joined_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (t) => [
+    index("team_member_team_idx").on(t.teamId),
+    index("team_member_user_idx").on(t.userId),
+    uniqueIndex("team_member_unique").on(t.teamId, t.userId),
+  ]
+);
+
+/**
+ * Team Invites - Secure token-based team invitations
+ */
+export const teamInvites = pgTable(
+  "team_invite",
+  {
+    id: text("id").primaryKey(),
+    teamId: text("team_id")
+      .notNull()
+      .references(() => teams.id, { onDelete: "cascade" }),
+    email: varchar("email", { length: 255 }).notNull(),
+    token: text("token").notNull().unique(),
+    role: teamRoleEnum("role").notNull().default("member"),
+    acceptedAt: timestamp("accepted_at"),
+    rejectedAt: timestamp("rejected_at"),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (t) => [
+    index("team_invite_team_idx").on(t.teamId),
+    index("team_invite_email_idx").on(t.email),
+    index("team_invite_token_idx").on(t.token),
+  ]
+);
+
+/**
+ * Sidekiqs - Custom AI assistants
+ */
+export const sidekiqs = pgTable(
+  "sidekiq",
+  {
+    id: text("id").primaryKey(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    teamId: text("team_id").references(() => teams.id, { onDelete: "set null" }),
+    name: varchar("name", { length: 100 }).notNull(),
+    description: varchar("description", { length: 500 }),
+    instructions: text("instructions").notNull(),
+    isPublic: boolean("is_public").notNull().default(false),
+    canTeamEdit: boolean("can_team_edit").notNull().default(false),
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .$defaultFn(() => new Date())
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (t) => [
+    index("sidekiq_owner_idx").on(t.ownerId),
+    index("sidekiq_team_idx").on(t.teamId),
+  ]
+);
+
+/**
+ * Threads - Conversation containers
+ */
+export const threads = pgTable(
+  "thread",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    sidekiqId: text("sidekiq_id").references(() => sidekiqs.id, {
+      onDelete: "set null",
+    }),
+    title: varchar("title", { length: 255 }),
+    activeModel: varchar("active_model", { length: 100 }),
+    isPinned: boolean("is_pinned").notNull().default(false),
+    isArchived: boolean("is_archived").notNull().default(false),
+    lastActivityAt: timestamp("last_activity_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+    messageCount: integer("message_count").notNull().default(0),
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .$defaultFn(() => new Date())
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (t) => [
+    index("thread_user_idx").on(t.userId),
+    index("thread_sidekiq_idx").on(t.sidekiqId),
+    index("thread_last_activity_idx").on(t.lastActivityAt),
+    index("thread_pinned_activity_idx").on(t.isPinned, t.lastActivityAt),
+  ]
+);
+
+/**
+ * Messages - Individual chat messages with branching support
+ */
+export const messages = pgTable(
+  "message",
+  {
+    id: text("id").primaryKey(),
+    threadId: text("thread_id")
+      .notNull()
+      .references(() => threads.id, { onDelete: "cascade" }),
+    parentMessageId: text("parent_message_id"),
+    role: messageRoleEnum("role").notNull(),
+    content: text("content").notNull(),
+    model: varchar("model", { length: 100 }),
+    inputTokens: integer("input_tokens"),
+    outputTokens: integer("output_tokens"),
+    metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (t) => [
+    index("message_thread_idx").on(t.threadId),
+    index("message_parent_idx").on(t.parentMessageId),
+    index("message_created_idx").on(t.createdAt),
+  ]
+);
+
+/**
+ * Relations
+ */
 export const userRelations = relations(user, ({ many }) => ({
-  account: many(account),
-  session: many(session),
+  accounts: many(account),
+  sessions: many(session),
+  ownedTeams: many(teams),
+  teamMemberships: many(teamMembers),
+  sidekiqs: many(sidekiqs),
+  threads: many(threads),
 }));
 
 export const accountRelations = relations(account, ({ one }) => ({
@@ -102,4 +268,45 @@ export const accountRelations = relations(account, ({ one }) => ({
 
 export const sessionRelations = relations(session, ({ one }) => ({
   user: one(user, { fields: [session.userId], references: [user.id] }),
+}));
+
+export const teamRelations = relations(teams, ({ one, many }) => ({
+  owner: one(user, { fields: [teams.ownerId], references: [user.id] }),
+  members: many(teamMembers),
+  invites: many(teamInvites),
+  sidekiqs: many(sidekiqs),
+}));
+
+export const teamMemberRelations = relations(teamMembers, ({ one }) => ({
+  team: one(teams, { fields: [teamMembers.teamId], references: [teams.id] }),
+  user: one(user, { fields: [teamMembers.userId], references: [user.id] }),
+}));
+
+export const teamInviteRelations = relations(teamInvites, ({ one }) => ({
+  team: one(teams, { fields: [teamInvites.teamId], references: [teams.id] }),
+}));
+
+export const sidekiqRelations = relations(sidekiqs, ({ one, many }) => ({
+  owner: one(user, { fields: [sidekiqs.ownerId], references: [user.id] }),
+  team: one(teams, { fields: [sidekiqs.teamId], references: [teams.id] }),
+  threads: many(threads),
+}));
+
+export const threadRelations = relations(threads, ({ one, many }) => ({
+  user: one(user, { fields: [threads.userId], references: [user.id] }),
+  sidekiq: one(sidekiqs, {
+    fields: [threads.sidekiqId],
+    references: [sidekiqs.id],
+  }),
+  messages: many(messages),
+}));
+
+export const messageRelations = relations(messages, ({ one, many }) => ({
+  thread: one(threads, { fields: [messages.threadId], references: [threads.id] }),
+  parentMessage: one(messages, {
+    fields: [messages.parentMessageId],
+    references: [messages.id],
+    relationName: "messageBranches",
+  }),
+  childMessages: many(messages, { relationName: "messageBranches" }),
 }));

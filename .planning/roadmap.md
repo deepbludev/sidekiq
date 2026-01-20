@@ -2,7 +2,7 @@
 
 ## Version 0. MVP
 ### Phase 0.0. Foundation
-- [ ] 0.0.1. Scaffolding Next.js + shadcn/ui + tailwindcss
+- [ ] 0.0.1. Scaffolding Next.js + shadcn/ui + tailwindcss + better-auth base setup
 - [ ] 0.0.2. tRPC setup with type-safe routes and Zod validation
 - [ ] 0.0.3. Database setup (PostgreSQL) with Drizzle ORM
 - [ ] 0.0.4. Drizzle migrations for core data models (Users, Teams, TeamMembers, TeamInvites, Sidekiqs, Threads, Messages)
