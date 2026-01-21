@@ -7,7 +7,19 @@
       "Bash(pnpm add:*)",
       "Bash(pnpm tsc:*)",
       "Bash(timeout 15 pnpm dev:*)",
-      "Bash(pnpm build:*)"
+      "Bash(pnpm build:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "WebFetch(domain:www.better-auth.com)",
+      "WebSearch",
+      "WebFetch(domain:dev.to)",
+      "Bash(pnpm test:run)",
+      "Bash(pnpm test:e2e:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill -9)",
+      "Bash(pnpm exec playwright install:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(curl:*)"
     ]
   }
 }

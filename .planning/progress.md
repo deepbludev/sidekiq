@@ -11,13 +11,13 @@
 | 0.0.4. Drizzle migrations for core data models | ✅ Done | All core tables created: teams, team_member, team_invite, sidekiq, thread, message |
 | 0.0.6. Vercel Blob Storage setup | ✅ Done | @vercel/blob installed, env vars configured, upload utility created |
 
-### Phase 0.1. Authentication
+### Phase 0.1. Authentication ✅
 | Task | Status | Notes |
 |------|--------|-------|
-| 0.1.1. Better-Auth integration | 🟡 Partial | Basic setup done, GitHub OAuth configured |
-| 0.1.2. Email/Password authentication | 🔴 Not Started | Better Auth supports it, needs UI |
-| 0.1.3. Password reset flow | 🔴 Not Started | |
-| 0.1.4. Protected routes and middleware | 🟡 Partial | tRPC protected procedures exist, page middleware not set up |
+| 0.1.1. Better-Auth integration | ✅ Done | GitHub OAuth configured with Better Auth |
+| 0.1.2. Email/Password authentication | ✅ Done | Sign-up/sign-in forms with React Hook Form + Zod validation |
+| 0.1.3. Password reset flow | ✅ Done | Forgot/reset password with Resend email (1-hour token expiration) |
+| 0.1.4. Protected routes and middleware | ✅ Done | Cookie-based middleware + server-side session validation |
 
 ### Phase 0.2. Core Chat
 | Task | Status | Notes |
@@ -51,9 +51,11 @@
 - **UI Components**: shadcn/ui (button, input, label, form, dialog, dropdown-menu, avatar, card, textarea, separator, scroll-area, tooltip, skeleton, badge, sheet, sonner)
 - **API**: tRPC 11.0.0 with React Query 5.69.0
 - **Database**: PostgreSQL (Neon) + Drizzle ORM 0.41.0
-- **Auth**: Better Auth 1.4 (GitHub OAuth working)
+- **Auth**: Better Auth 1.4 (GitHub OAuth + Email/Password + Password Reset)
+- **Email**: Resend (for password reset emails)
 - **Validation**: Zod 3.24.2
 - **File Storage**: @vercel/blob 2.0.0
+- **Testing**: Vitest 4.0 + Playwright 1.57 + Testing Library
 - **Package Manager**: pnpm
 
 ### Not Yet Installed
@@ -135,10 +137,51 @@ ls -la src/components/ui/
 
 ---
 
-## Next Steps
-1. **Phase 0.1**: Complete authentication (Email/Password UI, password reset, protected routes middleware)
-2. **Phase 0.2**: Build core chat functionality
+## Files Created/Modified in Phase 0.1
+
+### New Files
+**Auth Components** (`src/components/auth/`)
+- `auth-card.tsx` - Reusable card wrapper for auth pages
+- `oauth-buttons.tsx` - GitHub OAuth button with loading state
+- `sign-in-form.tsx` - Email/password sign-in with React Hook Form + Zod
+- `sign-up-form.tsx` - Registration form with validation
+- `forgot-password-form.tsx` - Password reset request form
+- `reset-password-form.tsx` - New password form with token
+
+**Auth Pages** (`src/app/(auth)/`)
+- `layout.tsx` - Centered layout, redirects authenticated users
+- `sign-in/page.tsx` - Sign in page
+- `sign-up/page.tsx` - Sign up page
+- `forgot-password/page.tsx` - Forgot password page
+- `reset-password/page.tsx` - Reset password page
+
+**Dashboard** (`src/app/(dashboard)/`)
+- `layout.tsx` - Session validation layer
+- `dashboard/page.tsx` - Placeholder with user info
+- `dashboard/sign-out-button.tsx` - Client component for sign out
+
+**Other**
+- `src/middleware.ts` - Route protection with cookie-based auth check
+- `src/lib/validations/auth.ts` - Zod schemas for all auth forms
+- `vitest.config.ts` - Vitest configuration
+- `playwright.config.ts` - Playwright E2E configuration
+- `tests/setup.ts` - Test setup file
+- `tests/unit/validations/auth.test.ts` - 15 unit tests for validation schemas
+- `tests/e2e/auth.spec.ts` - 13 E2E tests for auth flows
+
+### Modified Files
+- `src/app/layout.tsx` - Added Toaster from sonner
+- `src/app/page.tsx` - Updated for auth redirects, simplified landing page
+- `src/env.js` - Added `BETTER_AUTH_URL`, `RESEND_API_KEY`, `EMAIL_FROM`
+- `src/server/better-auth/config.ts` - Added baseURL, email/password reset with Resend
+- `package.json` - Added test scripts and dependencies (resend, vitest, playwright, happy-dom)
+- `.env.example` - Added new environment variables with documentation
 
 ---
 
-*Last Updated: 2026-01-20*
+## Next Steps
+1. **Phase 0.2**: Build core chat functionality (chat UI, LLM integration, streaming)
+
+---
+
+*Last Updated: 2026-01-21*

@@ -2,6 +2,7 @@ import "@sidekiq/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
+import { Toaster } from "sonner";
 
 import { TRPCReactProvider } from "@sidekiq/trpc/react";
 
@@ -23,6 +24,7 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <body>
         <TRPCReactProvider>{children}</TRPCReactProvider>
+        <Toaster richColors position="top-center" />
       </body>
     </html>
   );
