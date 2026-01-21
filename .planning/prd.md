@@ -17,7 +17,7 @@ The goal is to provide a "wow" user experience with high-end, modern and clean a
 - **Layout**: Sidebar (History + Sidekiqs) + Main Chat Area.
 - **Streaming**: Real-time token streaming for AI responses.
 - **Markdown Support**: Rich text rendering for code blocks, tables, lists, etc.
-- **Model Selection**: Ability to switch between underlying base models (e.g., GPT-4o, Claude 3.5 Sonnet) - *Implementation detail: abstraction layer for LLM provider.*
+- **Model Selection**: Ability to switch between underlying base models (e.g., GPT-4o, Claude 3.5 Sonnet) - *Implementation detail: Vercel AI Gateway provides unified access to all models with a single API key.*
 
 ### 2.3 Sidekiq (Custom Assistant) Management
 Users can create, edit, and delete their own Sidekiqs.
@@ -89,8 +89,8 @@ Users can create, edit, and delete their own Sidekiqs.
 - **ORM**: [Drizzle ORM](https://orm.drizzle.team/).
 - **Auth**: [Better-Auth](https://better-auth.com/) (Email/Password, Social Login (Google)).
 - **Payments**: [Stripe](https://stripe.com/) (Checkout Sessions, Webhooks).
-- **AI Integration**: Vercel AI SDK (recommended for standardizing generic providers).
-- **LLM Gateway**: Vercel Gateway.
+- **AI Integration**: Vercel AI SDK for standardizing provider interactions and streaming responses.
+- **LLM Gateway**: Vercel AI Gateway for unified API key management and model access across all providers (OpenAI, Anthropic, etc.). All provider API keys are configured in Vercel AI Gateway, eliminating the need for separate provider-specific keys in the application.
 - **Real-time Communication**: Server-Sent Events (SSE) for streaming AI responses.
 - **File Storage**: Vercel Blob Storage for avatar uploads.
 - **Error Tracking**: Sentry (or similar) for production error monitoring.
@@ -100,6 +100,7 @@ Users can create, edit, and delete their own Sidekiqs.
 - **Streaming Scope**: AI responses stream only to the user who initiated the message. Other users viewing shared chats see completed messages after refresh.
 - **Technology**: Server-Sent Events (SSE) for one-way server-to-client streaming.
 - **Integration**: Leverage Vercel AI SDK's native streaming capabilities with Next.js Edge functions.
+- **API Gateway**: All LLM requests route through Vercel AI Gateway, which handles provider authentication, rate limiting, and unified API key management. The application only needs a single Vercel AI Gateway API key to access all supported models.
 
 ### 3.2 Key Data Models (Draft)
 
@@ -456,7 +457,7 @@ Users can create, edit, and delete their own Sidekiqs.
 
 ### 7.5 Data Privacy
 - **Conversation Data**: Encrypted at rest (PostgreSQL encryption).
-- **API Keys**: Model provider API keys stored in environment variables, never exposed to client.
+- **API Keys**: Vercel AI Gateway API key stored in environment variables, never exposed to client. Individual provider API keys are managed securely within Vercel AI Gateway configuration, not in the application codebase.
 - **User Deletion**: Hard delete user data upon account deletion (GDPR compliance).
 
 ## 8. Monitoring & Observability
@@ -486,6 +487,7 @@ This section captures the key architectural and implementation decisions made du
 - **Real-time**: No real-time collaboration in MVP; multi-user streaming deferred
 - **File Storage**: Vercel Blob Storage for avatar uploads
 - **Monitoring**: Sentry for error tracking in MVP
+- **AI Gateway**: Vercel AI Gateway for unified API key management and model access; eliminates need for separate provider API keys in application
 
 ### Credit & Payment Decisions
 - **Credit Scope**: Both user-level and team-level credit balances
@@ -561,9 +563,10 @@ STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 STRIPE_PUBLISHABLE_KEY=
 
-# AI Model Providers
-OPENAI_API_KEY=
-ANTHROPIC_API_KEY=
+# Vercel AI Gateway
+# Single unified API key for accessing all models through Vercel AI Gateway
+# Provider-specific keys (OpenAI, Anthropic, etc.) are configured in Vercel AI Gateway dashboard
+VERCEL_AI_GATEWAY_API_KEY=
 
 # Model Pricing (per 1K tokens)
 GPT4O_INPUT_PRICE_PER_1K_TOKENS=0.0025

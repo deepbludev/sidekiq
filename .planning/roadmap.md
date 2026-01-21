@@ -16,7 +16,7 @@
 
 ### Phase 0.2. Core Chat
 - [ ] 0.2.1. Basic chat UI with sidebar (history) and main chat area
-- [ ] 0.2.2. Integration with LLM providers (OpenAI/Anthropic) using Vercel AI SDK
+- [ ] 0.2.2. Integration with LLM providers using Vercel AI Gateway (unified API key management - all provider keys configured in Vercel AI Gateway, not in app) and Vercel AI SDK (for streaming responses)
 - [ ] 0.2.3. Server-Sent Events (SSE) for streaming AI responses
 - [ ] 0.2.4. Message persistence with enhanced schema (model, tokens, metadata, parentMessageId)
 - [ ] 0.2.5. Thread management: create, auto-title generation after first exchange
