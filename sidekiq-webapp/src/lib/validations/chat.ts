@@ -3,23 +3,13 @@ import { DEFAULT_MODEL } from "@sidekiq/lib/ai/models";
 
 /**
  * Schema for message parts in the AI SDK UIMessage format.
- * Supports text parts for now, can be extended for tool results, images, etc.
+ * Uses passthrough to handle all AI SDK part types without strict validation.
+ * The AI SDK can return many part types (text, tool-invocation, reasoning, source, etc.)
+ * and we need to forward them all correctly.
  */
-const messagePartSchema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal("text"),
-    text: z.string(),
-  }),
-  // Extensible for future part types (tool-invocation, tool-result, image, etc.)
-  z.object({
-    type: z.literal("tool-invocation"),
-    toolInvocationId: z.string(),
-    toolName: z.string(),
-    args: z.record(z.unknown()),
-    state: z.enum(["pending", "result", "error"]),
-    result: z.unknown().optional(),
-  }),
-]);
+const messagePartSchema = z.object({
+  type: z.string(),
+}).passthrough();
 
 /**
  * Schema for UIMessage format as used by the Vercel AI SDK.
