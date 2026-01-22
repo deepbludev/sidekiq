@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 1 of 12 (AI Streaming Infrastructure)
-Plan: 1 of 2 complete
-Status: In progress
-Last activity: 2026-01-22 — Completed 01-01-PLAN.md (AI streaming backend)
+Plan: 2 of 2 complete
+Status: Phase complete
+Last activity: 2026-01-22 — Completed 01-02-PLAN.md (Chat UI with streaming)
 
-Progress: [█░░░░░░░░░] ~4% (1/~25 plans estimated)
+Progress: [██░░░░░░░░] ~8% (2/~25 plans estimated)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: ~15 min
-- Total execution time: ~0.25 hours
+- Total plans completed: 2
+- Average duration: ~19 min
+- Total execution time: ~0.65 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01 | 1 | 15min | 15min |
+| 01 | 2 | 39min | 19.5min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (15min)
-- Trend: N/A (first plan)
+- Last 5 plans: 01-01 (15min), 01-02 (24min)
+- Trend: Steady (~19min avg)
 
 *Updated after each plan completion*
 
@@ -44,8 +44,12 @@ Recent decisions affecting current work:
 
 - Vercel AI Gateway for LLM access (confirmed - implemented in 01-01)
 - SSE for streaming, not WebSockets (confirmed - implemented in 01-01)
-- Server-side message ID generation with nanoid (new - 01-01)
-- User message saved immediately, AI message in onFinish (new - 01-01)
+- Server-side message ID generation with nanoid (confirmed - 01-01)
+- User message saved immediately, AI message in onFinish (confirmed - 01-01)
+- AI SDK v6 useChat hook for frontend state management (new - 01-02)
+- Smart auto-scroll with scroll position tracking (new - 01-02)
+- Passthrough validation for AI SDK message parts (new - 01-02)
+- Server-side thread creation in page.tsx until Phase 3 (new - 01-02)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 
@@ -60,5 +64,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 01-01-PLAN.md (AI streaming backend infrastructure)
+Stopped at: Completed 01-02-PLAN.md (Chat UI with streaming) - Phase 01 complete
 Resume file: None
+Next: Phase 02 (to be planned)
