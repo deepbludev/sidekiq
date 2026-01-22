@@ -16,6 +16,7 @@ export const env = createEnv({
     BLOB_READ_WRITE_TOKEN: z.string().optional(),
     RESEND_API_KEY: z.string().optional(),
     EMAIL_FROM: z.string().email().optional().default("noreply@sidekiq.app"),
+    AI_GATEWAY_API_KEY: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -43,6 +44,7 @@ export const env = createEnv({
     BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     EMAIL_FROM: process.env.EMAIL_FROM,
+    AI_GATEWAY_API_KEY: process.env.AI_GATEWAY_API_KEY,
     NODE_ENV: process.env.NODE_ENV,
   },
   /**
