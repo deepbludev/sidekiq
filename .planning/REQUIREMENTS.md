@@ -115,12 +115,64 @@
 
 ## Traceability
 
-<!-- Filled by roadmapper -->
-
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
-| — | — | — |
+| CHAT-01 | Phase 1 | Pending |
+| CHAT-02 | Phase 4 | Pending |
+| CHAT-03 | Phase 4 | Pending |
+| CHAT-04 | Phase 3 | Pending |
+| CHAT-05 | Phase 3 | Pending |
+| CHAT-06 | Phase 3 | Pending |
+| CHAT-07 | Phase 3 | Pending |
+| CHAT-08 | Phase 3 | Pending |
+| CHAT-09 | Phase 3 | Pending |
+| CHAT-10 | Phase 1 | Pending |
+| CHAT-11 | Phase 2 | Pending |
+| CHAT-12 | Phase 1 | Pending |
+| SIDE-01 | Phase 5 | Pending |
+| SIDE-02 | Phase 5 | Pending |
+| SIDE-03 | Phase 5 | Pending |
+| SIDE-04 | Phase 5 | Pending |
+| SIDE-05 | Phase 5 | Pending |
+| SIDE-06 | Phase 5 | Pending |
+| KIQQ-01 | Phase 6 | Pending |
+| KIQQ-02 | Phase 6 | Pending |
+| KIQQ-03 | Phase 6 | Pending |
+| KIQQ-04 | Phase 7 | Pending |
+| KIQQ-05 | Phase 7 | Pending |
+| KIQQ-06 | Phase 6 | Pending |
+| KIQQ-07 | Phase 6 | Pending |
+| KIQQ-08 | Phase 6 | Pending |
+| KIQQ-09 | Phase 6 | Pending |
+| KIQQ-10 | Phase 6 | Pending |
+| TEAM-01 | Phase 8 | Pending |
+| TEAM-02 | Phase 8 | Pending |
+| TEAM-03 | Phase 8 | Pending |
+| TEAM-04 | Phase 8 | Pending |
+| TEAM-05 | Phase 8 | Pending |
+| TEAM-06 | Phase 8 | Pending |
+| TEAM-07 | Phase 9 | Pending |
+| TEAM-08 | Phase 9 | Pending |
+| TEAM-09 | Phase 9 | Pending |
+| TEAM-10 | Phase 9 | Pending |
+| TEAM-11 | Phase 8 | Pending |
+| UIUX-01 | Phase 2 | Pending |
+| UIUX-02 | Phase 2 | Pending |
+| UIUX-03 | Phase 2 | Pending |
+| UIUX-04 | Phase 11 | Pending |
+| UIUX-05 | Phase 11 | Pending |
+| UIUX-06 | Phase 11 | Pending |
+| UIUX-07 | Phase 12 | Pending |
+| UIUX-08 | Phase 12 | Pending |
+| UIUX-09 | Phase 2 | Pending |
+| UIUX-10 | Phase 12 | Pending |
+| UIUX-11 | Phase 12 | Pending |
+| ERRR-01 | Phase 10 | Pending |
+| ERRR-02 | Phase 10 | Pending |
+| ERRR-03 | Phase 10 | Pending |
+| ERRR-04 | Phase 10 | Pending |
 
 ---
 *Requirements defined: 2026-01-22*
-*Total v1 requirements: 44*
+*Total v1 requirements: 54*
+*Requirements mapped: 54/54 (100% coverage)*
