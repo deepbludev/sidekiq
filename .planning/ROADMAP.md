@@ -36,10 +36,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Messages are persisted to database with model, tokens, and metadata
   3. Streaming shows typing indicator followed by token-by-token rendering
   4. Backend properly consumes stream even if client disconnects
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 01-01: TBD
+- [ ] 01-01-PLAN.md — AI SDK backend infrastructure (packages, model registry, /api/chat route handler)
+- [ ] 01-02-PLAN.md — Chat UI with streaming (useChat, message components, typing indicator, auto-scroll)
 
 ### Phase 2: Basic Chat Interface
 **Goal**: User can send and view messages with optimistic UI and proper error handling
@@ -214,7 +215,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. AI Streaming Infrastructure | 0/1 | Not started | - |
+| 1. AI Streaming Infrastructure | 0/2 | Planned | - |
 | 2. Basic Chat Interface | 0/1 | Not started | - |
 | 3. Thread Management | 0/1 | Not started | - |
 | 4. Model Selection & Persistence | 0/1 | Not started | - |
