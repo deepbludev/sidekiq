@@ -12,7 +12,7 @@ Sidekiq v1 builds upon existing authentication and database infrastructure to de
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: AI Streaming Infrastructure** - Vercel AI SDK, Route Handlers, SSE
+- [x] **Phase 1: AI Streaming Infrastructure** - Vercel AI SDK, Route Handlers, SSE
 - [ ] **Phase 2: Basic Chat Interface** - Message UI, input, optimistic updates
 - [ ] **Phase 3: Thread Management** - Create, delete, archive, pin, auto-title
 - [ ] **Phase 4: Model Selection & Persistence** - Model picker, sticky selection
@@ -39,8 +39,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — AI SDK backend infrastructure (packages, model registry, /api/chat route handler)
-- [ ] 01-02-PLAN.md — Chat UI with streaming (useChat, message components, typing indicator, auto-scroll)
+- [x] 01-01-PLAN.md — AI SDK backend infrastructure (packages, model registry, /api/chat route handler)
+- [x] 01-02-PLAN.md — Chat UI with streaming (useChat, message components, typing indicator, auto-scroll)
 
 ### Phase 2: Basic Chat Interface
 **Goal**: User can send and view messages with optimistic UI and proper error handling
@@ -215,7 +215,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. AI Streaming Infrastructure | 0/2 | Planned | - |
+| 1. AI Streaming Infrastructure | 2/2 | ✓ Complete | 2026-01-22 |
 | 2. Basic Chat Interface | 0/1 | Not started | - |
 | 3. Thread Management | 0/1 | Not started | - |
 | 4. Model Selection & Persistence | 0/1 | Not started | - |

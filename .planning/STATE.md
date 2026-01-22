@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** Phase 1 - AI Streaming Infrastructure
+**Current focus:** Phase 2 - Basic Chat Interface
 
 ## Current Position
 
-Phase: 1 of 12 (AI Streaming Infrastructure)
-Plan: 2 of 2 complete
-Status: Phase complete
-Last activity: 2026-01-22 — Completed 01-02-PLAN.md (Chat UI with streaming)
+Phase: 2 of 12 (Basic Chat Interface)
+Plan: Not yet planned
+Status: Ready to plan
+Last activity: 2026-01-22 — Phase 1 complete (verified)
 
-Progress: [██░░░░░░░░] ~8% (2/~25 plans estimated)
+Progress: [██░░░░░░░░] ~8% (1/12 phases complete)
 
 ## Performance Metrics
 

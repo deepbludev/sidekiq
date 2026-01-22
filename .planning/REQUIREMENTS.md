@@ -8,7 +8,7 @@
 
 ### Core Chat (CHAT)
 
-- [ ] **CHAT-01**: User can send a message and receive a streaming AI response
+- [x] **CHAT-01**: User can send a message and receive a streaming AI response
 - [ ] **CHAT-02**: User can select which LLM model to use (GPT-4o, Claude, etc.) via dropdown near input
 - [ ] **CHAT-03**: Model selection persists for the entire thread (sticky per thread)
 - [ ] **CHAT-04**: User can create a new conversation thread
@@ -17,9 +17,9 @@
 - [ ] **CHAT-07**: User can delete a thread (permanent, with confirmation dialog)
 - [ ] **CHAT-08**: User can archive a thread (soft delete, recoverable)
 - [ ] **CHAT-09**: User can pin a thread (sticky to top of sidebar)
-- [ ] **CHAT-10**: Messages are persisted to database with model, tokens, and metadata
+- [x] **CHAT-10**: Messages are persisted to database with model, tokens, and metadata
 - [ ] **CHAT-11**: Message sending shows optimistic UI with error rollback
-- [ ] **CHAT-12**: Streaming shows typing indicator followed by token-by-token rendering
+- [x] **CHAT-12**: Streaming shows typing indicator followed by token-by-token rendering
 
 ### Sidebar & Organization (SIDE)
 
@@ -117,7 +117,7 @@
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
-| CHAT-01 | Phase 1 | Pending |
+| CHAT-01 | Phase 1 | Complete |
 | CHAT-02 | Phase 4 | Pending |
 | CHAT-03 | Phase 4 | Pending |
 | CHAT-04 | Phase 3 | Pending |
@@ -126,9 +126,9 @@
 | CHAT-07 | Phase 3 | Pending |
 | CHAT-08 | Phase 3 | Pending |
 | CHAT-09 | Phase 3 | Pending |
-| CHAT-10 | Phase 1 | Pending |
+| CHAT-10 | Phase 1 | Complete |
 | CHAT-11 | Phase 2 | Pending |
-| CHAT-12 | Phase 1 | Pending |
+| CHAT-12 | Phase 1 | Complete |
 | SIDE-01 | Phase 5 | Pending |
 | SIDE-02 | Phase 5 | Pending |
 | SIDE-03 | Phase 5 | Pending |
