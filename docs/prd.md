@@ -568,24 +568,12 @@ STRIPE_PUBLISHABLE_KEY=
 # Provider-specific keys (OpenAI, Anthropic, etc.) are configured in Vercel AI Gateway dashboard
 VERCEL_AI_GATEWAY_API_KEY=
 
-# Model Pricing (per 1K tokens)
-GPT4O_INPUT_PRICE_PER_1K_TOKENS=0.0025
-GPT4O_OUTPUT_PRICE_PER_1K_TOKENS=0.01
-CLAUDE_35_SONNET_INPUT_PRICE_PER_1K_TOKENS=0.003
-CLAUDE_35_SONNET_OUTPUT_PRICE_PER_1K_TOKENS=0.015
-
 # Vercel Blob Storage
 BLOB_READ_WRITE_TOKEN=
 
-# Sentry
-SENTRY_DSN=
-SENTRY_AUTH_TOKEN=
 
 # Email (for invites and password reset)
-SMTP_HOST=
-SMTP_PORT=
-SMTP_USER=
-SMTP_PASSWORD=
+RESEND_API_KEY=
 FROM_EMAIL=
 
 # App Config

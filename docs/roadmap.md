@@ -1,6 +1,6 @@
 # 9. Implementation Roadmap
 
-## Version 0. MVP
+## Milestone 0. MVP
 ### Phase 0.0. Foundation ✅
 - [x] 0.0.1. Scaffolding Next.js + shadcn/ui + tailwindcss + better-auth base setup
 - [x] 0.0.2. tRPC setup with type-safe routes and Zod validation
@@ -58,7 +58,7 @@
 - [ ] 0.5.7. Team authorization middleware for secure access control
 
 
-## Version 1. Advanced Features & Monetization
+## Milestone 1. Advanced Features & Monetization
 
 ### Phase 1.1. Advanced Chat Features: Tools
 - [ ] 1.1.1. Web Search: real-time information retrieval.

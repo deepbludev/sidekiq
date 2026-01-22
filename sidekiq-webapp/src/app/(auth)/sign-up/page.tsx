@@ -2,7 +2,14 @@ import { AuthCard } from "@sidekiq/components/auth/auth-card";
 import { SignUpForm } from "@sidekiq/components/auth/sign-up-form";
 import { OAuthButtons } from "@sidekiq/components/auth/oauth-buttons";
 
-export default function SignUpPage() {
+interface SignUpPageProps {
+  searchParams: Promise<{ callbackUrl?: string }>;
+}
+
+export default async function SignUpPage({ searchParams }: SignUpPageProps) {
+  const { callbackUrl } = await searchParams;
+  const callbackURL = callbackUrl ?? "/dashboard";
+
   return (
     <AuthCard
       title="Create an account"
@@ -14,8 +21,8 @@ export default function SignUpPage() {
       }}
     >
       <div className="space-y-6">
-        <SignUpForm />
-        <OAuthButtons />
+        <SignUpForm callbackURL={callbackURL} />
+        <OAuthButtons callbackURL={callbackURL} />
       </div>
     </AuthCard>
   );

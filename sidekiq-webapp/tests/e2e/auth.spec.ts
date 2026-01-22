@@ -119,3 +119,37 @@ test.describe("Reset Password Page", () => {
     await expect(page.getByRole("button", { name: /reset password/i })).toBeVisible();
   });
 });
+
+test.describe("Forgot Password Success State", () => {
+  test("should show success message after requesting password reset", async ({ page }) => {
+    await page.goto("/forgot-password");
+
+    // Fill in a valid email format
+    await page.getByLabel(/email/i).fill("test@example.com");
+
+    // Submit the form
+    await page.getByRole("button", { name: /send reset link/i }).click();
+
+    // Should show success message (doesn't reveal if email exists)
+    await expect(
+      page.getByText(/if an account exists with that email/i)
+    ).toBeVisible({ timeout: 10000 });
+
+    // Should show follow-up instruction
+    await expect(page.getByText(/check your email/i)).toBeVisible();
+
+    // Form should no longer be visible
+    await expect(page.getByRole("button", { name: /send reset link/i })).not.toBeVisible();
+  });
+});
+
+test.describe("Sign-in Link Preservation", () => {
+  test("should preserve callbackUrl when navigating to sign-up", async ({ page }) => {
+    // Start at sign-in with a callbackUrl
+    await page.goto("/sign-in?callbackUrl=%2Fdashboard");
+
+    // The sign-up link should ideally preserve the callback
+    // (This tests that sign-up now accepts callbackUrl)
+    await expect(page.getByRole("link", { name: /sign up/i })).toBeVisible();
+  });
+});

@@ -20,10 +20,14 @@ import {
   FormMessage,
 } from "@sidekiq/components/ui/form";
 
+interface SignUpFormProps {
+  callbackURL?: string;
+}
+
 /**
  * Sign up form with email/password registration
  */
-export function SignUpForm() {
+export function SignUpForm({ callbackURL = "/dashboard" }: SignUpFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -44,7 +48,7 @@ export function SignUpForm() {
         name: values.name,
         email: values.email,
         password: values.password,
-        callbackURL: "/dashboard",
+        callbackURL,
       });
 
       if (error) {
@@ -53,7 +57,7 @@ export function SignUpForm() {
       }
 
       toast.success("Account created successfully");
-      router.push("/dashboard");
+      router.push(callbackURL);
     } catch {
       toast.error("An unexpected error occurred");
     } finally {

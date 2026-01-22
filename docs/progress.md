@@ -1,43 +1,43 @@
 # Implementation Progress
 
-## Version 0. MVP
+## Milestone 0. MVP
 
 ### Phase 0.0. Foundation
-| Task | Status | Notes |
-|------|--------|-------|
-| 0.0.1. Scaffolding Next.js + shadcn/ui + tailwindcss + better-auth | ✅ Done | Next.js 15, Tailwind v4, Better Auth, shadcn/ui all configured |
-| 0.0.2. tRPC setup with type-safe routes and Zod validation | ✅ Done | tRPC 11 configured with protected/public procedures, Zod validation |
-| 0.0.3. Database setup (PostgreSQL) with Drizzle ORM | ✅ Done | Neon PostgreSQL connected, Drizzle ORM configured |
-| 0.0.4. Drizzle migrations for core data models | ✅ Done | All core tables created: teams, team_member, team_invite, sidekiq, thread, message |
-| 0.0.6. Vercel Blob Storage setup | ✅ Done | @vercel/blob installed, env vars configured, upload utility created |
+| Task                                                               | Status | Notes                                                                              |
+| ------------------------------------------------------------------ | ------ | ---------------------------------------------------------------------------------- |
+| 0.0.1. Scaffolding Next.js + shadcn/ui + tailwindcss + better-auth | ✅ Done | Next.js 15, Tailwind v4, Better Auth, shadcn/ui all configured                     |
+| 0.0.2. tRPC setup with type-safe routes and Zod validation         | ✅ Done | tRPC 11 configured with protected/public procedures, Zod validation                |
+| 0.0.3. Database setup (PostgreSQL) with Drizzle ORM                | ✅ Done | Neon PostgreSQL connected, Drizzle ORM configured                                  |
+| 0.0.4. Drizzle migrations for core data models                     | ✅ Done | All core tables created: teams, team_member, team_invite, sidekiq, thread, message |
+| 0.0.6. Vercel Blob Storage setup                                   | ✅ Done | @vercel/blob installed, env vars configured, upload utility created                |
 
 ### Phase 0.1. Authentication ✅
-| Task | Status | Notes |
-|------|--------|-------|
-| 0.1.1. Better-Auth integration | ✅ Done | GitHub OAuth configured with Better Auth |
-| 0.1.2. Email/Password authentication | ✅ Done | Sign-up/sign-in forms with React Hook Form + Zod validation |
-| 0.1.3. Password reset flow | ✅ Done | Forgot/reset password with Resend email (1-hour token expiration) |
-| 0.1.4. Protected routes and middleware | ✅ Done | Cookie-based middleware + server-side session validation |
+| Task                                   | Status | Notes                                                             |
+| -------------------------------------- | ------ | ----------------------------------------------------------------- |
+| 0.1.1. Better-Auth integration         | ✅ Done | GitHub OAuth configured with Better Auth                          |
+| 0.1.2. Email/Password authentication   | ✅ Done | Sign-up/sign-in forms with React Hook Form + Zod validation       |
+| 0.1.3. Password reset flow             | ✅ Done | Forgot/reset password with Resend email (1-hour token expiration) |
+| 0.1.4. Protected routes and middleware | ✅ Done | Cookie-based middleware + server-side session validation          |
 
 ### Phase 0.2. Core Chat
-| Task | Status | Notes |
-|------|--------|-------|
+| Task           | Status        | Notes                          |
+| -------------- | ------------- | ------------------------------ |
 | 0.2.1 - 0.2.18 | 🔴 Not Started | All core chat features pending |
 
 ### Phase 0.3. Sidekiqs
-| Task | Status | Notes |
-|------|--------|-------|
+| Task          | Status        | Notes                        |
+| ------------- | ------------- | ---------------------------- |
 | 0.3.1 - 0.3.7 | 🔴 Not Started | All Sidekiq features pending |
 
 ### Phase 0.4. UI/UX & Polish
-| Task | Status | Notes |
-|------|--------|-------|
-| 0.4.1 - 0.4.3 | 🔴 Not Started | |
+| Task          | Status        | Notes |
+| ------------- | ------------- | ----- |
+| 0.4.1 - 0.4.3 | 🔴 Not Started |       |
 
 ### Phase 0.5. Teams
-| Task | Status | Notes |
-|------|--------|-------|
-| 0.5.1 - 0.5.7 | 🔴 Not Started | |
+| Task          | Status        | Notes |
+| ------------- | ------------- | ----- |
+| 0.5.1 - 0.5.7 | 🔴 Not Started |       |
 
 ---
 
