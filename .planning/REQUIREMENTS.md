@@ -18,7 +18,7 @@
 - [ ] **CHAT-08**: User can archive a thread (soft delete, recoverable)
 - [ ] **CHAT-09**: User can pin a thread (sticky to top of sidebar)
 - [x] **CHAT-10**: Messages are persisted to database with model, tokens, and metadata
-- [ ] **CHAT-11**: Message sending shows optimistic UI with error rollback
+- [x] **CHAT-11**: Message sending shows optimistic UI with error rollback
 - [x] **CHAT-12**: Streaming shows typing indicator followed by token-by-token rendering
 
 ### Sidebar & Organization (SIDE)
@@ -59,15 +59,15 @@
 
 ### UI/UX Polish (UIUX)
 
-- [ ] **UIUX-01**: Dark/Light/System theme toggle works correctly
-- [ ] **UIUX-02**: Glassmorphism aesthetic with translucent backdrops and blur effects
-- [ ] **UIUX-03**: Subtle gradients throughout the interface
+- [x] **UIUX-01**: Dark/Light/System theme toggle works correctly
+- [x] **UIUX-02**: Glassmorphism aesthetic with translucent backdrops and blur effects
+- [x] **UIUX-03**: Subtle gradients throughout the interface
 - [ ] **UIUX-04**: Micro-animations for message appearance (fade-in/slide-up)
 - [ ] **UIUX-05**: Smooth transitions between pages
 - [ ] **UIUX-06**: Hover states on all interactive elements
 - [ ] **UIUX-07**: Skeleton loading states for sidebar and chat area
 - [ ] **UIUX-08**: Streaming indicator with cursor animation during AI response
-- [ ] **UIUX-09**: Empty states for new users with CTAs ("Start your first conversation")
+- [x] **UIUX-09**: Empty states for new users with CTAs ("Start your first conversation")
 - [ ] **UIUX-10**: Responsive design with sidebar as drawer on mobile
 - [ ] **UIUX-11**: Markdown rendering for AI responses (code blocks, tables, lists)
 
@@ -127,7 +127,7 @@
 | CHAT-08 | Phase 3 | Pending |
 | CHAT-09 | Phase 3 | Pending |
 | CHAT-10 | Phase 1 | Complete |
-| CHAT-11 | Phase 2 | Pending |
+| CHAT-11 | Phase 2 | Complete |
 | CHAT-12 | Phase 1 | Complete |
 | SIDE-01 | Phase 5 | Pending |
 | SIDE-02 | Phase 5 | Pending |
@@ -156,15 +156,15 @@
 | TEAM-09 | Phase 9 | Pending |
 | TEAM-10 | Phase 9 | Pending |
 | TEAM-11 | Phase 8 | Pending |
-| UIUX-01 | Phase 2 | Pending |
-| UIUX-02 | Phase 2 | Pending |
-| UIUX-03 | Phase 2 | Pending |
+| UIUX-01 | Phase 2 | Complete |
+| UIUX-02 | Phase 2 | Complete |
+| UIUX-03 | Phase 2 | Complete |
 | UIUX-04 | Phase 11 | Pending |
 | UIUX-05 | Phase 11 | Pending |
 | UIUX-06 | Phase 11 | Pending |
 | UIUX-07 | Phase 12 | Pending |
 | UIUX-08 | Phase 12 | Pending |
-| UIUX-09 | Phase 2 | Pending |
+| UIUX-09 | Phase 2 | Complete |
 | UIUX-10 | Phase 12 | Pending |
 | UIUX-11 | Phase 12 | Pending |
 | ERRR-01 | Phase 10 | Pending |

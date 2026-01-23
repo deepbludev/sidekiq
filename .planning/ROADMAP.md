@@ -13,7 +13,7 @@ Sidekiq v1 builds upon existing authentication and database infrastructure to de
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: AI Streaming Infrastructure** - Vercel AI SDK, Route Handlers, SSE
-- [ ] **Phase 2: Basic Chat Interface** - Message UI, input, optimistic updates
+- [x] **Phase 2: Basic Chat Interface** - Message UI, input, optimistic updates
 - [ ] **Phase 3: Thread Management** - Create, delete, archive, pin, auto-title
 - [ ] **Phase 4: Model Selection & Persistence** - Model picker, sticky selection
 - [ ] **Phase 5: Sidebar & Navigation** - History, date grouping, search
@@ -52,10 +52,12 @@ Plans:
   3. Chat interface has glassmorphism aesthetic with translucent backdrops and blur effects
   4. Dark/Light/System theme toggle works correctly across all UI elements
   5. Empty state shows "Start your first conversation" CTA for new users
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
+- [x] 02-01-PLAN.md — Theme system + glassmorphism foundation (next-themes, glass utilities, toggle-group)
+- [x] 02-02-PLAN.md — Markdown rendering + message actions (Streamdown, copy/edit/regenerate, scroll-to-bottom)
+- [x] 02-03-PLAN.md — Empty state + final integration (categorized prompts, error toasts, header with toggle)
 
 ### Phase 3: Thread Management
 **Goal**: User can organize conversations with create, delete, archive, pin, and rename
@@ -216,7 +218,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. AI Streaming Infrastructure | 2/2 | ✓ Complete | 2026-01-22 |
-| 2. Basic Chat Interface | 0/1 | Not started | - |
+| 2. Basic Chat Interface | 3/3 | ✓ Complete | 2026-01-23 |
 | 3. Thread Management | 0/1 | Not started | - |
 | 4. Model Selection & Persistence | 0/1 | Not started | - |
 | 5. Sidebar & Navigation | 0/1 | Not started | - |
