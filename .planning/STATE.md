@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 4 of 13 (Model Selection & Persistence)
-Plan: None yet
-Status: Ready to plan
-Last activity: 2026-01-23 — Completed 03-05-PLAN.md (gap closure - browser tab title)
+Plan: 1 of 3 complete
+Status: In progress
+Last activity: 2026-01-23 — Completed 04-01-PLAN.md (foundation for model picker)
 
-Progress: [██░░░░░░░░] ~23% (3/13 phases complete)
+Progress: [███░░░░░░░] ~27% (3/13 phases complete, 1/3 phase 4 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
+- Total plans completed: 11
 - Average duration: ~7 min
-- Total execution time: ~1 hour 14 min
+- Total execution time: ~1 hour 17 min
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [██░░░░░░░░] ~23% (3/13 phases complete)
 | 01 | 2 | 39min | 19.5min |
 | 02 | 3 | 18min | 6min |
 | 03 | 5 | 17min | 3.4min |
+| 04 | 1 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (4min), 03-03 (5min), 03-04 (2min), 03-05 (2min)
-- Trend: Very fast execution (~3.25min avg for last 4 plans)
+- Last 5 plans: 03-03 (5min), 03-04 (2min), 03-05 (2min), 04-01 (3min)
+- Trend: Very fast execution (~3min avg for last 4 plans)
 
 *Updated after each plan completion*
 
@@ -68,6 +69,10 @@ Recent decisions affecting current work:
 - Toast with undo for archive, 5 second window (confirmed - 03-03)
 - generateMetadata for SSR browser tab title (confirmed - 03-05)
 - Title polling every 2s, max 5 attempts for async title (confirmed - 03-05)
+- UserPreferences JSONB with optional fields for extensibility (confirmed - 04-01)
+- JSONB default {} for nullable preferences (confirmed - 04-01)
+- ModelFeature type for capability tags (confirmed - 04-01)
+- getProviders() helper for picker UI grouping (confirmed - 04-01)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 
@@ -87,9 +92,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 03-05-PLAN.md (gap closure - browser tab title)
+Stopped at: Completed 04-01-PLAN.md (foundation for model picker)
 Resume file: None
-Next: Phase 4 - Model Selection
+Next: 04-02-PLAN.md (model picker component)
 
 ## Phase 2 Completion Summary
 
