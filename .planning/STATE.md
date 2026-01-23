@@ -12,16 +12,16 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 Phase: 4 of 12 (Model Selection & Persistence)
 Plan: None yet
 Status: Ready to plan
-Last activity: 2026-01-23 — Phase 3 complete and verified
+Last activity: 2026-01-23 — Completed 03-04-PLAN.md (gap closure)
 
 Progress: [███░░░░░░░] ~25% (3/12 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: ~9 min
-- Total execution time: ~1 hour 10 min
+- Total plans completed: 9
+- Average duration: ~8 min
+- Total execution time: ~1 hour 12 min
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [███░░░░░░░] ~25% (3/12 phases complete)
 |-------|-------|-------|----------|
 | 01 | 2 | 39min | 19.5min |
 | 02 | 3 | 18min | 6min |
-| 03 | 3 | 13min | 4.3min |
+| 03 | 4 | 15min | 3.75min |
 
 **Recent Trend:**
-- Last 5 plans: 02-03 (8min), 03-01 (4min), 03-02 (4min), 03-03 (5min)
-- Trend: Fast execution (~5.25min avg for last 4 plans)
+- Last 5 plans: 03-01 (4min), 03-02 (4min), 03-03 (5min), 03-04 (2min)
+- Trend: Very fast execution (~3.75min avg for last 4 plans)
 
 *Updated after each plan completion*
 
@@ -63,7 +63,7 @@ Recent decisions affecting current work:
 - Budget model (gpt-4o-mini) for all title generation (confirmed - 03-02)
 - Fire-and-forget title generation, non-blocking (confirmed - 03-02)
 - X-Thread-Id header for new thread notification (confirmed - 03-02)
-- router.replace for redirect to avoid /chat in history (confirmed - 03-02)
+- window.history.replaceState for URL update without unmount (confirmed - 03-04, replaced router.replace)
 - Optimistic updates with cache rollback for thread actions (confirmed - 03-03)
 - Toast with undo for archive, 5 second window (confirmed - 03-03)
 - Branching via parentMessageId ready for v2 (pending)
@@ -80,7 +80,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 03-03-PLAN.md (Phase 3 complete)
+Stopped at: Completed 03-04-PLAN.md (gap closure - stream abortion fix)
 Resume file: None
 Next: Phase 4 - Model Selection
 
@@ -106,9 +106,11 @@ All 3 plans executed successfully:
 | 03-01 | Thread router and routing structure | ✓ Complete |
 | 03-02 | Thread creation on first message + auto-title | ✓ Complete |
 | 03-03 | Thread actions UI | ✓ Complete |
+| 03-04 | Stream abortion fix (gap closure) | ✓ Complete |
 
 **Verification:** 6/6 must-haves passed
 **Requirements:** CHAT-04, CHAT-05, CHAT-06, CHAT-07, CHAT-08, CHAT-09 complete
 **Components Ready:** ThreadItem, DeleteThreadDialog, RenameThreadInput, ThreadContextMenu
 **Hook Ready:** useThreadActions with optimistic updates
 **Note:** Thread action components await sidebar integration (Phase 5)
+**Gap closure:** 03-04 fixed stream abortion during URL update (window.history.replaceState instead of router.replace)
