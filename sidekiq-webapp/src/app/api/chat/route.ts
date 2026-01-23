@@ -4,6 +4,7 @@ import { nanoid } from "nanoid";
 import { eq } from "drizzle-orm";
 
 import { getModel } from "@sidekiq/lib/ai/models";
+import { generateThreadTitle } from "@sidekiq/lib/ai/title";
 import { chatRequestSchema } from "@sidekiq/lib/validations/chat";
 import { db } from "@sidekiq/server/db";
 import { messages, threads } from "@sidekiq/server/db/schema";
@@ -28,20 +29,23 @@ function extractTextContent(message: UIMessage): string {
  * POST /api/chat
  *
  * Streaming chat endpoint for AI conversations.
- * Handles message persistence and token tracking.
+ * Handles thread creation, message persistence, token tracking, and auto-title generation.
  *
  * Request body:
  * - messages: Array of UIMessage objects from useChat hook
- * - threadId: ID of the thread to save messages to
+ * - threadId: Optional - ID of existing thread, or omit to create new thread
  * - model: Optional model ID (defaults to DEFAULT_MODEL)
  *
  * Response:
  * - Server-Sent Events stream with AI response
+ * - X-Thread-Id header when a new thread is created
  *
  * Persistence:
+ * - Thread is created atomically with first message (if threadId not provided)
  * - User message is saved immediately on request
  * - AI message is saved after stream completes (in onFinish)
  * - Thread lastActivityAt is updated after completion
+ * - Auto-title is generated asynchronously after first AI response
  */
 export async function POST(req: Request) {
   // 1. Validate session (authentication required)
@@ -69,26 +73,65 @@ export async function POST(req: Request) {
 
   const { messages: uiMessages, threadId, model: modelId } = parseResult.data;
 
-  // Verify thread exists and belongs to user
-  const thread = await db.query.threads.findFirst({
-    where: eq(threads.id, threadId),
-  });
+  // 3. Handle thread: existing thread verification OR new thread creation
+  type ThreadRecord = typeof threads.$inferSelect;
+  let thread: ThreadRecord;
+  let isNewThread = false;
 
-  if (!thread) {
-    return new Response(JSON.stringify({ error: "Thread not found" }), {
-      status: 404,
-      headers: { "Content-Type": "application/json" },
+  if (threadId) {
+    // Existing thread - verify ownership
+    const existingThread = await db.query.threads.findFirst({
+      where: eq(threads.id, threadId),
     });
+
+    if (!existingThread) {
+      return new Response(JSON.stringify({ error: "Thread not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (existingThread.userId !== session.user.id) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized access to thread" }),
+        { status: 403, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    // Auto-unarchive if archived thread receives new message
+    if (existingThread.isArchived) {
+      await db
+        .update(threads)
+        .set({ isArchived: false, updatedAt: new Date() })
+        .where(eq(threads.id, existingThread.id));
+    }
+
+    thread = existingThread;
+  } else {
+    // New thread - create atomically with first message
+    isNewThread = true;
+    const newThreadId = nanoid();
+    const [newThread] = await db
+      .insert(threads)
+      .values({
+        id: newThreadId,
+        userId: session.user.id,
+        title: null, // Will be set after first AI response
+        lastActivityAt: new Date(),
+      })
+      .returning();
+
+    if (!newThread) {
+      return new Response(
+        JSON.stringify({ error: "Failed to create thread" }),
+        { status: 500, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    thread = newThread;
   }
 
-  if (thread.userId !== session.user.id) {
-    return new Response(
-      JSON.stringify({ error: "Unauthorized access to thread" }),
-      { status: 403, headers: { "Content-Type": "application/json" } },
-    );
-  }
-
-  // 3. Save user message immediately
+  // 4. Validate last message is from user
   const userMessage = uiMessages[uiMessages.length - 1];
   if (userMessage?.role !== "user") {
     return new Response(
@@ -97,31 +140,38 @@ export async function POST(req: Request) {
     );
   }
 
+  // 5. Save user message immediately
   const userMessageId = nanoid();
   await db.insert(messages).values({
     id: userMessageId,
-    threadId,
+    threadId: thread.id,
     role: "user",
     content: extractTextContent(userMessage as UIMessage),
     createdAt: new Date(),
   });
 
-  // 4. Track start time for latency calculation
+  // 6. Track start time for latency calculation
   const startTime = Date.now();
 
-  // 5. Call streamText with the model and messages
+  // 7. Call streamText with the model and messages
   const result = streamText({
     model: getModel(modelId),
     messages: await convertToModelMessages(uiMessages as UIMessage[]),
     abortSignal: req.signal,
   });
 
-  // 6. CRITICAL: Call consumeStream() immediately to ensure persistence
+  // 8. CRITICAL: Call consumeStream() immediately to ensure persistence
   // even if client disconnects
   result.consumeStream();
 
-  // 7. Return streaming response with onFinish callback for persistence
-  return result.toUIMessageStreamResponse({
+  // 9. Build response headers - include X-Thread-Id for new threads
+  const headers = new Headers();
+  if (isNewThread) {
+    headers.set("X-Thread-Id", thread.id);
+  }
+
+  // 10. Return streaming response with onFinish callback for persistence
+  const streamResponse = result.toUIMessageStreamResponse({
     originalMessages: uiMessages as UIMessage[],
     generateMessageId: () => nanoid(),
     onFinish: async ({ responseMessage, isAborted, finishReason }) => {
@@ -136,7 +186,7 @@ export async function POST(req: Request) {
       // Insert assistant message to database
       await db.insert(messages).values({
         id: responseMessage.id,
-        threadId,
+        threadId: thread.id,
         role: "assistant",
         content,
         model: modelId,
@@ -157,7 +207,40 @@ export async function POST(req: Request) {
           lastActivityAt: new Date(),
           messageCount: thread.messageCount + 2, // +1 user, +1 assistant
         })
-        .where(eq(threads.id, threadId));
+        .where(eq(threads.id, thread.id));
+
+      // Generate title for new threads (fire-and-forget, non-blocking)
+      if (isNewThread) {
+        const userContent = extractTextContent(userMessage as UIMessage);
+        const assistantContent = content;
+
+        // Don't await - let it happen async to avoid blocking response
+        generateThreadTitle(userContent, assistantContent)
+          .then(async (title) => {
+            await db
+              .update(threads)
+              .set({ title, updatedAt: new Date() })
+              .where(eq(threads.id, thread.id));
+          })
+          .catch((err) => {
+            console.error("[Auto-title] Failed:", err);
+          });
+      }
     },
   });
+
+  // 11. Apply custom headers to the response
+  if (isNewThread) {
+    // Create new response with custom headers
+    return new Response(streamResponse.body, {
+      status: streamResponse.status,
+      statusText: streamResponse.statusText,
+      headers: {
+        ...Object.fromEntries(streamResponse.headers.entries()),
+        "X-Thread-Id": thread.id,
+      },
+    });
+  }
+
+  return streamResponse;
 }
