@@ -68,6 +68,7 @@ export default async function ThreadPage({ params }: ThreadPageProps) {
       id: true,
       title: true,
       isArchived: true,
+      activeModel: true,
     },
   });
 
@@ -101,6 +102,7 @@ export default async function ThreadPage({ params }: ThreadPageProps) {
       threadId={thread.id}
       initialMessages={initialMessages}
       initialTitle={thread.title}
+      initialModel={thread.activeModel}
     />
   );
 }
