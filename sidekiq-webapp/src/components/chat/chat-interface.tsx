@@ -4,7 +4,6 @@ import { useRef, useState, useCallback, type FormEvent } from "react";
 import type { UIMessage } from "ai";
 import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { MessageList } from "./message-list";
@@ -37,7 +36,6 @@ export function ChatInterface({
   threadId,
   initialMessages = [],
 }: ChatInterfaceProps) {
-  const router = useRouter();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
 
@@ -57,14 +55,15 @@ export function ChatInterface({
         const newThreadId = response.headers.get("X-Thread-Id");
         if (newThreadId) {
           hasRedirectedRef.current = true;
-          // Use replace to avoid /chat appearing in history
-          router.replace(`/chat/${newThreadId}`);
+          // Use history API to update URL without navigation/remount
+          // This preserves the streaming connection (router.replace would unmount and abort)
+          window.history.replaceState(null, "", `/chat/${newThreadId}`);
         }
       }
 
       return response;
     },
-    [threadId, router],
+    [threadId],
   );
 
   // Create transport with custom fetch to capture thread ID
