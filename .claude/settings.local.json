@@ -32,7 +32,13 @@
       "Bash(cat:*)",
       "Bash(npm view:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(npx get-shit-done-cc --global)"
+      "Bash(npx get-shit-done-cc --global)",
+      "Skill(gsd:plan-phase)",
+      "mcp__shadcn__search_items_in_registries",
+      "mcp__shadcn__view_items_in_registries",
+      "mcp__shadcn__get_item_examples_from_registries",
+      "Skill(gsd:execute-phase)",
+      "Bash(chmod:*)"
     ]
   }
 }
