@@ -22,6 +22,18 @@ export const messageRoleEnum = pgEnum("message_role", [
   "system",
 ]);
 
+/**
+ * User preferences stored as JSONB.
+ * Extensible structure for user-specific settings.
+ */
+export interface UserPreferences {
+  /** User's default model for new threads */
+  defaultModel?: string;
+  /** Array of model IDs the user has favorited */
+  favoriteModels?: string[];
+  // Prepared for Phase 6/7: sidekiqDefaults?: Record<string, string>;
+}
+
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -30,6 +42,7 @@ export const user = pgTable("user", {
     .$defaultFn(() => false)
     .notNull(),
   image: text("image"),
+  preferences: jsonb("preferences").$type<UserPreferences>().default({}),
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
