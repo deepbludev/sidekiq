@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import { useRef, useState, useCallback, type FormEvent } from "react";
 import type { UIMessage } from "ai";
 import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { MessageList } from "./message-list";
@@ -30,18 +31,48 @@ interface ChatInterfaceProps {
  * and auto-scroll functionality. Includes error handling with toast notifications.
  *
  * Uses AI SDK v6 with DefaultChatTransport for HTTP communication.
+ * Handles new thread creation by capturing X-Thread-Id header and redirecting.
  */
 export function ChatInterface({
   threadId,
   initialMessages = [],
 }: ChatInterfaceProps) {
+  const router = useRouter();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
 
-  // Create transport with threadId in body
+  // Track if we've already redirected to prevent duplicate navigation
+  const hasRedirectedRef = useRef(false);
+
+  /**
+   * Custom fetch function that captures the X-Thread-Id header
+   * and redirects to the new thread URL when a thread is created.
+   */
+  const customFetch = useCallback(
+    async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+      const response = await fetch(input, init);
+
+      // Check for new thread ID header when in "new chat" state
+      if (!threadId && !hasRedirectedRef.current) {
+        const newThreadId = response.headers.get("X-Thread-Id");
+        if (newThreadId) {
+          hasRedirectedRef.current = true;
+          // Use replace to avoid /chat appearing in history
+          router.replace(`/chat/${newThreadId}`);
+        }
+      }
+
+      return response;
+    },
+    [threadId, router],
+  );
+
+  // Create transport with custom fetch to capture thread ID
+  // Only include threadId in body if it's not null
   const transport = new DefaultChatTransport({
     api: "/api/chat",
-    body: { threadId },
+    body: threadId ? { threadId } : {},
+    fetch: customFetch,
   });
 
   const { messages, sendMessage, status, stop, error } = useChat({
