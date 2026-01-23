@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { and, eq, asc } from "drizzle-orm";
 import type { UIMessage } from "ai";
+import type { Metadata } from "next";
 
 import { getSession } from "@sidekiq/server/better-auth/server";
 import { db } from "@sidekiq/server/db";
@@ -13,6 +14,35 @@ import { ChatInterface } from "@sidekiq/components/chat/chat-interface";
  */
 interface ThreadPageProps {
   params: Promise<{ threadId: string }>;
+}
+
+/**
+ * Generate dynamic metadata for the thread page.
+ * Sets browser tab title to "{thread title} - Sidekiq" or "New Chat - Sidekiq".
+ *
+ * Note: Next.js automatically deduplicates this query with the one in the page component
+ * since they're within the same request.
+ *
+ * @param params - Route params containing threadId
+ * @returns Metadata object with dynamic title
+ */
+export async function generateMetadata({
+  params,
+}: ThreadPageProps): Promise<Metadata> {
+  const { threadId } = await params;
+
+  const session = await getSession();
+  if (!session) {
+    return { title: "Sidekiq" };
+  }
+
+  const thread = await db.query.threads.findFirst({
+    where: and(eq(threads.id, threadId), eq(threads.userId, session.user.id)),
+    columns: { title: true },
+  });
+
+  const title = thread?.title ?? "New Chat";
+  return { title: `${title} - Sidekiq` };
 }
 
 /**
@@ -67,6 +97,10 @@ export default async function ThreadPage({ params }: ThreadPageProps) {
   }));
 
   return (
-    <ChatInterface threadId={thread.id} initialMessages={initialMessages} />
+    <ChatInterface
+      threadId={thread.id}
+      initialMessages={initialMessages}
+      initialTitle={thread.title}
+    />
   );
 }
