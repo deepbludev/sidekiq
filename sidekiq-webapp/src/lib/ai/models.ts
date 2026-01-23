@@ -22,6 +22,16 @@ export type PricingTier = "$" | "$$" | "$$$";
 export type SpeedTier = "fast" | "balanced" | "quality";
 
 /**
+ * Feature tags for model capabilities.
+ */
+export type ModelFeature =
+  | "fast"
+  | "thinking"
+  | "coding"
+  | "vision"
+  | "long-context";
+
+/**
  * Configuration for a single AI model.
  */
 export interface ModelConfig {
@@ -35,6 +45,12 @@ export interface ModelConfig {
   pricingTier: PricingTier;
   /** Speed/quality tradeoff indicator */
   speedTier: SpeedTier;
+  /** Short description of the model's strengths */
+  description: string;
+  /** Feature capabilities */
+  features: ModelFeature[];
+  /** Knowledge cutoff date (e.g., "Apr 2024") */
+  knowledgeCutoff: string;
 }
 
 /**
@@ -49,6 +65,9 @@ export const AVAILABLE_MODELS: ModelConfig[] = [
     provider: "openai",
     pricingTier: "$",
     speedTier: "fast",
+    description: "Fast and cost-effective for everyday tasks",
+    features: ["fast"],
+    knowledgeCutoff: "Oct 2023",
   },
   {
     id: "openai/gpt-4o",
@@ -56,6 +75,9 @@ export const AVAILABLE_MODELS: ModelConfig[] = [
     provider: "openai",
     pricingTier: "$$",
     speedTier: "balanced",
+    description: "Balanced performance for complex reasoning",
+    features: ["coding", "vision"],
+    knowledgeCutoff: "Oct 2023",
   },
   {
     id: "openai/o1",
@@ -63,6 +85,9 @@ export const AVAILABLE_MODELS: ModelConfig[] = [
     provider: "openai",
     pricingTier: "$$$",
     speedTier: "quality",
+    description: "Advanced reasoning with chain-of-thought",
+    features: ["thinking", "coding"],
+    knowledgeCutoff: "Oct 2023",
   },
   // Anthropic
   {
@@ -71,6 +96,9 @@ export const AVAILABLE_MODELS: ModelConfig[] = [
     provider: "anthropic",
     pricingTier: "$",
     speedTier: "fast",
+    description: "Lightning fast responses for quick tasks",
+    features: ["fast"],
+    knowledgeCutoff: "Apr 2024",
   },
   {
     id: "anthropic/claude-sonnet-4-20250514",
@@ -78,6 +106,9 @@ export const AVAILABLE_MODELS: ModelConfig[] = [
     provider: "anthropic",
     pricingTier: "$$",
     speedTier: "balanced",
+    description: "Excellent balance of speed and intelligence",
+    features: ["coding", "thinking"],
+    knowledgeCutoff: "Apr 2025",
   },
   {
     id: "anthropic/claude-opus-4-20250514",
@@ -85,6 +116,9 @@ export const AVAILABLE_MODELS: ModelConfig[] = [
     provider: "anthropic",
     pricingTier: "$$$",
     speedTier: "quality",
+    description: "Most capable model for complex analysis",
+    features: ["thinking", "coding", "long-context"],
+    knowledgeCutoff: "Apr 2025",
   },
   // Google
   {
@@ -93,6 +127,9 @@ export const AVAILABLE_MODELS: ModelConfig[] = [
     provider: "google",
     pricingTier: "$",
     speedTier: "fast",
+    description: "Ultra-fast multimodal responses",
+    features: ["fast", "vision"],
+    knowledgeCutoff: "Aug 2024",
   },
   {
     id: "google/gemini-2.5-pro-preview-05-06",
@@ -100,6 +137,9 @@ export const AVAILABLE_MODELS: ModelConfig[] = [
     provider: "google",
     pricingTier: "$$$",
     speedTier: "quality",
+    description: "Advanced reasoning with huge context window",
+    features: ["thinking", "long-context", "vision"],
+    knowledgeCutoff: "Jan 2025",
   },
 ] as const;
 
@@ -152,4 +192,14 @@ export function isValidModel(modelId: string): boolean {
  */
 export function getModelsByProvider(provider: Provider): ModelConfig[] {
   return AVAILABLE_MODELS.filter((model) => model.provider === provider);
+}
+
+/**
+ * Get unique providers from available models.
+ * Useful for grouping models by provider in picker UI.
+ *
+ * @returns Array of unique provider names
+ */
+export function getProviders(): Provider[] {
+  return [...new Set(AVAILABLE_MODELS.map((m) => m.provider))];
 }
