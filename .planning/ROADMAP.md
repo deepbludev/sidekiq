@@ -70,12 +70,13 @@ Plans:
   4. User can delete a thread with confirmation dialog (permanent removal)
   5. User can archive a thread (soft delete, recoverable)
   6. User can pin a thread to keep it at top of sidebar
-**Plans**: 3 plans
+**Plans**: 4 plans
 
 Plans:
 - [x] 03-01-PLAN.md — Thread tRPC router + routing structure (/chat, /chat/[threadId])
 - [x] 03-02-PLAN.md — Thread creation on first message + auto-title generation
 - [x] 03-03-PLAN.md — Thread action UI components (context menu, delete dialog, hover actions)
+- [x] 03-04-PLAN.md — [gap closure] Stream abortion fix (history API for URL update)
 
 ### Phase 4: Model Selection & Persistence
 **Goal**: User can select which LLM model to use and selection persists per thread
@@ -221,7 +222,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 |-------|----------------|--------|-----------|
 | 1. AI Streaming Infrastructure | 2/2 | ✓ Complete | 2026-01-22 |
 | 2. Basic Chat Interface | 3/3 | ✓ Complete | 2026-01-23 |
-| 3. Thread Management | 3/3 | ✓ Complete | 2026-01-23 |
+| 3. Thread Management | 4/4 | ✓ Complete | 2026-01-23 |
 | 4. Model Selection & Persistence | 0/1 | Not started | - |
 | 5. Sidebar & Navigation | 0/1 | Not started | - |
 | 6. Sidekiq CRUD | 0/1 | Not started | - |
