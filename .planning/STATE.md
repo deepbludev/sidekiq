@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** Phase 4 - Model Selection & Persistence
+**Current focus:** Phase 5 - Sidebar & Navigation
 
 ## Current Position
 
-Phase: 4 of 13 (Model Selection & Persistence)
-Plan: 2 of 3 complete
-Status: In progress
-Last activity: 2026-01-23 — Completed 04-02-PLAN.md (model picker component)
+Phase: 4 of 13 (Model Selection & Persistence) - COMPLETE
+Plan: 3 of 3 complete
+Status: Phase complete
+Last activity: 2026-01-23 - Completed 04-03-PLAN.md (persistence and integration)
 
-Progress: [███░░░░░░░] ~27% (3/13 phases complete, 2/3 phase 4 plans)
+Progress: [████░░░░░░] ~31% (4/13 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
+- Total plans completed: 13
 - Average duration: ~7 min
-- Total execution time: ~1 hour 21 min
+- Total execution time: ~1 hour 28 min
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: [███░░░░░░░] ~27% (3/13 phases complete, 2/3 phase
 | 01 | 2 | 39min | 19.5min |
 | 02 | 3 | 18min | 6min |
 | 03 | 5 | 17min | 3.4min |
-| 04 | 2 | 7min | 3.5min |
+| 04 | 3 | 14min | 4.7min |
 
 **Recent Trend:**
-- Last 5 plans: 03-04 (2min), 03-05 (2min), 04-01 (3min), 04-02 (4min)
-- Trend: Very fast execution (~3min avg for last 4 plans)
+- Last 5 plans: 03-05 (2min), 04-01 (3min), 04-02 (4min), 04-03 (7min)
+- Trend: Consistent execution (~4min avg for last 4 plans)
 
 *Updated after each plan completion*
 
@@ -77,6 +77,10 @@ Recent decisions affecting current work:
 - HoverCard openDelay 400ms for non-jarring display (confirmed - 04-02)
 - Favorites section hidden during search (confirmed - 04-02)
 - TooltipProvider at picker level for nested tooltips (confirmed - 04-02)
+- Client/server module split for server-only imports (confirmed - 04-03)
+- Optimistic updates with tRPC mutation rollback pattern (confirmed - 04-03)
+- Model sent via sendMessage body option for per-message flexibility (confirmed - 04-03)
+- Render prop pattern for model switch hints (confirmed - 04-03)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 
@@ -96,9 +100,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 04-02-PLAN.md (model picker component)
+Stopped at: Completed 04-03-PLAN.md (persistence and integration) - Phase 4 complete
 Resume file: None
-Next: 04-03-PLAN.md (persistence and integration)
+Next: Phase 5 - Sidebar & Navigation
 
 ## Phase 2 Completion Summary
 
@@ -106,9 +110,9 @@ All 3 plans executed successfully:
 
 | Plan | Focus | Status |
 |------|-------|--------|
-| 02-01 | Theme system + glassmorphism foundation | ✓ Complete |
-| 02-02 | Markdown rendering + message actions | ✓ Complete |
-| 02-03 | Empty state + final integration | ✓ Complete |
+| 02-01 | Theme system + glassmorphism foundation | Complete |
+| 02-02 | Markdown rendering + message actions | Complete |
+| 02-03 | Empty state + final integration | Complete |
 
 **Verification:** 19/19 must-haves passed
 **Requirements:** CHAT-11, UIUX-01, UIUX-02, UIUX-03, UIUX-09 marked Complete
@@ -119,11 +123,11 @@ All 5 plans executed successfully:
 
 | Plan | Focus | Status |
 |------|-------|--------|
-| 03-01 | Thread router and routing structure | ✓ Complete |
-| 03-02 | Thread creation on first message + auto-title | ✓ Complete |
-| 03-03 | Thread actions UI | ✓ Complete |
-| 03-04 | Stream abortion fix (gap closure) | ✓ Complete |
-| 03-05 | Browser tab title fix (gap closure) | ✓ Complete |
+| 03-01 | Thread router and routing structure | Complete |
+| 03-02 | Thread creation on first message + auto-title | Complete |
+| 03-03 | Thread actions UI | Complete |
+| 03-04 | Stream abortion fix (gap closure) | Complete |
+| 03-05 | Browser tab title fix (gap closure) | Complete |
 
 **Verification:** 6/6 must-haves passed
 **Requirements:** CHAT-04, CHAT-05, CHAT-06, CHAT-07, CHAT-08, CHAT-09 complete
@@ -133,13 +137,25 @@ All 5 plans executed successfully:
 **Gap closure 1:** 03-04 fixed stream abortion during URL update (window.history.replaceState instead of router.replace)
 **Gap closure 2:** 03-05 fixed browser tab title via SSR generateMetadata and title polling
 
-## Phase 4 Progress
+## Phase 4 Completion Summary
+
+All 3 plans executed successfully:
 
 | Plan | Focus | Status |
 |------|-------|--------|
-| 04-01 | Foundation (schema, metadata, shadcn) | ✓ Complete |
-| 04-02 | Model picker component | ✓ Complete |
-| 04-03 | Persistence and integration | Pending |
+| 04-01 | Foundation (schema, metadata, shadcn) | Complete |
+| 04-02 | Model picker component | Complete |
+| 04-03 | Persistence and integration | Complete |
 
-**Components Ready:** ModelPicker, ModelPickerTrigger, ModelPickerContent, ModelItem, ModelHoverCard, ProviderIcon
-**Patterns Established:** Popover + Command pattern, Fuse.js fuzzy search, HoverCard details
+**Components Ready:** ModelPicker, ModelPickerTrigger, ModelPickerContent, ModelItem, ModelHoverCard, ProviderIcon, ModelSwitchHint
+**Hooks Ready:** useModelSelection with optimistic updates for user preferences
+**Routers Ready:** userRouter with getPreferences and updateModelPreferences
+**Patterns Established:**
+- Popover + Command pattern for picker UI
+- Fuse.js fuzzy search with threshold 0.4
+- HoverCard for model details
+- Client/server module split (models-metadata.ts vs models.ts)
+- tRPC optimistic updates with rollback
+- Render prop pattern for model hints
+
+**Architecture Note:** models.ts split into client-safe models-metadata.ts and server-only models.ts to prevent server-only import errors in client components.
