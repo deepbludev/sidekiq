@@ -8,10 +8,8 @@ import { ProviderIcon } from "@sidekiq/components/icons/provider-icons";
 import type { ModelConfig } from "@sidekiq/lib/ai/models-metadata";
 import { cn } from "@sidekiq/lib/utils";
 
-interface ModelPickerTriggerProps {
+interface ModelPickerTriggerProps extends React.ComponentPropsWithoutRef<"button"> {
   selectedModel: ModelConfig | undefined;
-  disabled?: boolean;
-  className?: string;
 }
 
 /**
@@ -21,7 +19,7 @@ interface ModelPickerTriggerProps {
 export const ModelPickerTrigger = forwardRef<
   HTMLButtonElement,
   ModelPickerTriggerProps
->(({ selectedModel, disabled, className }, ref) => {
+>(({ selectedModel, disabled, className, ...props }, ref) => {
   return (
     <Button
       ref={ref}
@@ -34,6 +32,7 @@ export const ModelPickerTrigger = forwardRef<
         "border-border/50",
         className,
       )}
+      {...props}
     >
       {selectedModel && (
         <ProviderIcon
