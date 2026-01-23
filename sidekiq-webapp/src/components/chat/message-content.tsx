@@ -26,10 +26,11 @@ export function MessageContent({
   className,
 }: MessageContentProps) {
   // Memoize code plugin to avoid recreating on every render
+  // Using one-dark-pro for dark mode - better contrast and readability
   const codePlugin = useMemo(
     () =>
       createCodePlugin({
-        themes: ["github-light", "github-dark"],
+        themes: ["github-light", "one-dark-pro"],
       }),
     [],
   );
@@ -52,14 +53,12 @@ export function MessageContent({
         "prose-a:text-primary prose-a:no-underline hover:prose-a:underline",
         // Lists
         "prose-li:text-foreground/90",
-        // Code blocks - override Shiki backgrounds with lighter colors
+        // Code blocks styling
         "[&_pre]:border-border [&_pre]:my-3 [&_pre]:rounded-lg [&_pre]:border",
-        "[&_pre]:!bg-zinc-100 dark:[&_pre]:!bg-zinc-800/80",
         "[&_pre_code]:!bg-transparent",
         // Streamdown code wrapper styling
         "[&_.streamdown-code]:overflow-hidden [&_.streamdown-code]:rounded-lg",
         "[&_.streamdown-code]:border-border [&_.streamdown-code]:border",
-        "[&_.streamdown-code]:!bg-zinc-100 dark:[&_.streamdown-code]:!bg-zinc-800/80",
         // Code inline
         "prose-code:before:content-none prose-code:after:content-none",
         "prose-code:bg-zinc-200/70 dark:prose-code:bg-zinc-700/50",
