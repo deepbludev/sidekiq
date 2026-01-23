@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 03-thread-management
 source: [03-01-SUMMARY.md, 03-02-SUMMARY.md, 03-03-SUMMARY.md, 03-04-SUMMARY.md]
 started: 2026-01-23T15:00:00Z
@@ -55,7 +55,15 @@ skipped: 2
   reason: "User reported: Chrome tab title does not change - still shows 'Sidekiq' instead of auto-generated title after AI response completed"
   severity: major
   test: 2
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "The page component fetches the thread title from database but discards it - title is not passed to ChatInterface, and no mechanism exists to update document.title dynamically. Static metadata in layout.tsx always wins."
+  artifacts:
+    - path: "sidekiq-webapp/src/app/(dashboard)/chat/[threadId]/page.tsx"
+      issue: "Fetches title but discards it (line 39 fetches, line 70 doesn't use)"
+    - path: "sidekiq-webapp/src/components/chat/chat-interface.tsx"
+      issue: "No title prop, no document.title update logic"
+    - path: "sidekiq-webapp/src/app/layout.tsx"
+      issue: "Static metadata always shows 'Sidekiq'"
+  missing:
+    - "Add generateMetadata function to thread page for SSR title"
+    - "Pass title prop to ChatInterface and add useEffect to update document.title"
+  debug_session: ".planning/debug/tab-title-not-updating.md"
