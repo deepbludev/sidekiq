@@ -1,9 +1,9 @@
 ---
 status: complete
 phase: 03-thread-management
-source: [03-01-SUMMARY.md, 03-02-SUMMARY.md, 03-03-SUMMARY.md]
-started: 2026-01-23T14:30:00Z
-updated: 2026-01-23T14:40:00Z
+source: [03-01-SUMMARY.md, 03-02-SUMMARY.md, 03-03-SUMMARY.md, 03-04-SUMMARY.md]
+started: 2026-01-23T15:00:00Z
+updated: 2026-01-23T15:05:00Z
 ---
 
 ## Current Test
@@ -13,67 +13,47 @@ updated: 2026-01-23T14:40:00Z
 ## Tests
 
 ### 1. New chat creates thread on first message
-expected: Go to /chat (new chat page), type a message and send. The URL should change to /chat/[threadId] after the AI starts responding.
+expected: Go to /chat (new chat page), type a message and send. The URL should change to /chat/[threadId] after the AI starts responding. The AI response should stream completely without interruption.
 result: pass
 
 ### 2. Auto-title generation
-expected: After the first message exchange (user + AI), the thread should receive an auto-generated title (visible in browser tab or when you view thread list later). Should be 3-6 words summarizing the topic.
+expected: After the first message exchange (user + AI response completes), the thread should receive an auto-generated title. Check the browser tab or refresh and look at the thread later - title should be 3-6 words summarizing the topic.
 result: issue
-reported: "AI message wasn't triggered after 1st message and creation of thread. Had to send 2nd message to trigger it. The title doesn't change."
-severity: blocker
+reported: "Chrome tab title does not change - still shows 'Sidekiq' instead of auto-generated title after AI response completed"
+severity: major
 
-### 3. Archived thread auto-unarchives on new message
-expected: If you send a message to an archived thread, it should automatically unarchive (remove archived status).
-result: skipped
-reason: Cannot test without sidebar (Phase 5)
-
-### 4. Thread routing - existing thread loads messages
+### 3. Existing thread loads messages
 expected: Navigate directly to /chat/[threadId] for an existing thread. The previous messages should load and display correctly.
 result: pass
 
-### 5. Thread routing - invalid thread redirects
-expected: Navigate to /chat/[invalidId] with a non-existent thread ID. Should redirect back to /chat (new chat page).
+### 4. Invalid thread redirects to /chat
+expected: Navigate to /chat/invalid-thread-id-that-doesnt-exist. Should redirect back to /chat (new chat page).
 result: pass
 
-### 6. Thread context menu opens on right-click
-expected: Right-click on a ThreadItem component (when sidebar is available). A context menu should appear with options: Pin/Unpin, Rename, Archive, Delete.
+### 5. Thread context menu
+expected: Right-click on a ThreadItem component. A context menu should appear with options: Pin/Unpin, Rename, Archive, Delete.
 result: skipped
 reason: Requires sidebar (Phase 5)
 
-### 7. Delete thread shows confirmation dialog
-expected: Click Delete in context menu or action buttons. A confirmation dialog appears warning about permanent deletion and suggesting archive as alternative.
-result: skipped
-reason: Requires sidebar (Phase 5)
-
-### 8. Archive shows toast with undo
-expected: Archive a thread. A toast notification appears with an Undo button. Clicking Undo within ~5 seconds restores the thread.
-result: skipped
-reason: Requires sidebar (Phase 5)
-
-### 9. Pin toggle updates immediately
-expected: Pin/unpin a thread. The change should reflect immediately (optimistic update) without waiting for server response.
-result: skipped
-reason: Requires sidebar (Phase 5)
-
-### 10. Rename thread inline
-expected: Click Rename in context menu. An inline input appears with the current title selected. Press Enter to save or Escape to cancel.
+### 6. Delete thread confirmation
+expected: Click Delete in context menu. A confirmation dialog appears warning about permanent deletion and suggesting archive as alternative.
 result: skipped
 reason: Requires sidebar (Phase 5)
 
 ## Summary
 
-total: 10
+total: 6
 passed: 3
 issues: 1
 pending: 0
-skipped: 6
+skipped: 2
 
 ## Gaps
 
-- truth: "After the first message exchange, the thread receives an auto-generated title"
+- truth: "After the first message exchange, the thread receives an auto-generated title visible in browser tab"
   status: failed
-  reason: "User reported: AI message wasn't triggered after 1st message and creation of thread. Had to send 2nd message to trigger it. The title doesn't change."
-  severity: blocker
+  reason: "User reported: Chrome tab title does not change - still shows 'Sidekiq' instead of auto-generated title after AI response completed"
+  severity: major
   test: 2
   root_cause: ""
   artifacts: []
