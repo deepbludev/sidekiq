@@ -37,9 +37,9 @@ export const chatRequestSchema = z.object({
 
   /**
    * Thread ID for the conversation.
-   * Required to persist messages to the correct thread.
+   * Optional - if not provided, a new thread will be created on first message.
    */
-  threadId: z.string().min(1, "Thread ID is required"),
+  threadId: z.string().optional(),
 
   /**
    * Model to use for generation.
