@@ -13,7 +13,7 @@ vi.mock("ai", () => ({
 
 vi.mock("@sidekiq/lib/ai/models", () => ({
   getModel: vi.fn(),
-  DEFAULT_MODEL: "anthropic/claude-sonnet-4-20250514",
+  DEFAULT_MODEL: "google/gemini-2.0-flash",
 }));
 
 vi.mock("@sidekiq/server/db", () => ({
@@ -301,9 +301,7 @@ describe("POST /api/chat", () => {
       await POST(req);
 
       // Should use DEFAULT_MODEL from the schema default
-      expect(getModel).toHaveBeenCalledWith(
-        "anthropic/claude-sonnet-4-20250514",
-      );
+      expect(getModel).toHaveBeenCalledWith("google/gemini-2.0-flash");
     });
   });
 });

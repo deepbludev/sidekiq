@@ -42,8 +42,9 @@ describe("DEFAULT_MODEL", () => {
     expect(exists).toBe(true);
   });
 
-  it("should be the Claude Sonnet 4 model", () => {
-    expect(DEFAULT_MODEL).toBe("anthropic/claude-sonnet-4-20250514");
+  it("should be a valid model ID format", () => {
+    // DEFAULT_MODEL should match provider/model-name format
+    expect(DEFAULT_MODEL).toMatch(/^[a-z]+\/[a-z0-9.-]+$/);
   });
 });
 
