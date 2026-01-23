@@ -1,4 +1,5 @@
 import { healthRouter } from "@sidekiq/server/api/routers/health";
+import { threadRouter } from "@sidekiq/server/api/routers/thread";
 import {
   createCallerFactory,
   createTRPCRouter,
@@ -11,6 +12,7 @@ import {
  */
 export const appRouter = createTRPCRouter({
   health: healthRouter,
+  thread: threadRouter,
 });
 
 // export type definition of API
