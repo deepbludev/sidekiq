@@ -48,12 +48,33 @@ function formatTime(date: Date): string {
 }
 
 /**
- * Extracts the createdAt timestamp from message metadata if available.
+ * Extracts the createdAt timestamp from a message.
+ * Checks both the direct createdAt property (from useChat) and metadata.createdAt.
  *
- * @param metadata - The message metadata (unknown type)
+ * @param message - The UIMessage to extract timestamp from
  * @returns The createdAt date or null if not available
  */
-function getCreatedAt(metadata: unknown): Date | null {
+function getCreatedAt(message: UIMessage): Date | null {
+  // Cast to access potential createdAt property (useChat adds this at runtime)
+  const messageWithTimestamp = message as UIMessage & {
+    createdAt?: Date | string | number;
+  };
+
+  // First check direct createdAt property (provided by useChat)
+  if (messageWithTimestamp.createdAt) {
+    if (messageWithTimestamp.createdAt instanceof Date) {
+      return messageWithTimestamp.createdAt;
+    }
+    if (
+      typeof messageWithTimestamp.createdAt === "string" ||
+      typeof messageWithTimestamp.createdAt === "number"
+    ) {
+      return new Date(messageWithTimestamp.createdAt);
+    }
+  }
+
+  // Fallback to metadata.createdAt
+  const metadata = message.metadata;
   if (
     metadata &&
     typeof metadata === "object" &&
@@ -124,9 +145,9 @@ export function MessageItem({
           />
         </div>
 
-        {/* Timestamp (visible on hover) - shown when metadata.createdAt is available */}
+        {/* Timestamp (visible on hover) */}
         {(() => {
-          const createdAt = getCreatedAt(message.metadata);
+          const createdAt = getCreatedAt(message);
           if (showTimestamp && createdAt) {
             return (
               <time className="text-muted-foreground mt-1.5 block text-xs">

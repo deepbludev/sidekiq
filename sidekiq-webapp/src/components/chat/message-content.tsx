@@ -48,16 +48,22 @@ export function MessageContent({
         "prose-p:text-foreground/90",
         "prose-strong:text-foreground",
         "prose-code:text-foreground",
-        "prose-pre:bg-muted/50 prose-pre:border prose-pre:border-border",
         // Links
         "prose-a:text-primary prose-a:no-underline hover:prose-a:underline",
         // Lists
         "prose-li:text-foreground/90",
-        // Code blocks
-        "[&_pre]:my-3 [&_pre]:rounded-lg",
+        // Code blocks - override Shiki backgrounds with lighter colors
+        "[&_pre]:border-border [&_pre]:my-3 [&_pre]:rounded-lg [&_pre]:border",
+        "[&_pre]:!bg-zinc-100 dark:[&_pre]:!bg-zinc-800/80",
+        "[&_pre_code]:!bg-transparent",
+        // Streamdown code wrapper styling
+        "[&_.streamdown-code]:overflow-hidden [&_.streamdown-code]:rounded-lg",
+        "[&_.streamdown-code]:border-border [&_.streamdown-code]:border",
+        "[&_.streamdown-code]:!bg-zinc-100 dark:[&_.streamdown-code]:!bg-zinc-800/80",
         // Code inline
         "prose-code:before:content-none prose-code:after:content-none",
-        "prose-code:bg-muted/50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded",
+        "prose-code:bg-zinc-200/70 dark:prose-code:bg-zinc-700/50",
+        "prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded",
         className,
       )}
     >
