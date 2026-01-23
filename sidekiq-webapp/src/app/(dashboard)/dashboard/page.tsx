@@ -1,7 +1,13 @@
 import { redirect } from "next/navigation";
 
 import { getSession } from "@sidekiq/server/better-auth/server";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@sidekiq/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@sidekiq/components/ui/card";
 import { SignOutButton } from "./sign-out-button";
 
 export default async function DashboardPage() {

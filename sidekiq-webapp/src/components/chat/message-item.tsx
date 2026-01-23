@@ -2,7 +2,11 @@
 
 import type { UIMessage } from "ai";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@sidekiq/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@sidekiq/components/ui/avatar";
 import { cn } from "@sidekiq/lib/utils";
 
 interface MessageItemProps {
@@ -18,7 +22,9 @@ interface MessageItemProps {
  */
 function extractTextContent(message: UIMessage): string {
   return message.parts
-    .filter((part): part is { type: "text"; text: string } => part.type === "text")
+    .filter(
+      (part): part is { type: "text"; text: string } => part.type === "text",
+    )
     .map((part) => part.text)
     .join("");
 }
@@ -34,12 +40,7 @@ export function MessageItem({ message }: MessageItemProps) {
   const content = extractTextContent(message);
 
   return (
-    <div
-      className={cn(
-        "flex gap-3",
-        isUser ? "flex-row-reverse" : "flex-row"
-      )}
-    >
+    <div className={cn("flex gap-3", isUser ? "flex-row-reverse" : "flex-row")}>
       <Avatar className="h-8 w-8 shrink-0">
         {isUser ? (
           <>
@@ -51,7 +52,7 @@ export function MessageItem({ message }: MessageItemProps) {
         ) : (
           <>
             <AvatarImage src="/ai-avatar.png" alt="AI" />
-            <AvatarFallback className="bg-violet-600 text-white text-xs">
+            <AvatarFallback className="bg-violet-600 text-xs text-white">
               AI
             </AvatarFallback>
           </>
@@ -63,10 +64,10 @@ export function MessageItem({ message }: MessageItemProps) {
           "max-w-[80%] rounded-2xl px-4 py-2.5",
           isUser
             ? "bg-primary text-primary-foreground"
-            : "bg-zinc-800/50 text-zinc-100 border border-zinc-700/50"
+            : "border border-zinc-700/50 bg-zinc-800/50 text-zinc-100",
         )}
       >
-        <p className="whitespace-pre-wrap text-sm leading-relaxed">{content}</p>
+        <p className="text-sm leading-relaxed whitespace-pre-wrap">{content}</p>
       </div>
     </div>
   );

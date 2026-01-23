@@ -51,7 +51,7 @@ export function validateAvatarFile(file: File): {
  */
 export async function uploadAvatar(
   file: File,
-  userId: string
+  userId: string,
 ): Promise<PutBlobResult> {
   const validation = validateAvatarFile(file);
   if (!validation.valid) {

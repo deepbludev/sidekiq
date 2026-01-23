@@ -27,7 +27,7 @@ describe("signUpSchema", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0]?.message).toBe(
-        "Name must be at least 2 characters"
+        "Name must be at least 2 characters",
       );
     }
   });
@@ -42,7 +42,7 @@ describe("signUpSchema", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0]?.message).toBe(
-        "Name must be at most 50 characters"
+        "Name must be at most 50 characters",
       );
     }
   });
@@ -70,7 +70,7 @@ describe("signUpSchema", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0]?.message).toBe(
-        "Password must be at least 8 characters"
+        "Password must be at least 8 characters",
       );
     }
   });
@@ -86,7 +86,7 @@ describe("signUpSchema", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0]?.message).toBe(
-        "Password must be at most 128 characters"
+        "Password must be at most 128 characters",
       );
     }
   });
@@ -173,7 +173,7 @@ describe("resetPasswordSchema", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0]?.message).toBe(
-        "Password must be at least 8 characters"
+        "Password must be at least 8 characters",
       );
     }
   });

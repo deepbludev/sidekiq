@@ -63,8 +63,8 @@ export function ForgotPasswordForm() {
     return (
       <div className="text-center">
         <p className="text-zinc-300">
-          If an account exists with that email, we&apos;ve sent you a password reset
-          link.
+          If an account exists with that email, we&apos;ve sent you a password
+          reset link.
         </p>
         <p className="mt-2 text-sm text-zinc-400">
           Please check your email and follow the instructions.

@@ -110,11 +110,7 @@ export function SignInForm({ callbackURL = "/dashboard" }: SignInFormProps) {
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className="w-full"
-        >
+        <Button type="submit" disabled={isLoading} className="w-full">
           {isLoading && <Loader2 className="animate-spin" />}
           Sign In
         </Button>

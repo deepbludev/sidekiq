@@ -38,7 +38,7 @@ interface UseAutoScrollReturn {
  */
 export function useAutoScroll(
   containerRef: RefObject<HTMLDivElement | null>,
-  options: UseAutoScrollOptions = {}
+  options: UseAutoScrollOptions = {},
 ): UseAutoScrollReturn {
   const { threshold = 100 } = options;
   const isAtBottomRef = useRef(true);
@@ -64,7 +64,7 @@ export function useAutoScroll(
       });
       isAtBottomRef.current = true;
     },
-    [containerRef]
+    [containerRef],
   );
 
   return {

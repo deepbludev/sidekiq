@@ -1,5 +1,5 @@
-import { z } from "zod";
 import { DEFAULT_MODEL } from "@sidekiq/lib/ai/models";
+import { z } from "zod";
 
 /**
  * Schema for message parts in the AI SDK UIMessage format.
@@ -7,9 +7,11 @@ import { DEFAULT_MODEL } from "@sidekiq/lib/ai/models";
  * The AI SDK can return many part types (text, tool-invocation, reasoning, source, etc.)
  * and we need to forward them all correctly.
  */
-const messagePartSchema = z.object({
-  type: z.string(),
-}).passthrough();
+const messagePartSchema = z
+  .object({
+    type: z.string(),
+  })
+  .passthrough();
 
 /**
  * Schema for UIMessage format as used by the Vercel AI SDK.

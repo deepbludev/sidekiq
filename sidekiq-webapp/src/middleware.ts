@@ -12,7 +12,12 @@ const publicRoutes = [
 ];
 
 /** Routes that authenticated users should be redirected from */
-const authRoutes = ["/sign-in", "/sign-up", "/forgot-password", "/reset-password"];
+const authRoutes = [
+  "/sign-in",
+  "/sign-up",
+  "/forgot-password",
+  "/reset-password",
+];
 
 /**
  * Middleware for route protection
@@ -35,13 +40,16 @@ export function middleware(request: NextRequest) {
   const isAuthenticated = !!sessionCookie;
 
   // Check if accessing auth routes while authenticated
-  if (isAuthenticated && authRoutes.some((route) => pathname.startsWith(route))) {
+  if (
+    isAuthenticated &&
+    authRoutes.some((route) => pathname.startsWith(route))
+  ) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   // Check if accessing protected routes while not authenticated
   const isPublicRoute = publicRoutes.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`)
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 
   if (!isAuthenticated && !isPublicRoute) {

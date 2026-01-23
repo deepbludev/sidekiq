@@ -18,7 +18,7 @@ import { getSession } from "@sidekiq/server/better-auth/server";
 function extractTextContent(message: UIMessage): string {
   return message.parts
     .filter(
-      (part): part is { type: "text"; text: string } => part.type === "text"
+      (part): part is { type: "text"; text: string } => part.type === "text",
     )
     .map((part) => part.text)
     .join("");
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       {
         status: 400,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   }
 
@@ -84,7 +84,7 @@ export async function POST(req: Request) {
   if (thread.userId !== session.user.id) {
     return new Response(
       JSON.stringify({ error: "Unauthorized access to thread" }),
-      { status: 403, headers: { "Content-Type": "application/json" } }
+      { status: 403, headers: { "Content-Type": "application/json" } },
     );
   }
 
@@ -93,7 +93,7 @@ export async function POST(req: Request) {
   if (userMessage?.role !== "user") {
     return new Response(
       JSON.stringify({ error: "Last message must be from user" }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
+      { status: 400, headers: { "Content-Type": "application/json" } },
     );
   }
 

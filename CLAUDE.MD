@@ -15,8 +15,9 @@
 - **Tech Stack**:
   - JavaScript/TypeScript (Next.js, tailwindcss, Zod, Tanstack Query)
   - PostgreSQL
-  - Redis
-  - Railway + Docker for deployment
+  - Vercel for deployment
+  - Vercel AI SDK for AI integration
+  - Vercel AI Gateway for AI provider management
   - Docker Compose for local development
   - Github Actions CI/CD
 

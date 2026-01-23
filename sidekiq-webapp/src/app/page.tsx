@@ -25,7 +25,12 @@ export default async function Home() {
           <Button asChild size="lg">
             <Link href="/sign-up">Get Started</Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="border-zinc-700 bg-zinc-800 hover:bg-zinc-700">
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="border-zinc-700 bg-zinc-800 hover:bg-zinc-700"
+          >
             <Link href="/sign-in">Sign In</Link>
           </Button>
         </div>

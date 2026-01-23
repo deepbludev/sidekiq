@@ -18,7 +18,9 @@ test.describe("Authentication Routes", () => {
     await expect(page.getByLabel(/email/i)).toBeVisible();
     await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
     await expect(page.getByLabel("Confirm Password")).toBeVisible();
-    await expect(page.getByRole("button", { name: /create account/i })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /create account/i }),
+    ).toBeVisible();
     await expect(page.getByRole("button", { name: /github/i })).toBeVisible();
     await expect(page.getByText(/already have an account/i)).toBeVisible();
   });
@@ -27,7 +29,9 @@ test.describe("Authentication Routes", () => {
     await page.goto("/forgot-password");
     await expect(page.getByText("Forgot your password?")).toBeVisible();
     await expect(page.getByLabel(/email/i)).toBeVisible();
-    await expect(page.getByRole("button", { name: /send reset link/i })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /send reset link/i }),
+    ).toBeVisible();
     await expect(page.getByText(/remember your password/i)).toBeVisible();
   });
 
@@ -58,9 +62,13 @@ test.describe("Form Validation", () => {
     await page.getByRole("button", { name: /create account/i }).click();
 
     // Check for validation errors
-    await expect(page.getByText(/name must be at least 2 characters/i)).toBeVisible();
+    await expect(
+      page.getByText(/name must be at least 2 characters/i),
+    ).toBeVisible();
     await expect(page.getByText(/invalid email address/i)).toBeVisible();
-    await expect(page.getByText(/password must be at least 8 characters/i)).toBeVisible();
+    await expect(
+      page.getByText(/password must be at least 8 characters/i),
+    ).toBeVisible();
   });
 
   test("should show password mismatch error", async ({ page }) => {
@@ -89,7 +97,9 @@ test.describe("Form Validation", () => {
 });
 
 test.describe("Route Protection", () => {
-  test("should redirect unauthenticated user from dashboard to sign-in", async ({ page }) => {
+  test("should redirect unauthenticated user from dashboard to sign-in", async ({
+    page,
+  }) => {
     await page.goto("/dashboard");
 
     // Should redirect to sign-in with callbackUrl
@@ -116,12 +126,16 @@ test.describe("Reset Password Page", () => {
     await expect(page.getByText("Reset your password")).toBeVisible();
     await expect(page.getByLabel("New Password")).toBeVisible();
     await expect(page.getByLabel("Confirm Password")).toBeVisible();
-    await expect(page.getByRole("button", { name: /reset password/i })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /reset password/i }),
+    ).toBeVisible();
   });
 });
 
 test.describe("Forgot Password Success State", () => {
-  test("should show success message after requesting password reset", async ({ page }) => {
+  test("should show success message after requesting password reset", async ({
+    page,
+  }) => {
     await page.goto("/forgot-password");
 
     // Fill in a valid email format
@@ -132,19 +146,23 @@ test.describe("Forgot Password Success State", () => {
 
     // Should show success message (doesn't reveal if email exists)
     await expect(
-      page.getByText(/if an account exists with that email/i)
+      page.getByText(/if an account exists with that email/i),
     ).toBeVisible({ timeout: 10000 });
 
     // Should show follow-up instruction
     await expect(page.getByText(/check your email/i)).toBeVisible();
 
     // Form should no longer be visible
-    await expect(page.getByRole("button", { name: /send reset link/i })).not.toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /send reset link/i }),
+    ).not.toBeVisible();
   });
 });
 
 test.describe("Sign-in Link Preservation", () => {
-  test("should preserve callbackUrl when navigating to sign-up", async ({ page }) => {
+  test("should preserve callbackUrl when navigating to sign-up", async ({
+    page,
+  }) => {
     // Start at sign-in with a callbackUrl
     await page.goto("/sign-in?callbackUrl=%2Fdashboard");
 

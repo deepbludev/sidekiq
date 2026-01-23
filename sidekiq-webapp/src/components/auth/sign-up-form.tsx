@@ -139,11 +139,7 @@ export function SignUpForm({ callbackURL = "/dashboard" }: SignUpFormProps) {
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className="w-full"
-        >
+        <Button type="submit" disabled={isLoading} className="w-full">
           {isLoading && <Loader2 className="animate-spin" />}
           Create Account
         </Button>

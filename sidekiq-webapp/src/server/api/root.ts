@@ -1,5 +1,8 @@
 import { healthRouter } from "@sidekiq/server/api/routers/health";
-import { createCallerFactory, createTRPCRouter } from "@sidekiq/server/api/trpc";
+import {
+  createCallerFactory,
+  createTRPCRouter,
+} from "@sidekiq/server/api/trpc";
 
 /**
  * This is the primary router for your server.

@@ -103,7 +103,9 @@ describe("middleware", () => {
 
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/sign-in");
-      expect(response.headers.get("location")).toContain("callbackUrl=%2Fdashboard");
+      expect(response.headers.get("location")).toContain(
+        "callbackUrl=%2Fdashboard",
+      );
     });
 
     it("should redirect to sign-in from any protected route", () => {
@@ -113,7 +115,7 @@ describe("middleware", () => {
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/sign-in");
       expect(response.headers.get("location")).toContain(
-        "callbackUrl=%2Fsettings%2Fprofile"
+        "callbackUrl=%2Fsettings%2Fprofile",
       );
     });
   });

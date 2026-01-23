@@ -17,7 +17,9 @@ export function MessageList({ messages }: MessageListProps) {
     return (
       <div className="flex h-full items-center justify-center py-12">
         <div className="text-center">
-          <h3 className="text-lg font-medium text-zinc-200">Start a conversation</h3>
+          <h3 className="text-lg font-medium text-zinc-200">
+            Start a conversation
+          </h3>
           <p className="mt-1 text-sm text-zinc-500">
             Type a message below to begin chatting with the AI.
           </p>

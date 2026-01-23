@@ -75,10 +75,10 @@ export const verification = pgTable("verification", {
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").$defaultFn(
-    () => /* @__PURE__ */ new Date()
+    () => /* @__PURE__ */ new Date(),
   ),
   updatedAt: timestamp("updated_at").$defaultFn(
-    () => /* @__PURE__ */ new Date()
+    () => /* @__PURE__ */ new Date(),
   ),
 });
 
@@ -101,7 +101,7 @@ export const teams = pgTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (t) => [index("team_owner_idx").on(t.ownerId)]
+  (t) => [index("team_owner_idx").on(t.ownerId)],
 );
 
 /**
@@ -125,7 +125,7 @@ export const teamMembers = pgTable(
     index("team_member_team_idx").on(t.teamId),
     index("team_member_user_idx").on(t.userId),
     uniqueIndex("team_member_unique").on(t.teamId, t.userId),
-  ]
+  ],
 );
 
 /**
@@ -152,7 +152,7 @@ export const teamInvites = pgTable(
     index("team_invite_team_idx").on(t.teamId),
     index("team_invite_email_idx").on(t.email),
     index("team_invite_token_idx").on(t.token),
-  ]
+  ],
 );
 
 /**
@@ -165,7 +165,9 @@ export const sidekiqs = pgTable(
     ownerId: text("owner_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    teamId: text("team_id").references(() => teams.id, { onDelete: "set null" }),
+    teamId: text("team_id").references(() => teams.id, {
+      onDelete: "set null",
+    }),
     name: varchar("name", { length: 100 }).notNull(),
     description: varchar("description", { length: 500 }),
     instructions: text("instructions").notNull(),
@@ -182,7 +184,7 @@ export const sidekiqs = pgTable(
   (t) => [
     index("sidekiq_owner_idx").on(t.ownerId),
     index("sidekiq_team_idx").on(t.teamId),
-  ]
+  ],
 );
 
 /**
@@ -219,7 +221,7 @@ export const threads = pgTable(
     index("thread_sidekiq_idx").on(t.sidekiqId),
     index("thread_last_activity_idx").on(t.lastActivityAt),
     index("thread_pinned_activity_idx").on(t.isPinned, t.lastActivityAt),
-  ]
+  ],
 );
 
 /**
@@ -247,7 +249,7 @@ export const messages = pgTable(
     index("message_thread_idx").on(t.threadId),
     index("message_parent_idx").on(t.parentMessageId),
     index("message_created_idx").on(t.createdAt),
-  ]
+  ],
 );
 
 /**
@@ -302,7 +304,10 @@ export const threadRelations = relations(threads, ({ one, many }) => ({
 }));
 
 export const messageRelations = relations(messages, ({ one, many }) => ({
-  thread: one(threads, { fields: [messages.threadId], references: [threads.id] }),
+  thread: one(threads, {
+    fields: [messages.threadId],
+    references: [threads.id],
+  }),
   parentMessage: one(messages, {
     fields: [messages.parentMessageId],
     references: [messages.id],

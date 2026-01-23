@@ -60,14 +60,14 @@ export function ChatInput({
         placeholder="Type a message..."
         disabled={isStreaming}
         className={cn(
-          "min-h-[52px] max-h-[200px] resize-none pr-24",
-          "bg-zinc-900 border-zinc-700 focus-visible:border-zinc-600",
-          "placeholder:text-zinc-500"
+          "max-h-[200px] min-h-[52px] resize-none pr-24",
+          "border-zinc-700 bg-zinc-900 focus-visible:border-zinc-600",
+          "placeholder:text-zinc-500",
         )}
         rows={1}
       />
 
-      <div className="absolute bottom-2 right-2 flex gap-1">
+      <div className="absolute right-2 bottom-2 flex gap-1">
         {isStreaming ? (
           <Button
             type="button"
