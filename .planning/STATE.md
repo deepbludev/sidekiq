@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 3 of 12 (Thread Management)
-Plan: None yet
-Status: Ready to plan
-Last activity: 2026-01-23 — Phase 2 complete (all 3 plans executed, verified)
+Plan: 1 of 3 complete
+Status: In progress
+Last activity: 2026-01-23 — Completed 03-01-PLAN.md
 
-Progress: [██░░░░░░░░] ~17% (2/12 phases complete)
+Progress: [██░░░░░░░░] ~20% (2/12 phases + 1 plan)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: ~13 min
+- Total plans completed: 6
+- Average duration: ~10 min
 - Total execution time: ~1 hour
 
 **By Phase:**
@@ -29,10 +29,11 @@ Progress: [██░░░░░░░░] ~17% (2/12 phases complete)
 |-------|-------|-------|----------|
 | 01 | 2 | 39min | 19.5min |
 | 02 | 3 | 18min | 6min |
+| 03 | 1 | 4min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (24min), 02-01 (5min), 02-02 (5min), 02-03 (8min)
-- Trend: Fast execution (~6min avg for Phase 2)
+- Last 5 plans: 02-01 (5min), 02-02 (5min), 02-03 (8min), 03-01 (4min)
+- Trend: Fast execution (~5.5min avg for last 4 plans)
 
 *Updated after each plan completion*
 
@@ -50,7 +51,8 @@ Recent decisions affecting current work:
 - AI SDK v6 useChat hook for frontend state management (confirmed - 01-02)
 - Smart auto-scroll with scroll position tracking (confirmed - 01-02)
 - Passthrough validation for AI SDK message parts (confirmed - 01-02)
-- Server-side thread creation in page.tsx until Phase 3 (active - needs Phase 3)
+- Thread routing: /chat for new, /chat/[threadId] for existing (confirmed - 03-01)
+- Thread router with CRUD operations via tRPC (confirmed - 03-01)
 - Streamdown for streaming markdown (confirmed - 02-02)
 - one-dark-pro Shiki theme for dark mode code (confirmed - 02-03)
 - Minimal lines style, not bubbles (confirmed - 02-02)
@@ -68,14 +70,15 @@ None yet.
 ### Blockers/Concerns
 
 - AI_GATEWAY_API_KEY environment variable must be configured for /api/chat to work
-- Thread creation currently server-side in page.tsx - needs proper management in Phase 3
+- ChatInterface needs to handle threadId: null for sending messages (03-02)
+- API /api/chat needs to create thread if threadId not provided (03-02)
 
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Phase 2 complete and verified
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None
-Next: Plan Phase 3 (Thread Management)
+Next: Execute 03-02-PLAN.md (Thread creation on first message)
 
 ## Phase 2 Completion Summary
 
