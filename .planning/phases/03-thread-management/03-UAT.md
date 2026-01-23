@@ -1,9 +1,9 @@
 ---
-status: diagnosed
+status: complete
 phase: 03-thread-management
-source: [03-01-SUMMARY.md, 03-02-SUMMARY.md, 03-03-SUMMARY.md, 03-04-SUMMARY.md]
+source: [03-01-SUMMARY.md, 03-02-SUMMARY.md, 03-03-SUMMARY.md, 03-04-SUMMARY.md, 03-05-SUMMARY.md]
 started: 2026-01-23T15:00:00Z
-updated: 2026-01-23T15:05:00Z
+updated: 2026-01-23T16:32:00Z
 ---
 
 ## Current Test
@@ -18,9 +18,8 @@ result: pass
 
 ### 2. Auto-title generation
 expected: After the first message exchange (user + AI response completes), the thread should receive an auto-generated title. Check the browser tab or refresh and look at the thread later - title should be 3-6 words summarizing the topic.
-result: issue
-reported: "Chrome tab title does not change - still shows 'Sidekiq' instead of auto-generated title after AI response completed"
-severity: major
+result: pass
+note: Re-tested after 03-05 fix - browser tab now updates correctly
 
 ### 3. Existing thread loads messages
 expected: Navigate directly to /chat/[threadId] for an existing thread. The previous messages should load and display correctly.
@@ -43,27 +42,18 @@ reason: Requires sidebar (Phase 5)
 ## Summary
 
 total: 6
-passed: 3
-issues: 1
+passed: 4
+issues: 0
 pending: 0
 skipped: 2
 
 ## Gaps
 
+[none - all issues resolved]
+
+## Resolved Issues
+
 - truth: "After the first message exchange, the thread receives an auto-generated title visible in browser tab"
-  status: failed
-  reason: "User reported: Chrome tab title does not change - still shows 'Sidekiq' instead of auto-generated title after AI response completed"
-  severity: major
-  test: 2
-  root_cause: "The page component fetches the thread title from database but discards it - title is not passed to ChatInterface, and no mechanism exists to update document.title dynamically. Static metadata in layout.tsx always wins."
-  artifacts:
-    - path: "sidekiq-webapp/src/app/(dashboard)/chat/[threadId]/page.tsx"
-      issue: "Fetches title but discards it (line 39 fetches, line 70 doesn't use)"
-    - path: "sidekiq-webapp/src/components/chat/chat-interface.tsx"
-      issue: "No title prop, no document.title update logic"
-    - path: "sidekiq-webapp/src/app/layout.tsx"
-      issue: "Static metadata always shows 'Sidekiq'"
-  missing:
-    - "Add generateMetadata function to thread page for SSR title"
-    - "Pass title prop to ChatInterface and add useEffect to update document.title"
-  debug_session: ".planning/debug/tab-title-not-updating.md"
+  status: fixed
+  fix: "03-05-PLAN.md - Added generateMetadata for SSR title and tRPC polling for dynamic updates"
+  verified: 2026-01-23
