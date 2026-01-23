@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
@@ -12,9 +13,26 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   projects: [
+    // Setup project for authentication
+    {
+      name: "setup",
+      testMatch: /auth\.setup\.ts/,
+    },
+    // Tests that don't require authentication
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      testIgnore: /chat\.spec\.ts/,
+    },
+    // Tests that require authentication
+    {
+      name: "chromium-authenticated",
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "tests/.auth/user.json",
+      },
+      testMatch: /chat\.spec\.ts/,
+      dependencies: ["setup"],
     },
   ],
   webServer: {

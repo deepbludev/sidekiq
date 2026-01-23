@@ -9,6 +9,7 @@
 /coverage
 /test-results
 /playwright-report
+/tests/.auth/*.json
 
 # database
 /prisma/db.sqlite
