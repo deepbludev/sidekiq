@@ -11,12 +11,12 @@
 - [x] **CHAT-01**: User can send a message and receive a streaming AI response
 - [ ] **CHAT-02**: User can select which LLM model to use (GPT-4o, Claude, etc.) via dropdown near input
 - [ ] **CHAT-03**: Model selection persists for the entire thread (sticky per thread)
-- [ ] **CHAT-04**: User can create a new conversation thread
-- [ ] **CHAT-05**: Thread title is auto-generated after first user message + AI response exchange
-- [ ] **CHAT-06**: User can manually edit thread title
-- [ ] **CHAT-07**: User can delete a thread (permanent, with confirmation dialog)
-- [ ] **CHAT-08**: User can archive a thread (soft delete, recoverable)
-- [ ] **CHAT-09**: User can pin a thread (sticky to top of sidebar)
+- [x] **CHAT-04**: User can create a new conversation thread
+- [x] **CHAT-05**: Thread title is auto-generated after first user message + AI response exchange
+- [x] **CHAT-06**: User can manually edit thread title
+- [x] **CHAT-07**: User can delete a thread (permanent, with confirmation dialog)
+- [x] **CHAT-08**: User can archive a thread (soft delete, recoverable)
+- [x] **CHAT-09**: User can pin a thread (sticky to top of sidebar)
 - [x] **CHAT-10**: Messages are persisted to database with model, tokens, and metadata
 - [x] **CHAT-11**: Message sending shows optimistic UI with error rollback
 - [x] **CHAT-12**: Streaming shows typing indicator followed by token-by-token rendering
@@ -120,12 +120,12 @@
 | CHAT-01 | Phase 1 | Complete |
 | CHAT-02 | Phase 4 | Pending |
 | CHAT-03 | Phase 4 | Pending |
-| CHAT-04 | Phase 3 | Pending |
-| CHAT-05 | Phase 3 | Pending |
-| CHAT-06 | Phase 3 | Pending |
-| CHAT-07 | Phase 3 | Pending |
-| CHAT-08 | Phase 3 | Pending |
-| CHAT-09 | Phase 3 | Pending |
+| CHAT-04 | Phase 3 | Complete |
+| CHAT-05 | Phase 3 | Complete |
+| CHAT-06 | Phase 3 | Complete |
+| CHAT-07 | Phase 3 | Complete |
+| CHAT-08 | Phase 3 | Complete |
+| CHAT-09 | Phase 3 | Complete |
 | CHAT-10 | Phase 1 | Complete |
 | CHAT-11 | Phase 2 | Complete |
 | CHAT-12 | Phase 1 | Complete |

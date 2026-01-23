@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** Phase 3 - Thread Management
+**Current focus:** Phase 4 - Model Selection & Persistence
 
 ## Current Position
 
-Phase: 3 of 12 (Thread Management)
-Plan: 3 of 3 complete
-Status: Phase complete
-Last activity: 2026-01-23 — Completed 03-03-PLAN.md
+Phase: 4 of 12 (Model Selection & Persistence)
+Plan: None yet
+Status: Ready to plan
+Last activity: 2026-01-23 — Phase 3 complete and verified
 
 Progress: [███░░░░░░░] ~25% (3/12 phases complete)
 
@@ -107,6 +107,8 @@ All 3 plans executed successfully:
 | 03-02 | Thread creation on first message + auto-title | ✓ Complete |
 | 03-03 | Thread actions UI | ✓ Complete |
 
-**Verification:** All must-haves passed
+**Verification:** 6/6 must-haves passed
+**Requirements:** CHAT-04, CHAT-05, CHAT-06, CHAT-07, CHAT-08, CHAT-09 complete
 **Components Ready:** ThreadItem, DeleteThreadDialog, RenameThreadInput, ThreadContextMenu
 **Hook Ready:** useThreadActions with optimistic updates
+**Note:** Thread action components await sidebar integration (Phase 5)
