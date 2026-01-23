@@ -1,6 +1,12 @@
 "use client";
 
-import { useRef, useState, useCallback, type FormEvent } from "react";
+import {
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  type FormEvent,
+} from "react";
 import type { UIMessage } from "ai";
 import { DefaultChatTransport } from "ai";
 import { useChat } from "@ai-sdk/react";
@@ -12,6 +18,7 @@ import { TypingIndicator } from "./typing-indicator";
 import { ChatScrollAnchor } from "./chat-scroll-anchor";
 import { ScrollToBottom } from "./scroll-to-bottom";
 import { cn } from "@sidekiq/lib/utils";
+import { api } from "@sidekiq/trpc/react";
 
 interface ChatInterfaceProps {
   /**
@@ -21,6 +28,8 @@ interface ChatInterfaceProps {
   threadId: string | null;
   /** Initial messages to load from database */
   initialMessages?: UIMessage[];
+  /** Initial thread title from SSR (null if not yet generated) */
+  initialTitle?: string | null;
 }
 
 /**
@@ -35,12 +44,46 @@ interface ChatInterfaceProps {
 export function ChatInterface({
   threadId,
   initialMessages = [],
+  initialTitle,
 }: ChatInterfaceProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
+  const [currentTitle, setCurrentTitle] = useState<string | null>(
+    initialTitle ?? null,
+  );
+
+  // Track the actual thread ID (may change after redirect for new threads)
+  const [activeThreadId, setActiveThreadId] = useState<string | null>(threadId);
 
   // Track if we've already redirected to prevent duplicate navigation
   const hasRedirectedRef = useRef(false);
+
+  // Poll for title when we have a thread but no title yet
+  const { data: titleData } = api.thread.getTitle.useQuery(
+    { threadId: activeThreadId! },
+    {
+      enabled: !!activeThreadId && !currentTitle,
+      refetchInterval: (query) => {
+        // Poll every 2 seconds until we get a title, max 5 attempts (10 seconds)
+        if (query.state.data?.title) return false;
+        if (query.state.dataUpdateCount >= 5) return false;
+        return 2000;
+      },
+    },
+  );
+
+  // Update current title when polling returns a title
+  useEffect(() => {
+    if (titleData?.title && !currentTitle) {
+      setCurrentTitle(titleData.title);
+    }
+  }, [titleData?.title, currentTitle]);
+
+  // Update document.title when currentTitle changes
+  useEffect(() => {
+    const displayTitle = currentTitle ?? "New Chat";
+    document.title = `${displayTitle} - Sidekiq`;
+  }, [currentTitle]);
 
   /**
    * Custom fetch function that captures the X-Thread-Id header
@@ -55,6 +98,8 @@ export function ChatInterface({
         const newThreadId = response.headers.get("X-Thread-Id");
         if (newThreadId) {
           hasRedirectedRef.current = true;
+          // Track the new thread ID for title polling
+          setActiveThreadId(newThreadId);
           // Use history API to update URL without navigation/remount
           // This preserves the streaming connection (router.replace would unmount and abort)
           window.history.replaceState(null, "", `/chat/${newThreadId}`);

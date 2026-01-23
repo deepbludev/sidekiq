@@ -10,6 +10,7 @@ import {
   togglePinInputSchema,
   renameThreadInputSchema,
   listThreadsInputSchema,
+  getTitleInputSchema,
 } from "@sidekiq/lib/validations/thread";
 
 /**
@@ -19,6 +20,27 @@ import {
  * ownership verification via userId check in WHERE clauses.
  */
 export const threadRouter = createTRPCRouter({
+  /**
+   * Get thread title by ID.
+   * Used for polling title after async generation.
+   *
+   * @param threadId - ID of the thread to get title for
+   * @returns Object with title (string or null)
+   */
+  getTitle: protectedProcedure
+    .input(getTitleInputSchema)
+    .query(async ({ ctx, input }) => {
+      const thread = await ctx.db.query.threads.findFirst({
+        where: and(
+          eq(threads.id, input.threadId),
+          eq(threads.userId, ctx.session.user.id),
+        ),
+        columns: { title: true },
+      });
+
+      return { title: thread?.title ?? null };
+    }),
+
   /**
    * List user's threads sorted by pinned status then last activity.
    * Pinned threads appear first, then sorted by most recent activity.

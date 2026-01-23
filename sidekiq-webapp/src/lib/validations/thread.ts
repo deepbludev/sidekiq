@@ -78,3 +78,13 @@ export const listThreadsInputSchema = z
   .optional();
 
 export type ListThreadsInput = z.infer<typeof listThreadsInputSchema>;
+
+/**
+ * Input schema for getting a thread's title.
+ * Used for polling title after async generation.
+ */
+export const getTitleInputSchema = z.object({
+  threadId: threadIdSchema,
+});
+
+export type GetTitleInput = z.infer<typeof getTitleInputSchema>;
