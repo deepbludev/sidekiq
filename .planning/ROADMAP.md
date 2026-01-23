@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: AI Streaming Infrastructure** - Vercel AI SDK, Route Handlers, SSE
 - [x] **Phase 2: Basic Chat Interface** - Message UI, input, optimistic updates
 - [x] **Phase 3: Thread Management** - Create, delete, archive, pin, auto-title
-- [ ] **Phase 4: Model Selection & Persistence** - Model picker, sticky selection
+- [x] **Phase 4: Model Selection & Persistence** - Model picker, sticky selection
 - [ ] **Phase 5: Sidebar & Navigation** - History, date grouping, search
 - [ ] **Phase 6: Sidekiq CRUD** - Create, edit, delete custom assistants
 - [ ] **Phase 7: Sidekiq Chat Integration** - Chat with Sidekiq, system prompt injection
@@ -95,7 +95,7 @@ Plans:
 - [x] 04-01-PLAN.md — Schema extensions + model metadata (user preferences JSONB, extended ModelConfig, shadcn components)
 - [x] 04-02-PLAN.md — Model picker component (fuzzy search, favorites, provider groups, hover cards)
 - [x] 04-03-PLAN.md — Chat integration + persistence (wire picker, user preferences tRPC, model switch hints)
-- [ ] 04-04-PLAN.md — [gap closure] Fix model picker dropdown not opening (forward rest props)
+- [x] 04-04-PLAN.md — [gap closure] Fix model picker dropdown not opening (forward rest props)
 
 ### Phase 5: Sidebar & Navigation
 **Goal**: User can browse conversation history with search, date grouping, and visual indicators
@@ -242,7 +242,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 1. AI Streaming Infrastructure | 2/2 | ✓ Complete | 2026-01-22 |
 | 2. Basic Chat Interface | 3/3 | ✓ Complete | 2026-01-23 |
 | 3. Thread Management | 5/5 | ✓ Complete | 2026-01-23 |
-| 4. Model Selection & Persistence | 3/4 | In Progress | - |
+| 4. Model Selection & Persistence | 4/4 | ✓ Complete | 2026-01-23 |
 | 5. Sidebar & Navigation | 0/1 | Not started | - |
 | 6. Sidekiq CRUD | 0/1 | Not started | - |
 | 7. Sidekiq Chat Integration | 0/1 | Not started | - |

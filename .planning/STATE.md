@@ -140,13 +140,14 @@ All 5 plans executed successfully:
 
 ## Phase 4 Completion Summary
 
-All 3 plans executed successfully:
+All 4 plans executed successfully:
 
 | Plan | Focus | Status |
 |------|-------|--------|
 | 04-01 | Foundation (schema, metadata, shadcn) | Complete |
 | 04-02 | Model picker component | Complete |
 | 04-03 | Persistence and integration | Complete |
+| 04-04 | Model picker fix (gap closure) | Complete |
 
 **Components Ready:** ModelPicker, ModelPickerTrigger, ModelPickerContent, ModelItem, ModelHoverCard, ProviderIcon, ModelSwitchHint
 **Hooks Ready:** useModelSelection with optimistic updates for user preferences
@@ -159,7 +160,7 @@ All 3 plans executed successfully:
 - tRPC optimistic updates with rollback
 - Render prop pattern for model hints
 
-**Verification:** 20/20 must-haves passed (1 gap fixed by orchestrator post-verification)
+**Verification:** 22/22 must-haves passed (re-verified after gap closure)
 **Requirements:** CHAT-02, CHAT-03 marked Complete
 **Gap closure 1:** Thread page wasn't passing activeModel to ChatInterface — fixed by adding activeModel column to query and initialModel prop
 **Gap closure 2:** Model picker dropdown wasn't opening — fixed by forwarding rest props (including onClick) from PopoverTrigger to Button element

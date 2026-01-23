@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 04-model-selection
 source: 04-01-SUMMARY.md, 04-02-SUMMARY.md, 04-03-SUMMARY.md
 started: 2026-01-23T21:00:00Z
@@ -82,7 +82,12 @@ skipped: 9
   reason: "User reported: doesnt work, when i click on the button, nothing happens"
   severity: major
   test: 2
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "ModelPickerTrigger component does not forward rest props to Button - PopoverTrigger's onClick is discarded"
+  artifacts:
+    - path: "sidekiq-webapp/src/components/model-picker/model-picker-trigger.tsx"
+      issue: "Missing rest props spread - lines 11-15, 24"
+  missing:
+    - "Extend props interface with React.ComponentPropsWithoutRef<'button'>"
+    - "Destructure with rest: ({ selectedModel, disabled, className, ...props }, ref)"
+    - "Spread {...props} on Button component"
+  debug_session: ".planning/debug/model-picker-dropdown-not-opening.md"
