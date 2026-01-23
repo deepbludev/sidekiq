@@ -149,7 +149,7 @@ export const AVAILABLE_MODELS: ModelConfig[] = [
 /**
  * Default model used when no model is specified.
  */
-export const DEFAULT_MODEL = "anthropic/claude-sonnet-4-20250514";
+export const DEFAULT_MODEL = "google/gemini-2.0-flash";
 
 /**
  * Get the configuration metadata for a model by ID.
