@@ -1,0 +1,3 @@
+cd sidekiq-webapp
+pnpm exec lint-staged
+pnpm exec tsc --noEmit
