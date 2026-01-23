@@ -1,17 +1,21 @@
 "use client";
 
 import type { UIMessage } from "ai";
+import { useState } from "react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@sidekiq/components/ui/avatar";
+import { MessageContent } from "./message-content";
+import { MessageActions } from "./message-actions";
 import { cn } from "@sidekiq/lib/utils";
 
 interface MessageItemProps {
   /** The message to render */
   message: UIMessage;
+  /** Whether this message is currently streaming */
+  isStreaming?: boolean;
+  /** Callback when user clicks edit */
+  onEdit?: () => void;
+  /** Callback when user clicks regenerate */
+  onRegenerate?: () => void;
 }
 
 /**
@@ -30,44 +34,108 @@ function extractTextContent(message: UIMessage): string {
 }
 
 /**
- * Renders a single chat message with avatar and styling based on role.
+ * Formats a timestamp for display.
  *
- * User messages are right-aligned with a user avatar.
- * Assistant messages are left-aligned with an AI avatar.
+ * @param date - The date to format
+ * @returns Formatted time string (e.g., "2:30 PM")
  */
-export function MessageItem({ message }: MessageItemProps) {
+function formatTime(date: Date): string {
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(date);
+}
+
+/**
+ * Extracts the createdAt timestamp from message metadata if available.
+ *
+ * @param metadata - The message metadata (unknown type)
+ * @returns The createdAt date or null if not available
+ */
+function getCreatedAt(metadata: unknown): Date | null {
+  if (
+    metadata &&
+    typeof metadata === "object" &&
+    "createdAt" in metadata &&
+    metadata.createdAt
+  ) {
+    const createdAt = metadata.createdAt;
+    if (createdAt instanceof Date) {
+      return createdAt;
+    }
+    if (typeof createdAt === "string" || typeof createdAt === "number") {
+      return new Date(createdAt);
+    }
+  }
+  return null;
+}
+
+/**
+ * Renders a single chat message with minimal lines style.
+ *
+ * Per CONTEXT.md:
+ * - No bubbles/cards, just text with subtle background tint
+ * - Timestamps shown on hover only
+ * - Narrow centered content area (~700px max)
+ * - Actions appear inline at end of message on hover
+ */
+export function MessageItem({
+  message,
+  isStreaming = false,
+  onEdit,
+  onRegenerate,
+}: MessageItemProps) {
+  const [showTimestamp, setShowTimestamp] = useState(false);
   const isUser = message.role === "user";
   const content = extractTextContent(message);
 
   return (
-    <div className={cn("flex gap-3", isUser ? "flex-row-reverse" : "flex-row")}>
-      <Avatar className="h-8 w-8 shrink-0">
-        {isUser ? (
-          <>
-            <AvatarImage src="/user-avatar.png" alt="You" />
-            <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-              U
-            </AvatarFallback>
-          </>
-        ) : (
-          <>
-            <AvatarImage src="/ai-avatar.png" alt="AI" />
-            <AvatarFallback className="bg-violet-600 text-xs text-white">
-              AI
-            </AvatarFallback>
-          </>
-        )}
-      </Avatar>
+    <div
+      className={cn(
+        "group relative -mx-4 px-4 py-4",
+        // Subtle background tint to distinguish user vs AI
+        isUser ? "bg-transparent" : "bg-muted/30 dark:bg-muted/10",
+      )}
+      onMouseEnter={() => setShowTimestamp(true)}
+      onMouseLeave={() => setShowTimestamp(false)}
+    >
+      <div className="mx-auto max-w-[700px]">
+        <div className="flex items-start justify-between gap-4">
+          {/* Message content */}
+          <div className="min-w-0 flex-1">
+            {isUser ? (
+              // User messages: plain text
+              <p className="text-foreground text-sm leading-relaxed whitespace-pre-wrap">
+                {content}
+              </p>
+            ) : (
+              // Assistant messages: rendered markdown
+              <MessageContent content={content} isStreaming={isStreaming} />
+            )}
+          </div>
 
-      <div
-        className={cn(
-          "max-w-[80%] rounded-2xl px-4 py-2.5",
-          isUser
-            ? "bg-primary text-primary-foreground"
-            : "border border-zinc-700/50 bg-zinc-800/50 text-zinc-100",
-        )}
-      >
-        <p className="text-sm leading-relaxed whitespace-pre-wrap">{content}</p>
+          {/* Actions (visible on hover) */}
+          <MessageActions
+            role={message.role as "user" | "assistant"}
+            content={content}
+            onEdit={isUser ? onEdit : undefined}
+            onRegenerate={!isUser ? onRegenerate : undefined}
+          />
+        </div>
+
+        {/* Timestamp (visible on hover) - shown when metadata.createdAt is available */}
+        {(() => {
+          const createdAt = getCreatedAt(message.metadata);
+          if (showTimestamp && createdAt) {
+            return (
+              <time className="text-muted-foreground mt-1.5 block text-xs">
+                {formatTime(createdAt)}
+              </time>
+            );
+          }
+          return null;
+        })()}
       </div>
     </div>
   );
