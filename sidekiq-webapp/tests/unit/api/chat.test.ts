@@ -24,7 +24,9 @@ vi.mock("@sidekiq/server/db", () => ({
       },
     },
     insert: vi.fn(() => ({
-      values: vi.fn(),
+      values: vi.fn(() => ({
+        returning: vi.fn(),
+      })),
     })),
     update: vi.fn(() => ({
       set: vi.fn(() => ({
@@ -106,9 +108,11 @@ describe("POST /api/chat", () => {
     };
     (streamText as Mock).mockReturnValue(mockResult);
 
-    // Mock db.insert chain
+    // Mock db.insert chain (for messages and new threads)
     (db.insert as Mock).mockReturnValue({
-      values: vi.fn().mockResolvedValue(undefined),
+      values: vi.fn().mockReturnValue({
+        returning: vi.fn().mockResolvedValue([{ id: "new-thread-123" }]),
+      }),
     });
 
     // Mock db.update chain
@@ -159,7 +163,7 @@ describe("POST /api/chat", () => {
       expect(body.error).toBe("Invalid request");
     });
 
-    it("should return 400 for missing threadId", async () => {
+    it("should create new thread when threadId is missing", async () => {
       const req = createMockRequest({
         messages: [
           {
@@ -171,14 +175,16 @@ describe("POST /api/chat", () => {
       });
       const res = await POST(req);
 
-      expect(res.status).toBe(400);
+      // Should succeed and create a new thread
+      expect(res.status).toBe(200);
     });
 
-    it("should return 400 for empty threadId", async () => {
+    it("should create new thread when threadId is empty", async () => {
       const req = createMockRequest(validChatBody({ threadId: "" }));
       const res = await POST(req);
 
-      expect(res.status).toBe(400);
+      // Should succeed and create a new thread
+      expect(res.status).toBe(200);
     });
 
     it("should return 400 when last message is not from user", async () => {

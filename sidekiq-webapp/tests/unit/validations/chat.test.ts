@@ -149,7 +149,7 @@ describe("chatRequestSchema", () => {
       }
     });
 
-    it("should reject missing threadId", () => {
+    it("should accept missing threadId (creates new thread)", () => {
       const result = chatRequestSchema.safeParse({
         messages: [
           {
@@ -160,10 +160,13 @@ describe("chatRequestSchema", () => {
         ],
       });
 
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.threadId).toBeUndefined();
+      }
     });
 
-    it("should reject empty threadId", () => {
+    it("should accept empty threadId (creates new thread)", () => {
       const result = chatRequestSchema.safeParse({
         messages: [
           {
@@ -175,10 +178,8 @@ describe("chatRequestSchema", () => {
         threadId: "",
       });
 
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0]?.message).toBe("Thread ID is required");
-      }
+      // Empty string is valid - route handler will create new thread
+      expect(result.success).toBe(true);
     });
 
     it("should reject message without id", () => {
