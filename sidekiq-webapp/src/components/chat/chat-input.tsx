@@ -18,10 +18,12 @@ interface ChatInputProps {
   isStreaming: boolean;
   /** Function to stop the current stream */
   onStop: () => void;
+  /** Placeholder text */
+  placeholder?: string;
 }
 
 /**
- * Chat input component with textarea and send/stop buttons.
+ * Chat input component with glassmorphism styling.
  *
  * Features:
  * - Auto-resizing textarea
@@ -35,6 +37,7 @@ export function ChatInput({
   onSubmit,
   isStreaming,
   onStop,
+  placeholder = "Type a message...",
 }: ChatInputProps) {
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     // Enter to send, Shift+Enter for newline
@@ -57,12 +60,14 @@ export function ChatInput({
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Type a message..."
+        placeholder={placeholder}
         disabled={isStreaming}
         className={cn(
           "max-h-[200px] min-h-[52px] resize-none pr-24",
-          "border-zinc-700 bg-zinc-900 focus-visible:border-zinc-600",
-          "placeholder:text-zinc-500",
+          // Glassmorphism input styling
+          "glass-input",
+          "focus-visible:ring-primary/20",
+          "placeholder:text-muted-foreground/60",
         )}
         rows={1}
       />
@@ -75,6 +80,7 @@ export function ChatInput({
             size="icon-sm"
             onClick={onStop}
             aria-label="Stop generating"
+            className="shadow-sm"
           >
             <Square className="h-4 w-4" />
           </Button>
@@ -84,6 +90,7 @@ export function ChatInput({
             size="icon-sm"
             disabled={!canSend}
             aria-label="Send message"
+            className="shadow-sm"
           >
             <Send className="h-4 w-4" />
           </Button>
