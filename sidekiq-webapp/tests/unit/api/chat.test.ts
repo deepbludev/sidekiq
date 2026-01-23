@@ -1,5 +1,10 @@
 import { describe, expect, it, vi, beforeEach, type Mock } from "vitest";
 
+/** Type for error response body */
+interface ErrorResponse {
+  error: string;
+}
+
 // Mock modules before importing the route handler
 vi.mock("ai", () => ({
   streamText: vi.fn(),
@@ -97,7 +102,9 @@ describe("POST /api/chat", () => {
     // Mock streamText to return a valid response
     const mockResult = {
       consumeStream: vi.fn(),
-      toUIMessageStreamResponse: vi.fn(() => new Response("stream", { status: 200 })),
+      toUIMessageStreamResponse: vi.fn(
+        () => new Response("stream", { status: 200 }),
+      ),
       usage: Promise.resolve({ inputTokens: 10, outputTokens: 20 }),
     };
     (streamText as Mock).mockReturnValue(mockResult);
@@ -151,7 +158,7 @@ describe("POST /api/chat", () => {
       const res = await POST(req);
 
       expect(res.status).toBe(400);
-      const body = await res.json();
+      const body = (await res.json()) as ErrorResponse;
       expect(body.error).toBe("Invalid request");
     });
 
@@ -197,7 +204,7 @@ describe("POST /api/chat", () => {
       const res = await POST(req);
 
       expect(res.status).toBe(400);
-      const body = await res.json();
+      const body = (await res.json()) as ErrorResponse;
       expect(body.error).toBe("Last message must be from user");
     });
   });
@@ -210,7 +217,7 @@ describe("POST /api/chat", () => {
       const res = await POST(req);
 
       expect(res.status).toBe(404);
-      const body = await res.json();
+      const body = (await res.json()) as ErrorResponse;
       expect(body.error).toBe("Thread not found");
     });
 
@@ -225,7 +232,7 @@ describe("POST /api/chat", () => {
       const res = await POST(req);
 
       expect(res.status).toBe(403);
-      const body = await res.json();
+      const body = (await res.json()) as ErrorResponse;
       expect(body.error).toBe("Unauthorized access to thread");
     });
   });
@@ -235,10 +242,15 @@ describe("POST /api/chat", () => {
       const req = createMockRequest(validChatBody());
       await POST(req);
 
-      expect(getModel).toHaveBeenCalledWith("anthropic/claude-sonnet-4-20250514");
+      expect(getModel).toHaveBeenCalledWith(
+        "anthropic/claude-sonnet-4-20250514",
+      );
       expect(streamText).toHaveBeenCalled();
 
-      const streamTextCall = (streamText as Mock).mock.calls[0]?.[0];
+      const streamTextCall = (streamText as Mock).mock.calls[0]?.[0] as Record<
+        string,
+        unknown
+      >;
       expect(streamTextCall).toHaveProperty("model");
       expect(streamTextCall).toHaveProperty("messages");
     });
@@ -247,8 +259,9 @@ describe("POST /api/chat", () => {
       const req = createMockRequest(validChatBody());
       await POST(req);
 
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(db.insert).toHaveBeenCalled();
-      const insertCall = (db.insert as Mock).mock.calls[0]?.[0];
+      const insertCall = (db.insert as Mock).mock.calls[0]?.[0] as unknown;
       // Verify messages table was passed to insert
       expect(insertCall).toBeDefined();
     });
@@ -264,7 +277,9 @@ describe("POST /api/chat", () => {
       const mockConsume = vi.fn();
       const mockResult = {
         consumeStream: mockConsume,
-        toUIMessageStreamResponse: vi.fn(() => new Response("stream", { status: 200 })),
+        toUIMessageStreamResponse: vi.fn(
+          () => new Response("stream", { status: 200 }),
+        ),
         usage: Promise.resolve({ inputTokens: 10, outputTokens: 20 }),
       };
       (streamText as Mock).mockReturnValue(mockResult);
@@ -283,7 +298,9 @@ describe("POST /api/chat", () => {
       await POST(req);
 
       // Should use DEFAULT_MODEL from the schema default
-      expect(getModel).toHaveBeenCalledWith("anthropic/claude-sonnet-4-20250514");
+      expect(getModel).toHaveBeenCalledWith(
+        "anthropic/claude-sonnet-4-20250514",
+      );
     });
   });
 });

@@ -3,9 +3,9 @@
 import type { UIMessage } from "ai";
 import { useState } from "react";
 
-import { MessageContent } from "./message-content";
-import { MessageActions } from "./message-actions";
 import { cn } from "@sidekiq/lib/utils";
+import { MessageActions } from "./message-actions";
+import { MessageContent } from "./message-content";
 
 interface MessageItemProps {
   /** The message to render */
@@ -24,7 +24,7 @@ interface MessageItemProps {
  * @param message - The UIMessage to extract text from
  * @returns Concatenated text content from all text parts
  */
-function extractTextContent(message: UIMessage): string {
+export function extractTextContent(message: UIMessage): string {
   return message.parts
     .filter(
       (part): part is { type: "text"; text: string } => part.type === "text",
@@ -39,7 +39,7 @@ function extractTextContent(message: UIMessage): string {
  * @param date - The date to format
  * @returns Formatted time string (e.g., "2:30 PM")
  */
-function formatTime(date: Date): string {
+export function formatTime(date: Date): string {
   return new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
     minute: "2-digit",
@@ -54,7 +54,7 @@ function formatTime(date: Date): string {
  * @param message - The UIMessage to extract timestamp from
  * @returns The createdAt date or null if not available
  */
-function getCreatedAt(message: UIMessage): Date | null {
+export function getCreatedAt(message: UIMessage): Date | null {
   // Cast to access potential createdAt property (useChat adds this at runtime)
   const messageWithTimestamp = message as UIMessage & {
     createdAt?: Date | string | number;

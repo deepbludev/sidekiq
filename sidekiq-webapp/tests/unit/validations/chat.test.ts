@@ -223,8 +223,8 @@ describe("chatRequestSchema", () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        const roleError = result.error.issues.find(
-          (issue) => issue.path.includes("role"),
+        const roleError = result.error.issues.find((issue) =>
+          issue.path.includes("role"),
         );
         expect(roleError).toBeDefined();
       }
