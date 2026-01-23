@@ -1,8 +1,8 @@
 "use client";
 
-import { Streamdown } from "streamdown";
 import { createCodePlugin } from "@streamdown/code";
 import { useMemo } from "react";
+import { Streamdown } from "streamdown";
 
 import { cn } from "@sidekiq/lib/utils";
 
@@ -55,7 +55,7 @@ export function MessageContent({
         "prose-li:text-foreground/90",
         // Code blocks styling
         "[&_pre]:border-border [&_pre]:my-3 [&_pre]:rounded-lg [&_pre]:border",
-        "[&_pre_code]:!bg-transparent",
+        "[&_pre_code]:bg-transparent",
         // Streamdown code wrapper styling
         "[&_.streamdown-code]:overflow-hidden [&_.streamdown-code]:rounded-lg",
         "[&_.streamdown-code]:border-border [&_.streamdown-code]:border",

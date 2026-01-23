@@ -86,17 +86,14 @@ describe("POST /api/chat", () => {
     (getSession as Mock).mockResolvedValue({
       user: { id: "user-123", email: "test@example.com" },
     });
-
     (db.query.threads.findFirst as Mock).mockResolvedValue({
       id: "thread-123",
       userId: "user-123",
       messageCount: 0,
     });
-
     (convertToModelMessages as Mock).mockResolvedValue([
       { role: "user", content: "Hello" },
     ]);
-
     (getModel as Mock).mockReturnValue({ id: "mock-model" });
 
     // Mock streamText to return a valid response
