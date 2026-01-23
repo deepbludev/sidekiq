@@ -24,6 +24,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 10: Error Handling & Edge Cases** - Comprehensive error states, retry logic
 - [ ] **Phase 11: UI Polish & Animations** - Glassmorphism refinement, micro-animations
 - [ ] **Phase 12: Performance & Production** - Loading states, responsive, markdown
+- [ ] **Phase 13: Refactor Architecture to Vertical Slicing by Feature** - Reorganize codebase structure
 
 ## Phase Details
 
@@ -88,10 +89,12 @@ Plans:
   2. User can select from available models (GPT-4o, Claude, etc.)
   3. Selected model persists for the entire thread (sticky per thread)
   4. Different threads can use different models independently
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md — Schema extensions + model metadata (user preferences JSONB, extended ModelConfig, shadcn components)
+- [ ] 04-02-PLAN.md — Model picker component (fuzzy search, favorites, provider groups, hover cards)
+- [ ] 04-03-PLAN.md — Chat integration + persistence (wire picker, user preferences tRPC, model switch hints)
 
 ### Phase 5: Sidebar & Navigation
 **Goal**: User can browse conversation history with search, date grouping, and visual indicators
@@ -214,17 +217,31 @@ Plans:
 Plans:
 - [ ] 12-01: TBD
 
+### Phase 13: Refactor Architecture to Vertical Slicing by Feature
+**Goal**: Reorganize codebase from horizontal layers to vertical feature slices for better maintainability
+**Depends on**: Phase 12
+**Requirements**: None (internal refactor)
+**Success Criteria** (what must be TRUE):
+  1. Code is organized by feature domain (chat, sidekiq, team, etc.) rather than technical layer
+  2. Each feature slice contains its own components, hooks, API routes, and types
+  3. Cross-cutting concerns (auth, db, ui primitives) remain in shared locations
+  4. All existing functionality continues to work after reorganization
+**Plans**: TBD
+
+Plans:
+- [ ] 13-01: TBD (run /gsd:plan-phase 13 to break down)
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. AI Streaming Infrastructure | 2/2 | ✓ Complete | 2026-01-22 |
 | 2. Basic Chat Interface | 3/3 | ✓ Complete | 2026-01-23 |
 | 3. Thread Management | 5/5 | ✓ Complete | 2026-01-23 |
-| 4. Model Selection & Persistence | 0/1 | Not started | - |
+| 4. Model Selection & Persistence | 0/3 | Not started | - |
 | 5. Sidebar & Navigation | 0/1 | Not started | - |
 | 6. Sidekiq CRUD | 0/1 | Not started | - |
 | 7. Sidekiq Chat Integration | 0/1 | Not started | - |
@@ -233,3 +250,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 10. Error Handling & Edge Cases | 0/1 | Not started | - |
 | 11. UI Polish & Animations | 0/1 | Not started | - |
 | 12. Performance & Production | 0/1 | Not started | - |
+| 13. Refactor Architecture to Vertical Slicing | 0/1 | Not started | - |
