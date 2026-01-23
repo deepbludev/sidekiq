@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: AI Streaming Infrastructure** - Vercel AI SDK, Route Handlers, SSE
 - [x] **Phase 2: Basic Chat Interface** - Message UI, input, optimistic updates
-- [ ] **Phase 3: Thread Management** - Create, delete, archive, pin, auto-title
+- [x] **Phase 3: Thread Management** - Create, delete, archive, pin, auto-title
 - [ ] **Phase 4: Model Selection & Persistence** - Model picker, sticky selection
 - [ ] **Phase 5: Sidebar & Navigation** - History, date grouping, search
 - [ ] **Phase 6: Sidekiq CRUD** - Create, edit, delete custom assistants
@@ -77,7 +77,7 @@ Plans:
 - [x] 03-02-PLAN.md — Thread creation on first message + auto-title generation
 - [x] 03-03-PLAN.md — Thread action UI components (context menu, delete dialog, hover actions)
 - [x] 03-04-PLAN.md — [gap closure] Stream abortion fix (history API for URL update)
-- [ ] 03-05-PLAN.md — [gap closure] Browser tab title display (SSR + dynamic update)
+- [x] 03-05-PLAN.md — [gap closure] Browser tab title display (SSR + dynamic update)
 
 ### Phase 4: Model Selection & Persistence
 **Goal**: User can select which LLM model to use and selection persists per thread
@@ -223,7 +223,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 |-------|----------------|--------|-----------|
 | 1. AI Streaming Infrastructure | 2/2 | ✓ Complete | 2026-01-22 |
 | 2. Basic Chat Interface | 3/3 | ✓ Complete | 2026-01-23 |
-| 3. Thread Management | 4/5 | In Progress | - |
+| 3. Thread Management | 5/5 | ✓ Complete | 2026-01-23 |
 | 4. Model Selection & Persistence | 0/1 | Not started | - |
 | 5. Sidebar & Navigation | 0/1 | Not started | - |
 | 6. Sidekiq CRUD | 0/1 | Not started | - |
