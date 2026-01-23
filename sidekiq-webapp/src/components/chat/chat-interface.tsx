@@ -14,9 +14,12 @@ import { ScrollToBottom } from "./scroll-to-bottom";
 import { cn } from "@sidekiq/lib/utils";
 
 interface ChatInterfaceProps {
-  /** Thread ID for message persistence */
-  threadId: string;
-  /** Initial messages to load from database (Phase 3) */
+  /**
+   * Thread ID for message persistence.
+   * null = "new chat" state (thread created on first message send)
+   */
+  threadId: string | null;
+  /** Initial messages to load from database */
   initialMessages?: UIMessage[];
 }
 

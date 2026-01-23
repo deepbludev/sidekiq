@@ -1,51 +1,23 @@
 import { redirect } from "next/navigation";
-import { eq, desc } from "drizzle-orm";
-import { nanoid } from "nanoid";
 
 import { getSession } from "@sidekiq/server/better-auth/server";
-import { db } from "@sidekiq/server/db";
-import { threads } from "@sidekiq/server/db/schema";
 import { ChatInterface } from "@sidekiq/components/chat/chat-interface";
 
 /**
- * Chat page
+ * New Chat page
  *
- * Server component that finds or creates a default thread for the user
- * and renders the ChatInterface client component.
+ * Server component representing the "new chat" state.
+ * No thread is loaded - thread will be created on first message send.
  *
- * Thread management UI comes in Phase 3.
+ * This is the landing page for starting fresh conversations.
  */
-export default async function ChatPage() {
+export default async function NewChatPage() {
   const session = await getSession();
   if (!session) {
     redirect("/sign-in");
   }
 
-  // Find most recent thread or create one if none exists
-  // Temporary approach - Thread creation UI comes in Phase 3
-  let thread = await db.query.threads.findFirst({
-    where: eq(threads.userId, session.user.id),
-    orderBy: desc(threads.lastActivityAt),
-  });
-
-  if (!thread) {
-    const threadId = nanoid();
-    const [newThread] = await db
-      .insert(threads)
-      .values({
-        id: threadId,
-        userId: session.user.id,
-        title: "New Chat",
-        lastActivityAt: new Date(),
-      })
-      .returning();
-
-    // newThread should always exist after insert, but TypeScript needs this check
-    if (!newThread) {
-      throw new Error("Failed to create thread");
-    }
-    thread = newThread;
-  }
-
-  return <ChatInterface threadId={thread.id} />;
+  // No thread ID - this is the "new chat" state
+  // Thread will be created when user sends their first message
+  return <ChatInterface threadId={null} />;
 }
