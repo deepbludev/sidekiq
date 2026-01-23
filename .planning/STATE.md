@@ -10,29 +10,29 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 2 of 12 (Basic Chat Interface)
-Plan: 02-02 complete, 02-01 and 02-03 pending
-Status: In progress
-Last activity: 2026-01-23 - Completed 02-02-PLAN.md (markdown + message actions)
+Plan: 02-01 complete, 02-02 complete, 02-03 pending
+Status: In progress - ready for 02-03
+Last activity: 2026-01-23 - Completed 02-01-PLAN.md (theme system + glassmorphism)
 
-Progress: [██░░░░░░░░] ~8% (1/12 phases complete, 3/5 plans done)
+Progress: [██░░░░░░░░] ~8% (1/12 phases complete, 4/5 plans done)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
+- Total plans completed: 4
 - Average duration: ~15 min
-- Total execution time: ~0.75 hours
+- Total execution time: ~0.83 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 2 | 39min | 19.5min |
-| 02 | 1 | 5min | 5min |
+| 02 | 2 | 10min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (15min), 01-02 (24min), 02-02 (5min)
-- Trend: Improving (last plan very fast)
+- Last 5 plans: 01-01 (15min), 01-02 (24min), 02-02 (5min), 02-01 (5min)
+- Trend: Improving (phase 2 plans very fast)
 
 *Updated after each plan completion*
 
@@ -55,7 +55,10 @@ Recent decisions affecting current work:
 - Dual Shiki themes (github-light/github-dark) for code blocks (new - 02-02)
 - Minimal lines style, not bubbles (confirmed - 02-02)
 - Timestamps stored in message metadata.createdAt (new - 02-02)
-- next-themes for theme system (pending - 02 planning)
+- next-themes with attribute="class" for Tailwind dark mode (confirmed - 02-01)
+- Mounted state pattern for hydration-safe theme components (new - 02-01)
+- Toaster position at bottom-center per design spec (confirmed - 02-01)
+- Glassmorphism with backdrop-blur utilities (confirmed - 02-01)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 
@@ -70,15 +73,15 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-23T10:25:33Z
-Stopped at: Completed 02-02-PLAN.md
+Last session: 2026-01-23T10:26:16Z
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None
-Next: Execute 02-01 (theme system) or 02-03 (empty state + integration, depends on 02-01)
+Next: Execute 02-03 (empty state + final integration)
 
 ## Phase 2 Plan Structure
 
 | Plan | Wave | Depends On | Status | Focus |
 |------|------|------------|--------|-------|
-| 02-01 | 1 | - | Pending | Theme system + glassmorphism foundation |
+| 02-01 | 1 | - | Complete | Theme system + glassmorphism foundation |
 | 02-02 | 1 | - | Complete | Markdown rendering + message actions |
-| 02-03 | 2 | 02-01, 02-02 | Blocked on 02-01 | Empty state + final integration |
+| 02-03 | 2 | 02-01, 02-02 | Ready | Empty state + final integration |
