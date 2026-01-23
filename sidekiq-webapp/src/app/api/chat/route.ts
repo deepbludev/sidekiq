@@ -117,6 +117,7 @@ export async function POST(req: Request) {
         id: newThreadId,
         userId: session.user.id,
         title: null, // Will be set after first AI response
+        activeModel: modelId,
         lastActivityAt: new Date(),
       })
       .returning();
@@ -200,12 +201,13 @@ export async function POST(req: Request) {
         createdAt: new Date(),
       });
 
-      // Update thread lastActivityAt and increment message count
+      // Update thread lastActivityAt, messageCount, and activeModel
       await db
         .update(threads)
         .set({
           lastActivityAt: new Date(),
           messageCount: thread.messageCount + 2, // +1 user, +1 assistant
+          activeModel: modelId,
         })
         .where(eq(threads.id, thread.id));
 
