@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 3 of 12 (Thread Management)
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-01-23 — Completed 03-01-PLAN.md
+Last activity: 2026-01-23 — Completed 03-02-PLAN.md
 
-Progress: [██░░░░░░░░] ~20% (2/12 phases + 1 plan)
+Progress: [██░░░░░░░░] ~22% (2/12 phases + 2 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: ~10 min
-- Total execution time: ~1 hour
+- Total plans completed: 7
+- Average duration: ~9 min
+- Total execution time: ~1 hour 5 min
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [██░░░░░░░░] ~20% (2/12 phases + 1 plan)
 |-------|-------|-------|----------|
 | 01 | 2 | 39min | 19.5min |
 | 02 | 3 | 18min | 6min |
-| 03 | 1 | 4min | 4min |
+| 03 | 2 | 8min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (5min), 02-02 (5min), 02-03 (8min), 03-01 (4min)
-- Trend: Fast execution (~5.5min avg for last 4 plans)
+- Last 5 plans: 02-02 (5min), 02-03 (8min), 03-01 (4min), 03-02 (4min)
+- Trend: Fast execution (~5.25min avg for last 4 plans)
 
 *Updated after each plan completion*
 
@@ -60,6 +60,10 @@ Recent decisions affecting current work:
 - Mounted state pattern for hydration-safe theme components (confirmed - 02-01)
 - Toaster position at bottom-center per design spec (confirmed - 02-01)
 - Glassmorphism with backdrop-blur utilities (confirmed - 02-01)
+- Budget model (gpt-4o-mini) for all title generation (confirmed - 03-02)
+- Fire-and-forget title generation, non-blocking (confirmed - 03-02)
+- X-Thread-Id header for new thread notification (confirmed - 03-02)
+- router.replace for redirect to avoid /chat in history (confirmed - 03-02)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 
@@ -70,15 +74,13 @@ None yet.
 ### Blockers/Concerns
 
 - AI_GATEWAY_API_KEY environment variable must be configured for /api/chat to work
-- ChatInterface needs to handle threadId: null for sending messages (03-02)
-- API /api/chat needs to create thread if threadId not provided (03-02)
 
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 03-01-PLAN.md
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
-Next: Execute 03-02-PLAN.md (Thread creation on first message)
+Next: Execute 03-03-PLAN.md (Thread actions UI)
 
 ## Phase 2 Completion Summary
 
@@ -92,3 +94,11 @@ All 3 plans executed successfully:
 
 **Verification:** 19/19 must-haves passed
 **Requirements:** CHAT-11, UIUX-01, UIUX-02, UIUX-03, UIUX-09 marked Complete
+
+## Phase 3 Progress
+
+| Plan | Focus | Status |
+|------|-------|--------|
+| 03-01 | Thread router and routing structure | ✓ Complete |
+| 03-02 | Thread creation on first message + auto-title | ✓ Complete |
+| 03-03 | Thread actions UI | Pending |
