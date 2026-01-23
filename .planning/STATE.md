@@ -87,8 +87,9 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-1 pending todo in `.planning/todos/pending/`:
+2 pending todos in `.planning/todos/pending/`:
 - **Rethink branding and UI to match Linear aesthetic** (ui)
+- **Implement database seeding for local development** (database)
 
 ### Blockers/Concerns
 
