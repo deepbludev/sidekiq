@@ -158,4 +158,8 @@ All 3 plans executed successfully:
 - tRPC optimistic updates with rollback
 - Render prop pattern for model hints
 
+**Verification:** 20/20 must-haves passed (1 gap fixed by orchestrator post-verification)
+**Requirements:** CHAT-02, CHAT-03 marked Complete
+**Gap closure:** Thread page wasn't passing activeModel to ChatInterface — fixed by adding activeModel column to query and initialModel prop
+
 **Architecture Note:** models.ts split into client-safe models-metadata.ts and server-only models.ts to prevent server-only import errors in client components.

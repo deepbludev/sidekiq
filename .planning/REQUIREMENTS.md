@@ -9,8 +9,8 @@
 ### Core Chat (CHAT)
 
 - [x] **CHAT-01**: User can send a message and receive a streaming AI response
-- [ ] **CHAT-02**: User can select which LLM model to use (GPT-4o, Claude, etc.) via dropdown near input
-- [ ] **CHAT-03**: Model selection persists for the entire thread (sticky per thread)
+- [x] **CHAT-02**: User can select which LLM model to use (GPT-4o, Claude, etc.) via dropdown near input
+- [x] **CHAT-03**: Model selection persists for the entire thread (sticky per thread)
 - [x] **CHAT-04**: User can create a new conversation thread
 - [x] **CHAT-05**: Thread title is auto-generated after first user message + AI response exchange
 - [x] **CHAT-06**: User can manually edit thread title
