@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 4 of 12 (Model Selection & Persistence)
+Phase: 4 of 13 (Model Selection & Persistence)
 Plan: None yet
 Status: Ready to plan
 Last activity: 2026-01-23 — Completed 03-05-PLAN.md (gap closure - browser tab title)
 
-Progress: [███░░░░░░░] ~25% (3/12 phases complete)
+Progress: [██░░░░░░░░] ~23% (3/13 phases complete)
 
 ## Performance Metrics
 
@@ -73,11 +73,16 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-None yet.
+1 pending todo in `.planning/todos/pending/`:
+- **Rethink branding and UI to match Linear aesthetic** (ui)
 
 ### Blockers/Concerns
 
 - AI_GATEWAY_API_KEY environment variable must be configured for /api/chat to work
+
+### Roadmap Evolution
+
+- Phase 13 added: Refactor architecture to vertical slicing by feature
 
 ## Session Continuity
 
