@@ -1,4 +1,4 @@
-import { DEFAULT_MODEL } from "@sidekiq/lib/ai/models";
+import { DEFAULT_MODEL } from "@sidekiq/lib/ai/models-metadata";
 import { z } from "zod";
 
 /**

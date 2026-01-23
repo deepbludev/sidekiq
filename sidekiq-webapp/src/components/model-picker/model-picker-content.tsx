@@ -14,7 +14,7 @@ import {
   getProviders,
   type ModelConfig,
   type Provider,
-} from "@sidekiq/lib/ai/models";
+} from "@sidekiq/lib/ai/models-metadata";
 import { getProviderDisplayName } from "@sidekiq/components/icons/provider-icons";
 import { ModelItem } from "./model-item";
 

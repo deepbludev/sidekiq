@@ -1,6 +1,6 @@
 "use client";
 
-import type { FormEvent, KeyboardEvent } from "react";
+import type { FormEvent, KeyboardEvent, ReactNode } from "react";
 import { Send, Square } from "lucide-react";
 
 import { Button } from "@sidekiq/components/ui/button";
@@ -20,6 +20,8 @@ interface ChatInputProps {
   onStop: () => void;
   /** Placeholder text */
   placeholder?: string;
+  /** Model picker component to render */
+  modelPicker?: ReactNode;
 }
 
 /**
@@ -38,6 +40,7 @@ export function ChatInput({
   isStreaming,
   onStop,
   placeholder = "Type a message...",
+  modelPicker,
 }: ChatInputProps) {
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     // Enter to send, Shift+Enter for newline
@@ -72,7 +75,8 @@ export function ChatInput({
         rows={1}
       />
 
-      <div className="absolute right-2 bottom-2 flex gap-1">
+      <div className="absolute right-2 bottom-2 flex items-center gap-2">
+        {modelPicker}
         {isStreaming ? (
           <Button
             type="button"

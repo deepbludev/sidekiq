@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { api } from "@sidekiq/trpc/react";
-import { DEFAULT_MODEL, isValidModel } from "@sidekiq/lib/ai/models";
+import { DEFAULT_MODEL, isValidModel } from "@sidekiq/lib/ai/models-metadata";
 
 interface UseModelSelectionOptions {
   /** Initial model from thread (for existing threads) */

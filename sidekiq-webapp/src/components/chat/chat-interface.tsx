@@ -17,6 +17,9 @@ import { ChatInput } from "./chat-input";
 import { TypingIndicator } from "./typing-indicator";
 import { ChatScrollAnchor } from "./chat-scroll-anchor";
 import { ScrollToBottom } from "./scroll-to-bottom";
+import { ModelSwitchHint } from "./model-switch-hint";
+import { ModelPicker } from "@sidekiq/components/model-picker";
+import { useModelSelection } from "@sidekiq/hooks/use-model-selection";
 import { cn } from "@sidekiq/lib/utils";
 import { api } from "@sidekiq/trpc/react";
 
@@ -30,6 +33,8 @@ interface ChatInterfaceProps {
   initialMessages?: UIMessage[];
   /** Initial thread title from SSR (null if not yet generated) */
   initialTitle?: string | null;
+  /** Initial model from thread (for existing threads) */
+  initialModel?: string | null;
 }
 
 /**
@@ -45,6 +50,7 @@ export function ChatInterface({
   threadId,
   initialMessages = [],
   initialTitle,
+  initialModel,
 }: ChatInterfaceProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
@@ -57,6 +63,18 @@ export function ChatInterface({
 
   // Track if we've already redirected to prevent duplicate navigation
   const hasRedirectedRef = useRef(false);
+
+  // Track model switches for inline hints
+  const [modelSwitches, setModelSwitches] = useState<
+    Array<{
+      afterMessageIndex: number;
+      previousModel: string;
+      currentModel: string;
+    }>
+  >([]);
+
+  // Track the model used for the most recent message
+  const lastMessageModelRef = useRef<string | null>(null);
 
   // Poll for title when we have a thread but no title yet
   const { data: titleData } = api.thread.getTitle.useQuery(
@@ -84,6 +102,30 @@ export function ChatInterface({
     const displayTitle = currentTitle ?? "New Chat";
     document.title = `${displayTitle} - Sidekiq`;
   }, [currentTitle]);
+
+  // Model selection with user preferences
+  const {
+    selectedModel,
+    setSelectedModel,
+    favoriteModelIds,
+    defaultModelId,
+    toggleFavorite,
+  } = useModelSelection({
+    threadModel: initialModel,
+    onModelChange: (previousModel, newModel) => {
+      // Only add hint if there are existing messages and user has sent at least one
+      if (messages.length > 0 && lastMessageModelRef.current) {
+        setModelSwitches((prev) => [
+          ...prev,
+          {
+            afterMessageIndex: messages.length - 1,
+            previousModel,
+            currentModel: newModel,
+          },
+        ]);
+      }
+    },
+  });
 
   /**
    * Custom fetch function that captures the X-Thread-Id header
@@ -145,7 +187,13 @@ export function ChatInterface({
     if (!trimmedInput || isStreaming) return;
 
     setInput("");
-    await sendMessage({ text: trimmedInput });
+    lastMessageModelRef.current = selectedModel;
+
+    // Pass model in the options.body - this merges with transport.body
+    await sendMessage(
+      { text: trimmedInput },
+      { body: { model: selectedModel } },
+    );
   };
 
   const handlePromptSelect = (prompt: string) => {
@@ -199,6 +247,13 @@ export function ChatInterface({
             onPromptSelect={handlePromptSelect}
             onEditMessage={handleEditMessage}
             onRegenerateMessage={handleRegenerateMessage}
+            modelSwitches={modelSwitches}
+            renderModelSwitchHint={(previousModel, currentModel) => (
+              <ModelSwitchHint
+                previousModel={previousModel}
+                currentModel={currentModel}
+              />
+            )}
           />
 
           {/* Typing indicator */}
@@ -231,6 +286,16 @@ export function ChatInterface({
             onSubmit={handleSubmit}
             isStreaming={isStreaming}
             onStop={stop}
+            modelPicker={
+              <ModelPicker
+                value={selectedModel}
+                onValueChange={setSelectedModel}
+                favoriteModelIds={favoriteModelIds}
+                defaultModelId={defaultModelId}
+                onToggleFavorite={toggleFavorite}
+                disabled={isStreaming}
+              />
+            }
           />
         </div>
       </div>

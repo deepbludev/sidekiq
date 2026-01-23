@@ -7,7 +7,7 @@ import {
   PopoverTrigger,
 } from "@sidekiq/components/ui/popover";
 import { TooltipProvider } from "@sidekiq/components/ui/tooltip";
-import { getModelConfig } from "@sidekiq/lib/ai/models";
+import { getModelConfig } from "@sidekiq/lib/ai/models-metadata";
 import { ModelPickerTrigger } from "./model-picker-trigger";
 import { ModelPickerContent } from "./model-picker-content";
 

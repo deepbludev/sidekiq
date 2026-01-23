@@ -1,9 +1,16 @@
 "use client";
 
 import type { UIMessage } from "ai";
+import type { ReactNode } from "react";
 
 import { MessageItem } from "./message-item";
 import { EmptyState } from "./empty-state";
+
+export interface ModelSwitch {
+  afterMessageIndex: number;
+  previousModel: string;
+  currentModel: string;
+}
 
 interface MessageListProps {
   /** Array of messages to render */
@@ -16,6 +23,13 @@ interface MessageListProps {
   onEditMessage?: (messageId: string) => void;
   /** Callback when user clicks regenerate on a message */
   onRegenerateMessage?: (messageId: string) => void;
+  /** Model switches to render as inline hints */
+  modelSwitches?: ModelSwitch[];
+  /** Render function for model switch hints */
+  renderModelSwitchHint?: (
+    previousModel: string,
+    currentModel: string,
+  ) => ReactNode;
 }
 
 /**
@@ -27,6 +41,8 @@ export function MessageList({
   onPromptSelect,
   onEditMessage,
   onRegenerateMessage,
+  modelSwitches = [],
+  renderModelSwitchHint,
 }: MessageListProps) {
   if (messages.length === 0) {
     return onPromptSelect ? (
@@ -46,21 +62,35 @@ export function MessageList({
     );
   }
 
+  // Build a map of hints by their position (after message index)
+  const hintsByPosition = new Map<number, ModelSwitch>();
+  for (const switchData of modelSwitches) {
+    hintsByPosition.set(switchData.afterMessageIndex, switchData);
+  }
+
   return (
     <div className="divide-border/50 divide-y">
-      {messages.map((message) => (
-        <MessageItem
-          key={message.id}
-          message={message}
-          isStreaming={message.id === streamingMessageId}
-          onEdit={onEditMessage ? () => onEditMessage(message.id) : undefined}
-          onRegenerate={
-            onRegenerateMessage
-              ? () => onRegenerateMessage(message.id)
-              : undefined
-          }
-        />
-      ))}
+      {messages.map((message, index) => {
+        const hint = hintsByPosition.get(index);
+        return (
+          <div key={message.id}>
+            <MessageItem
+              message={message}
+              isStreaming={message.id === streamingMessageId}
+              onEdit={
+                onEditMessage ? () => onEditMessage(message.id) : undefined
+              }
+              onRegenerate={
+                onRegenerateMessage
+                  ? () => onRegenerateMessage(message.id)
+                  : undefined
+              }
+            />
+            {hint &&
+              renderModelSwitchHint?.(hint.previousModel, hint.currentModel)}
+          </div>
+        );
+      })}
     </div>
   );
 }
