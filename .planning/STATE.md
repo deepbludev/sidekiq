@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 4 of 13 (Model Selection & Persistence) - COMPLETE
-Plan: 3 of 3 complete
-Status: Phase complete
-Last activity: 2026-01-23 - Completed 04-03-PLAN.md (persistence and integration)
+Plan: 4 of 4 complete (includes gap closure plan)
+Status: Phase complete (all gaps closed)
+Last activity: 2026-01-23 - Completed 04-04-PLAN.md (model picker fix - gap closure)
 
 Progress: [████░░░░░░] ~31% (4/13 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: ~7 min
-- Total execution time: ~1 hour 28 min
+- Total execution time: ~1 hour 31 min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [████░░░░░░] ~31% (4/13 phases complete)
 | 01 | 2 | 39min | 19.5min |
 | 02 | 3 | 18min | 6min |
 | 03 | 5 | 17min | 3.4min |
-| 04 | 3 | 14min | 4.7min |
+| 04 | 4 | 17min | 4.25min |
 
 **Recent Trend:**
-- Last 5 plans: 03-05 (2min), 04-01 (3min), 04-02 (4min), 04-03 (7min)
+- Last 5 plans: 04-01 (3min), 04-02 (4min), 04-03 (7min), 04-04 (3min)
 - Trend: Consistent execution (~4min avg for last 4 plans)
 
 *Updated after each plan completion*
@@ -81,6 +81,7 @@ Recent decisions affecting current work:
 - Optimistic updates with tRPC mutation rollback pattern (confirmed - 04-03)
 - Model sent via sendMessage body option for per-message flexibility (confirmed - 04-03)
 - Render prop pattern for model switch hints (confirmed - 04-03)
+- ComponentPropsWithoutRef for Radix asChild prop forwarding (confirmed - 04-04)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 
@@ -100,7 +101,7 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 04-03-PLAN.md (persistence and integration) - Phase 4 complete
+Stopped at: Completed 04-04-PLAN.md (model picker fix - gap closure) - Phase 4 fully complete
 Resume file: None
 Next: Phase 5 - Sidebar & Navigation
 
@@ -160,6 +161,9 @@ All 3 plans executed successfully:
 
 **Verification:** 20/20 must-haves passed (1 gap fixed by orchestrator post-verification)
 **Requirements:** CHAT-02, CHAT-03 marked Complete
-**Gap closure:** Thread page wasn't passing activeModel to ChatInterface — fixed by adding activeModel column to query and initialModel prop
+**Gap closure 1:** Thread page wasn't passing activeModel to ChatInterface — fixed by adding activeModel column to query and initialModel prop
+**Gap closure 2:** Model picker dropdown wasn't opening — fixed by forwarding rest props (including onClick) from PopoverTrigger to Button element
 
 **Architecture Note:** models.ts split into client-safe models-metadata.ts and server-only models.ts to prevent server-only import errors in client components.
+
+**Pattern Note:** Radix UI asChild requires child components to spread ...props to receive event handlers.
