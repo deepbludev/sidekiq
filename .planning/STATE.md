@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 4 of 13 (Model Selection & Persistence)
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-01-23 — Completed 04-01-PLAN.md (foundation for model picker)
+Last activity: 2026-01-23 — Completed 04-02-PLAN.md (model picker component)
 
-Progress: [███░░░░░░░] ~27% (3/13 phases complete, 1/3 phase 4 plans)
+Progress: [███░░░░░░░] ~27% (3/13 phases complete, 2/3 phase 4 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
+- Total plans completed: 12
 - Average duration: ~7 min
-- Total execution time: ~1 hour 17 min
+- Total execution time: ~1 hour 21 min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [███░░░░░░░] ~27% (3/13 phases complete, 1/3 phase
 | 01 | 2 | 39min | 19.5min |
 | 02 | 3 | 18min | 6min |
 | 03 | 5 | 17min | 3.4min |
-| 04 | 1 | 3min | 3min |
+| 04 | 2 | 7min | 3.5min |
 
 **Recent Trend:**
-- Last 5 plans: 03-03 (5min), 03-04 (2min), 03-05 (2min), 04-01 (3min)
+- Last 5 plans: 03-04 (2min), 03-05 (2min), 04-01 (3min), 04-02 (4min)
 - Trend: Very fast execution (~3min avg for last 4 plans)
 
 *Updated after each plan completion*
@@ -73,6 +73,10 @@ Recent decisions affecting current work:
 - JSONB default {} for nullable preferences (confirmed - 04-01)
 - ModelFeature type for capability tags (confirmed - 04-01)
 - getProviders() helper for picker UI grouping (confirmed - 04-01)
+- Fuse.js threshold 0.4 for typo tolerance (confirmed - 04-02)
+- HoverCard openDelay 400ms for non-jarring display (confirmed - 04-02)
+- Favorites section hidden during search (confirmed - 04-02)
+- TooltipProvider at picker level for nested tooltips (confirmed - 04-02)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 
@@ -92,9 +96,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 04-01-PLAN.md (foundation for model picker)
+Stopped at: Completed 04-02-PLAN.md (model picker component)
 Resume file: None
-Next: 04-02-PLAN.md (model picker component)
+Next: 04-03-PLAN.md (persistence and integration)
 
 ## Phase 2 Completion Summary
 
@@ -128,3 +132,14 @@ All 5 plans executed successfully:
 **Note:** Thread action components await sidebar integration (Phase 5)
 **Gap closure 1:** 03-04 fixed stream abortion during URL update (window.history.replaceState instead of router.replace)
 **Gap closure 2:** 03-05 fixed browser tab title via SSR generateMetadata and title polling
+
+## Phase 4 Progress
+
+| Plan | Focus | Status |
+|------|-------|--------|
+| 04-01 | Foundation (schema, metadata, shadcn) | ✓ Complete |
+| 04-02 | Model picker component | ✓ Complete |
+| 04-03 | Persistence and integration | Pending |
+
+**Components Ready:** ModelPicker, ModelPickerTrigger, ModelPickerContent, ModelItem, ModelHoverCard, ProviderIcon
+**Patterns Established:** Popover + Command pattern, Fuse.js fuzzy search, HoverCard details
