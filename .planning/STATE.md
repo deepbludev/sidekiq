@@ -106,13 +106,14 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-6 pending todos in `.planning/todos/pending/`:
+7 pending todos in `.planning/todos/pending/`:
 - **Implement Projects feature** (ui) — workspace grouping chats, knowledge base, team sharing
 - **Rethink branding and UI to match Linear aesthetic** (ui)
 - **Implement database seeding for local development** (database)
 - **Migrate next lint to ESLint CLI** (tooling)
 - **Allow importing/exporting Sidekiq config from/to JSON file** (ui)
 - **Fix Cmd+N shortcut conflicting with browser new window** (ui)
+- **Sidekiq creation agent feature** (ui) — create a Sidekiq by chatting similar to GPT Builder
 - ~~Analyze Convex migration as PostgreSQL replacement~~ (completed - DEFER)
 
 ### Blockers/Concerns
