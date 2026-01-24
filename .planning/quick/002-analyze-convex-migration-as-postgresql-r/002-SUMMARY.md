@@ -91,14 +91,14 @@ None - no external service configuration required.
 
 ### Why DEFER (Not Migrate Now)
 
-| Factor | Assessment |
-|--------|------------|
+| Factor              | Assessment                             |
+| ------------------- | -------------------------------------- |
 | Current pain points | None - PostgreSQL/Drizzle working well |
-| Migration cost | 17-24 days development |
-| Roadmap impact | Delays MVP by ~1 month |
-| Real-time benefits | Primarily Phase 8-9 (teams) |
-| Vendor lock-in | HIGH risk with Convex |
-| Better Auth compat | Requires work (not native) |
+| Migration cost      | 17-24 days development                 |
+| Roadmap impact      | Delays MVP by ~1 month                 |
+| Real-time benefits  | Primarily Phase 8-9 (teams)            |
+| Vendor lock-in      | HIGH risk with Convex                  |
+| Better Auth compat  | Requires work (not native)             |
 
 ### When to Reconsider
 

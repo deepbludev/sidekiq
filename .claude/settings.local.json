@@ -39,7 +39,8 @@
       "mcp__shadcn__get_item_examples_from_registries",
       "Skill(gsd:execute-phase)",
       "Bash(chmod:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "WebFetch(domain:t3.chat)"
     ]
   }
 }
