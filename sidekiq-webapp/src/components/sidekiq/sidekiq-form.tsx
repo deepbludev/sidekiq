@@ -106,17 +106,21 @@ export function SidekiqForm({
     }
   }, [name, mode, form]);
 
+  // Track dirty state for unsaved changes warning
+  // Must destructure to subscribe to formState changes (React Hook Form optimization)
+  const { isDirty } = form.formState;
+
   // Unsaved changes warning
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (form.formState.isDirty) {
+      if (isDirty) {
         e.preventDefault();
         e.returnValue = "";
       }
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [form.formState.isDirty]);
+  }, [isDirty]);
 
   const onSubmit = async (data: SidekiqFormValues) => {
     if (mode === "create") {
