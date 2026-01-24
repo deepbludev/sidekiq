@@ -100,14 +100,14 @@ Plans:
 ### Phase 5: Sidebar & Navigation
 **Goal**: User can browse conversation history with search, date grouping, and visual indicators
 **Depends on**: Phase 4
-**Requirements**: SIDE-01, SIDE-02, SIDE-03, SIDE-04, SIDE-05, SIDE-06
+**Requirements**: SIDE-01, SIDE-02, SIDE-03, SIDE-04, SIDE-05
+**Deferred**: SIDE-06 (Sidekiq visual indicators) -> Phase 7 (threads don't have sidekiqId until Sidekiq Chat Integration)
 **Success Criteria** (what must be TRUE):
   1. Sidebar shows conversation history sorted by lastActivityAt (most recent first)
   2. Pinned threads appear at top of sidebar regardless of activity
   3. Threads are grouped by date (Today / Yesterday / This Week / Older)
   4. User can search threads by title and content
   5. Scroll position is preserved when switching between threads
-  6. Sidekiq chats show visual indicator (icon, badge, subtitle with Sidekiq name)
 **Plans**: 5 plans
 
 Plans:
@@ -138,12 +138,13 @@ Plans:
 ### Phase 7: Sidekiq Chat Integration
 **Goal**: User can start a chat with a Sidekiq and see its personality in responses
 **Depends on**: Phase 6
-**Requirements**: KIQQ-04, KIQQ-05
+**Requirements**: KIQQ-04, KIQQ-05, SIDE-06
 **Success Criteria** (what must be TRUE):
   1. User can start a chat with a Sidekiq from the Sidekiq list
   2. Sidekiq's instructions are prepended as system message (not stored in message history)
   3. UI clearly indicates which Sidekiq is currently active in a conversation
   4. Messages from Sidekiq-based conversations reflect the custom instructions
+  5. Sidekiq chats show visual indicator in sidebar (icon, badge, subtitle with Sidekiq name)
 **Plans**: TBD
 
 Plans:
