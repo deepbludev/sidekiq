@@ -108,10 +108,14 @@ Plans:
   4. User can search threads by title and content
   5. Scroll position is preserved when switching between threads
   6. Sidekiq chats show visual indicator (icon, badge, subtitle with Sidekiq name)
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 05-01: TBD
+- [ ] 05-01-PLAN.md — Foundation (deps, sidebar state hook, keyboard shortcuts, date grouping)
+- [ ] 05-02-PLAN.md — Sidebar layout (header, collapsed icon rail, layout integration)
+- [ ] 05-03-PLAN.md — Thread list with virtualization and date groups
+- [ ] 05-04-PLAN.md — Thread search with fuzzy matching
+- [ ] 05-05-PLAN.md — Mobile drawer and footer with user menu
 
 ### Phase 6: Sidekiq CRUD
 **Goal**: User can create, edit, and delete custom AI assistants (Sidekiqs)
