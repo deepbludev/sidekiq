@@ -122,6 +122,7 @@ Recent decisions affecting current work:
 |---|-------------|------|--------|-----------|
 | 001 | Change default model to google/gemini-2.0-flash | 2026-01-23 | 95b6dae | [001-change-the-default-model-to-google-gemin](./quick/001-change-the-default-model-to-google-gemin/) |
 | 002 | Analyze Convex migration (DEFER) | 2026-01-24 | e22023c | [002-analyze-convex-migration-as-postgresql-r](./quick/002-analyze-convex-migration-as-postgresql-r/) |
+| 003 | Add Phase 5 unit and E2E tests | 2026-01-24 | 8669e75 | [003-update-test-suite-with-phase-5-unit-and-](./quick/003-update-test-suite-with-phase-5-unit-and-/) |
 
 ### Roadmap Evolution
 
@@ -130,7 +131,7 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 05-05-PLAN.md (Mobile drawer & footer) - Phase 5 complete
+Stopped at: Completed quick-003 (Phase 5 unit and E2E tests)
 Resume file: None
 Next: Phase 6 - Sidekiqs CRUD
 
