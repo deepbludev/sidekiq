@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 5 of 13 (Sidebar & Navigation) - IN PROGRESS
-Plan: 2 of 5 complete
-Status: Plan 05-02 complete, continuing to 05-03
-Last activity: 2026-01-24 - Completed 05-02-PLAN.md (Sidebar layout structure)
+Plan: 3 of 5 complete
+Status: Plan 05-03 complete, continuing to 05-04
+Last activity: 2026-01-24 - Completed 05-03-PLAN.md (Virtualized thread list)
 
-Progress: [████░░░░░░] ~38% (4 phases + 2 plans complete)
+Progress: [████░░░░░░] ~40% (4 phases + 3 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: ~6 min
-- Total execution time: ~1 hour 39 min
+- Total execution time: ~1 hour 46 min
 
 **By Phase:**
 
@@ -31,11 +31,11 @@ Progress: [████░░░░░░] ~38% (4 phases + 2 plans complete)
 | 02 | 3 | 18min | 6min |
 | 03 | 5 | 17min | 3.4min |
 | 04 | 4 | 17min | 4.25min |
-| 05 | 2 | 8min | 4min |
+| 05 | 3 | 15min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 04-03 (7min), 04-04 (3min), 05-01 (5min), 05-02 (3min)
-- Trend: Consistent execution (~4.5min avg for last 4 plans)
+- Last 5 plans: 04-04 (3min), 05-01 (5min), 05-02 (3min), 05-03 (7min)
+- Trend: Consistent execution (~4.5min avg)
 
 *Updated after each plan completion*
 
@@ -89,6 +89,9 @@ Recent decisions affecting current work:
 - Sidebar widths: 288px expanded (w-72), 64px collapsed (w-16) (confirmed - 05-02)
 - 200ms ease-out transition for sidebar collapse animation (confirmed - 05-02)
 - Icon rail pattern for collapsed sidebar (New Chat, Sidekiqs, Settings) (confirmed - 05-02)
+- Scroll position in ref (not state) to avoid re-renders (confirmed - 05-03)
+- Flattened groups with discriminated union for virtualization (confirmed - 05-03)
+- TanStack Virtual overscan of 5 items for smooth scrolling (confirmed - 05-03)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 - DEFER Convex migration - PostgreSQL/Drizzle has no pain points, reconsider at Phase 8-9 (confirmed - quick-002)
@@ -118,9 +121,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 05-02-PLAN.md (Sidebar layout structure)
+Stopped at: Completed 05-03-PLAN.md (Virtualized thread list)
 Resume file: None
-Next: 05-03-PLAN.md (Thread list)
+Next: 05-04-PLAN.md (Search)
 
 ## Phase 2 Completion Summary
 
