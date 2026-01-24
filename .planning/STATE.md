@@ -106,9 +106,10 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-2 pending todos in `.planning/todos/pending/`:
+3 pending todos in `.planning/todos/pending/`:
 - **Rethink branding and UI to match Linear aesthetic** (ui)
 - **Implement database seeding for local development** (database)
+- **Migrate next lint to ESLint CLI** (tooling)
 - ~~Analyze Convex migration as PostgreSQL replacement~~ (completed - DEFER)
 
 ### Blockers/Concerns
