@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -32,6 +32,16 @@ export interface UserPreferences {
   /** Array of model IDs the user has favorited */
   favoriteModels?: string[];
   // Prepared for Phase 6/7: sidekiqDefaults?: Record<string, string>;
+}
+
+/**
+ * Sidekiq avatar configuration.
+ * Supports either text initials or emoji with customizable background color.
+ */
+export interface SidekiqAvatar {
+  type: "initials" | "emoji";
+  color: string;
+  emoji?: string;
 }
 
 export const user = pgTable("user", {
@@ -184,6 +194,24 @@ export const sidekiqs = pgTable(
     name: varchar("name", { length: 100 }).notNull(),
     description: varchar("description", { length: 500 }),
     instructions: text("instructions").notNull(),
+    /** Array of conversation starter prompts */
+    conversationStarters: jsonb("conversation_starters")
+      .$type<string[]>()
+      .default([])
+      .notNull(),
+    /** Default model ID to use for new chats with this Sidekiq */
+    defaultModel: varchar("default_model", { length: 100 }),
+    /** Avatar configuration (initials or emoji with color) */
+    avatar: jsonb("avatar")
+      .$type<SidekiqAvatar>()
+      .default({ type: "initials", color: "#6366f1" })
+      .notNull(),
+    /** Whether this Sidekiq is favorited (appears at top of sidebar) */
+    isFavorite: boolean("is_favorite").notNull().default(false),
+    /** Last time this Sidekiq was used to start a chat */
+    lastUsedAt: timestamp("last_used_at"),
+    /** Denormalized count of threads using this Sidekiq */
+    threadCount: integer("thread_count").notNull().default(0),
     isPublic: boolean("is_public").notNull().default(false),
     canTeamEdit: boolean("can_team_edit").notNull().default(false),
     createdAt: timestamp("created_at")
@@ -197,6 +225,11 @@ export const sidekiqs = pgTable(
   (t) => [
     index("sidekiq_owner_idx").on(t.ownerId),
     index("sidekiq_team_idx").on(t.teamId),
+    index("sidekiq_favorite_idx").on(t.isFavorite),
+    uniqueIndex("sidekiq_owner_name_unique").on(
+      t.ownerId,
+      sql`LOWER(${t.name})`,
+    ),
   ],
 );
 
