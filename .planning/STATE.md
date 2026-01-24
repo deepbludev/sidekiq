@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 6 of 13 (Sidekiq CRUD)
-Plan: 2 of 4 complete
+Plan: 3 of 7 complete
 Status: Phase 6 in progress
-Last activity: 2026-01-24 - Completed 06-02-PLAN.md (Utilities and hooks)
+Last activity: 2026-01-24 - Completed 06-03-PLAN.md (List page and sidebar)
 
-Progress: [█████░░░░░] ~50% (5 phases + 2 plans complete)
+Progress: [█████░░░░░] ~52% (5 phases + 3 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
-- Average duration: ~7.5 min
-- Total execution time: ~2 hours 34 min
+- Total plans completed: 21
+- Average duration: ~7.4 min
+- Total execution time: ~2 hours 41 min
 
 **By Phase:**
 
@@ -32,11 +32,11 @@ Progress: [█████░░░░░] ~50% (5 phases + 2 plans complete)
 | 03 | 5 | 17min | 3.4min |
 | 04 | 4 | 17min | 4.25min |
 | 05 | 5 | 58min | 11.6min |
-| 06 | 2 | 40min | 20min |
+| 06 | 3 | 47min | 15.7min |
 
 **Recent Trend:**
-- Last 5 plans: 05-04 (35min), 05-05 (8min), 06-01 (12min), 06-02 (28min)
-- Trend: Phase 6 in progress, 06-02 longer due to git/lint issues
+- Last 5 plans: 05-05 (8min), 06-01 (12min), 06-02 (28min), 06-03 (7min)
+- Trend: 06-03 fast execution, list components straightforward
 
 *Updated after each plan completion*
 
@@ -107,6 +107,9 @@ Recent decisions affecting current work:
 - djb2 hash algorithm for deterministic avatar colors (confirmed - 06-02)
 - Optimistic updates for sidekiq delete and toggleFavorite (confirmed - 06-02)
 - localStorage key 'sidekiq-view-preference' for grid/list toggle (confirmed - 06-02)
+- Sidebar Sidekiq click navigates to edit, not chat (Phase 7 integration pending) (confirmed - 06-03)
+- Type-to-confirm delete with exact name match (confirmed - 06-03)
+- Sidebar shows max 5 Sidekiqs with favorites first (confirmed - 06-03)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 - DEFER Convex migration - PostgreSQL/Drizzle has no pain points, reconsider at Phase 8-9 (confirmed - quick-002)
@@ -142,9 +145,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 06-02-PLAN.md (Utilities and hooks)
+Stopped at: Completed 06-03-PLAN.md (List page and sidebar)
 Resume file: None
-Next: 06-03-PLAN.md - List page and components
+Next: 06-04-PLAN.md - Create/edit form
 
 ## Phase 2 Completion Summary
 
