@@ -23,12 +23,12 @@
 
 ### Sidebar & Organization (SIDE)
 
-- [ ] **SIDE-01**: Sidebar shows conversation history sorted by lastActivityAt (most recent first)
-- [ ] **SIDE-02**: Pinned threads appear at top of sidebar regardless of activity
-- [ ] **SIDE-03**: Threads are grouped by date (Today / Yesterday / This Week / Older)
-- [ ] **SIDE-04**: User can search threads by title and content
-- [ ] **SIDE-05**: Scroll position is preserved when switching between threads
-- [ ] **SIDE-06**: Sidekiq chats show visual indicator (icon, badge, subtitle with Sidekiq name)
+- [x] **SIDE-01**: Sidebar shows conversation history sorted by lastActivityAt (most recent first)
+- [x] **SIDE-02**: Pinned threads appear at top of sidebar regardless of activity
+- [x] **SIDE-03**: Threads are grouped by date (Today / Yesterday / This Week / Older)
+- [x] **SIDE-04**: User can search threads by title and content
+- [x] **SIDE-05**: Scroll position is preserved when switching between threads
+- [ ] **SIDE-06**: Sidekiq chats show visual indicator (icon, badge, subtitle with Sidekiq name) - DEFERRED to Phase 7
 
 ### Sidekiqs - Custom Assistants (KIQQ)
 
@@ -129,12 +129,12 @@
 | CHAT-10 | Phase 1 | Complete |
 | CHAT-11 | Phase 2 | Complete |
 | CHAT-12 | Phase 1 | Complete |
-| SIDE-01 | Phase 5 | Pending |
-| SIDE-02 | Phase 5 | Pending |
-| SIDE-03 | Phase 5 | Pending |
-| SIDE-04 | Phase 5 | Pending |
-| SIDE-05 | Phase 5 | Pending |
-| SIDE-06 | Phase 5 | Pending |
+| SIDE-01 | Phase 5 | Complete |
+| SIDE-02 | Phase 5 | Complete |
+| SIDE-03 | Phase 5 | Complete |
+| SIDE-04 | Phase 5 | Complete |
+| SIDE-05 | Phase 5 | Complete |
+| SIDE-06 | Phase 7 | Pending |
 | KIQQ-01 | Phase 6 | Pending |
 | KIQQ-02 | Phase 6 | Pending |
 | KIQQ-03 | Phase 6 | Pending |

@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Basic Chat Interface** - Message UI, input, optimistic updates
 - [x] **Phase 3: Thread Management** - Create, delete, archive, pin, auto-title
 - [x] **Phase 4: Model Selection & Persistence** - Model picker, sticky selection
-- [ ] **Phase 5: Sidebar & Navigation** - History, date grouping, search
+- [x] **Phase 5: Sidebar & Navigation** - History, date grouping, search
 - [ ] **Phase 6: Sidekiq CRUD** - Create, edit, delete custom assistants
 - [ ] **Phase 7: Sidekiq Chat Integration** - Chat with Sidekiq, system prompt injection
 - [ ] **Phase 8: Team Foundation** - Create teams, member management, invites
@@ -111,11 +111,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Foundation (deps, sidebar state hook, keyboard shortcuts, date grouping)
-- [ ] 05-02-PLAN.md — Sidebar layout (header, collapsed icon rail, layout integration)
-- [ ] 05-03-PLAN.md — Thread list with virtualization and date groups
-- [ ] 05-04-PLAN.md — Thread search with fuzzy matching
-- [ ] 05-05-PLAN.md — Mobile drawer and footer with user menu
+- [x] 05-01-PLAN.md — Foundation (deps, sidebar state hook, keyboard shortcuts, date grouping)
+- [x] 05-02-PLAN.md — Sidebar layout (header, collapsed icon rail, layout integration)
+- [x] 05-03-PLAN.md — Thread list with virtualization and date groups
+- [x] 05-04-PLAN.md — Thread search with fuzzy matching
+- [x] 05-05-PLAN.md — Mobile drawer and footer with user menu
 
 ### Phase 6: Sidekiq CRUD
 **Goal**: User can create, edit, and delete custom AI assistants (Sidekiqs)
@@ -248,7 +248,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 2. Basic Chat Interface | 3/3 | ✓ Complete | 2026-01-23 |
 | 3. Thread Management | 5/5 | ✓ Complete | 2026-01-23 |
 | 4. Model Selection & Persistence | 4/4 | ✓ Complete | 2026-01-23 |
-| 5. Sidebar & Navigation | 0/1 | Not started | - |
+| 5. Sidebar & Navigation | 5/5 | ✓ Complete | 2026-01-24 |
 | 6. Sidekiq CRUD | 0/1 | Not started | - |
 | 7. Sidekiq Chat Integration | 0/1 | Not started | - |
 | 8. Team Foundation | 0/1 | Not started | - |
