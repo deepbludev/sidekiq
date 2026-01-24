@@ -120,20 +120,26 @@ Plans:
 ### Phase 6: Sidekiq CRUD
 **Goal**: User can create, edit, and delete custom AI assistants (Sidekiqs)
 **Depends on**: Phase 5
-**Requirements**: KIQQ-01, KIQQ-02, KIQQ-03, KIQQ-06, KIQQ-07, KIQQ-08, KIQQ-09, KIQQ-10
+**Requirements**: KIQQ-01, KIQQ-02, KIQQ-03, KIQQ-06, KIQQ-08, KIQQ-09, KIQQ-10
+**Deferred**: KIQQ-07 (100 Sidekiqs limit) -> subscription-based limits in future milestone
 **Success Criteria** (what must be TRUE):
   1. User can create a Sidekiq with name, description, and instructions (system prompt)
   2. User can edit their Sidekiq's name, description, and instructions
   3. User can delete their Sidekiq
   4. Sidekiqs show text initial avatars (colored circles with initials)
-  5. User is limited to 100 Sidekiqs per account
-  6. User is limited to 10 Sidekiq creations per hour (anti-spam rate limiting)
-  7. Instructions are validated (max 4000 characters)
-  8. Empty state shows "Create your first Sidekiq" with CTA
-**Plans**: TBD
+  5. User is limited to 25 Sidekiq creations per hour (anti-spam rate limiting)
+  6. Instructions are validated (max 8000 characters per CONTEXT.md)
+  7. Empty state shows "Create your first Sidekiq" with CTA
+**Plans**: 7 plans
 
 Plans:
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md — Schema extensions + tRPC router (CRUD with rate limiting)
+- [ ] 06-02-PLAN.md — Dependencies + utilities (avatar, hooks, view preference)
+- [ ] 06-03-PLAN.md — List page + empty state + sidebar section
+- [ ] 06-04-PLAN.md — Create form with split layout and live preview
+- [ ] 06-05-PLAN.md — Conversation starters (drag-drop) + instructions editor (markdown)
+- [ ] 06-06-PLAN.md — Avatar customization (color picker + emoji picker)
+- [ ] 06-07-PLAN.md — Edit page + templates + final verification
 
 ### Phase 7: Sidekiq Chat Integration
 **Goal**: User can start a chat with a Sidekiq and see its personality in responses
@@ -240,16 +246,16 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. AI Streaming Infrastructure | 2/2 | ✓ Complete | 2026-01-22 |
-| 2. Basic Chat Interface | 3/3 | ✓ Complete | 2026-01-23 |
-| 3. Thread Management | 5/5 | ✓ Complete | 2026-01-23 |
-| 4. Model Selection & Persistence | 4/4 | ✓ Complete | 2026-01-23 |
-| 5. Sidebar & Navigation | 5/5 | ✓ Complete | 2026-01-24 |
-| 6. Sidekiq CRUD | 0/1 | Not started | - |
+| 1. AI Streaming Infrastructure | 2/2 | Complete | 2026-01-22 |
+| 2. Basic Chat Interface | 3/3 | Complete | 2026-01-23 |
+| 3. Thread Management | 5/5 | Complete | 2026-01-23 |
+| 4. Model Selection & Persistence | 4/4 | Complete | 2026-01-23 |
+| 5. Sidebar & Navigation | 5/5 | Complete | 2026-01-24 |
+| 6. Sidekiq CRUD | 0/7 | Planned | - |
 | 7. Sidekiq Chat Integration | 0/1 | Not started | - |
 | 8. Team Foundation | 0/1 | Not started | - |
 | 9. Team Sidekiq Sharing | 0/1 | Not started | - |
