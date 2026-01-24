@@ -50,6 +50,8 @@ function flattenGroupsForVirtualization(
 interface SidebarThreadListProps {
   /** Search query for filtering threads by title */
   searchQuery?: string;
+  /** Callback when a thread is selected (used by mobile drawer to close) */
+  onThreadSelect?: () => void;
 }
 
 /**
@@ -64,14 +66,20 @@ interface SidebarThreadListProps {
  * - Active thread highlighting via pathname
  * - Empty, loading, and no-results states
  *
+ * @param props.searchQuery - Search query for filtering threads
+ * @param props.onThreadSelect - Callback when a thread is selected
+ *
  * @example
  * ```tsx
  * <SidebarThreadList />
- * // Or with search:
- * <SidebarThreadList searchQuery={searchQuery} />
+ * // Or with search and callback:
+ * <SidebarThreadList searchQuery={searchQuery} onThreadSelect={() => setOpen(false)} />
  * ```
  */
-export function SidebarThreadList({ searchQuery }: SidebarThreadListProps) {
+export function SidebarThreadList({
+  searchQuery,
+  onThreadSelect,
+}: SidebarThreadListProps) {
   const pathname = usePathname();
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -258,7 +266,7 @@ export function SidebarThreadList({ searchQuery }: SidebarThreadListProps) {
               {item.type === "header" ? (
                 <SidebarThreadGroup group={item.group} />
               ) : (
-                <div className="px-2">
+                <div className="px-2" onClick={onThreadSelect}>
                   <ThreadItem
                     thread={item.thread}
                     isActive={item.thread.id === activeThreadId}

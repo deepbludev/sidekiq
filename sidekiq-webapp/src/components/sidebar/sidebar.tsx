@@ -18,6 +18,7 @@ import { SidebarHeader } from "./sidebar-header";
 import { SidebarCollapsed } from "./sidebar-collapsed";
 import { SidebarSearch } from "./sidebar-search";
 import { SidebarThreadList } from "./sidebar-thread-list";
+import { SidebarFooter } from "./sidebar-footer";
 
 /**
  * Main sidebar component with collapse/expand behavior and search.
@@ -32,6 +33,8 @@ import { SidebarThreadList } from "./sidebar-thread-list";
  *
  * Follows Linear/Notion-style sidebar pattern per design spec.
  *
+ * @param props.onThreadSelect - Callback when a thread is selected (used by mobile drawer to close)
+ *
  * @example
  * ```tsx
  * <div className="flex h-screen">
@@ -40,7 +43,13 @@ import { SidebarThreadList } from "./sidebar-thread-list";
  * </div>
  * ```
  */
-export function Sidebar() {
+
+interface SidebarProps {
+  /** Callback when a thread is selected (used by mobile drawer to close) */
+  onThreadSelect?: () => void;
+}
+
+export function Sidebar({ onThreadSelect }: SidebarProps) {
   const router = useRouter();
   const { isCollapsed, toggle } = useSidebarState();
   const [searchQuery, setSearchQuery] = useState("");
@@ -79,13 +88,14 @@ export function Sidebar() {
 
           {/* Thread list */}
           <div className="flex-1 overflow-hidden">
-            <SidebarThreadList searchQuery={searchQuery} />
+            <SidebarThreadList
+              searchQuery={searchQuery}
+              onThreadSelect={onThreadSelect}
+            />
           </div>
 
-          {/* Footer placeholder - will be added in Plan 05-05 */}
-          <div className="border-border/50 border-t p-3">
-            {/* SidebarFooter will go here */}
-          </div>
+          {/* Footer with user menu */}
+          <SidebarFooter isCollapsed={isCollapsed} />
         </>
       )}
 
