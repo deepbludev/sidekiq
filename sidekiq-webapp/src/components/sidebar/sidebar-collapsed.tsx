@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { PenSquare, Sparkles, Settings } from "lucide-react";
 
 import { Button } from "@sidekiq/components/ui/button";
@@ -58,17 +59,13 @@ export function SidebarCollapsed({ onNewChat }: SidebarCollapsedProps) {
         <TooltipContent side="right">New Chat</TooltipContent>
       </Tooltip>
 
-      {/* Sidekiqs - placeholder, no action yet */}
+      {/* Sidekiqs */}
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Sidekiqs"
-            disabled
-            className="opacity-50"
-          >
-            <Sparkles className="size-5" />
+          <Button variant="ghost" size="icon" asChild aria-label="Sidekiqs">
+            <Link href="/sidekiqs">
+              <Sparkles className="size-5" />
+            </Link>
           </Button>
         </TooltipTrigger>
         <TooltipContent side="right">Sidekiqs</TooltipContent>
