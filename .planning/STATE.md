@@ -91,6 +91,7 @@ Recent decisions affecting current work:
 2 pending todos in `.planning/todos/pending/`:
 - **Rethink branding and UI to match Linear aesthetic** (ui)
 - **Implement database seeding for local development** (database)
+- ~~Analyze Convex migration as PostgreSQL replacement~~ (completed - DEFER)
 
 ### Blockers/Concerns
 
