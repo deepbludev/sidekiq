@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 4 of 13 (Model Selection & Persistence) - COMPLETE
-Plan: 4 of 4 complete (includes gap closure plan)
-Status: Phase complete (all gaps closed)
-Last activity: 2026-01-24 - Completed quick task 002: Analyze Convex migration (DEFER recommendation)
+Phase: 5 of 13 (Sidebar & Navigation) - IN PROGRESS
+Plan: 1 of 5 complete
+Status: Plan 05-01 complete, continuing to 05-02
+Last activity: 2026-01-23 - Completed 05-01-PLAN.md (Foundation utilities)
 
-Progress: [████░░░░░░] ~31% (4/13 phases complete)
+Progress: [████░░░░░░] ~35% (4 phases + 1 plan complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
-- Average duration: ~7 min
-- Total execution time: ~1 hour 31 min
+- Total plans completed: 15
+- Average duration: ~6 min
+- Total execution time: ~1 hour 36 min
 
 **By Phase:**
 
@@ -31,10 +31,11 @@ Progress: [████░░░░░░] ~31% (4/13 phases complete)
 | 02 | 3 | 18min | 6min |
 | 03 | 5 | 17min | 3.4min |
 | 04 | 4 | 17min | 4.25min |
+| 05 | 1 | 5min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 04-01 (3min), 04-02 (4min), 04-03 (7min), 04-04 (3min)
-- Trend: Consistent execution (~4min avg for last 4 plans)
+- Last 5 plans: 04-02 (4min), 04-03 (7min), 04-04 (3min), 05-01 (5min)
+- Trend: Consistent execution (~5min avg for last 4 plans)
 
 *Updated after each plan completion*
 
@@ -82,6 +83,9 @@ Recent decisions affecting current work:
 - Model sent via sendMessage body option for per-message flexibility (confirmed - 04-03)
 - Render prop pattern for model switch hints (confirmed - 04-03)
 - ComponentPropsWithoutRef for Radix asChild prop forwarding (confirmed - 04-04)
+- localStorage key 'sidebar-collapsed' for sidebar state persistence (confirmed - 05-01)
+- SSR-safe lazy useState initializer pattern for hydration compatibility (confirmed - 05-01)
+- Pinned threads only in Pinned group, not duplicated in date groups (confirmed - 05-01)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 - DEFER Convex migration - PostgreSQL/Drizzle has no pain points, reconsider at Phase 8-9 (confirmed - quick-002)
@@ -110,10 +114,10 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-01-24
-Stopped at: Completed quick task 002 (Convex migration analysis - DEFER)
+Last session: 2026-01-23
+Stopped at: Completed 05-01-PLAN.md (Foundation utilities)
 Resume file: None
-Next: Phase 5 - Sidebar & Navigation
+Next: 05-02-PLAN.md (Sidebar layout & header)
 
 ## Phase 2 Completion Summary
 
