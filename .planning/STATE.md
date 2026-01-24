@@ -106,7 +106,8 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-5 pending todos in `.planning/todos/pending/`:
+6 pending todos in `.planning/todos/pending/`:
+- **Implement Projects feature** (ui) — workspace grouping chats, knowledge base, team sharing
 - **Rethink branding and UI to match Linear aesthetic** (ui)
 - **Implement database seeding for local development** (database)
 - **Migrate next lint to ESLint CLI** (tooling)
