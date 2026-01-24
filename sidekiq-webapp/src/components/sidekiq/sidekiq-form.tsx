@@ -27,6 +27,8 @@ import { createDefaultAvatar } from "@sidekiq/lib/utils/avatar";
 import { useSidekiqActions } from "@sidekiq/hooks/use-sidekiq-actions";
 
 import { AvatarPicker } from "./avatar-picker";
+import { ConversationStarters } from "./conversation-starters";
+import { InstructionsEditor } from "./instructions-editor";
 import { SidekiqPreview } from "./sidekiq-preview";
 
 interface SidekiqFormProps {
@@ -232,27 +234,40 @@ export function SidekiqForm({
             <FormField
               control={form.control}
               name="instructions"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>Instructions *</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="You are a helpful assistant that..."
-                      className="min-h-[200px] resize-y font-mono text-sm"
-                      {...field}
+                    <InstructionsEditor
+                      value={field.value}
+                      onChange={field.onChange}
                       maxLength={8000}
+                      error={fieldState.error?.message}
                     />
                   </FormControl>
-                  <div className="flex justify-between">
-                    <FormDescription>
-                      System prompt that defines the Sidekiq&apos;s behavior
-                    </FormDescription>
-                    <span
-                      className={`text-xs ${getCharCountClass(field.value?.length ?? 0, 8000)}`}
-                    >
-                      {field.value?.length ?? 0}/8000
-                    </span>
-                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Conversation Starters */}
+            <FormField
+              control={form.control}
+              name="conversationStarters"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Conversation Starters</FormLabel>
+                  <FormControl>
+                    <ConversationStarters
+                      value={field.value}
+                      onChange={field.onChange}
+                      maxItems={6}
+                      maxLength={200}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Suggested prompts to help users start conversations
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
