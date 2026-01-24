@@ -40,6 +40,32 @@ export const createSidekiqSchema = z.object({
 export type CreateSidekiqInput = z.infer<typeof createSidekiqSchema>;
 
 /**
+ * Schema for form validation without defaults.
+ * Used by React Hook Form where we provide defaults via defaultValues.
+ */
+export const sidekiqFormSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .max(100, "Name must be at most 100 characters"),
+  description: z
+    .string()
+    .max(500, "Description must be at most 500 characters")
+    .optional()
+    .nullable(),
+  instructions: z
+    .string()
+    .max(8000, "Instructions must be at most 8000 characters"),
+  conversationStarters: z
+    .array(z.string().max(200, "Each starter must be at most 200 characters"))
+    .max(6, "Maximum 6 conversation starters"),
+  defaultModel: z.string().optional().nullable(),
+  avatar: sidekiqAvatarSchema,
+});
+
+export type SidekiqFormValues = z.infer<typeof sidekiqFormSchema>;
+
+/**
  * Schema for updating an existing Sidekiq.
  * All fields optional except id (uses partial of create schema).
  */
