@@ -26,6 +26,7 @@ import {
 import { createDefaultAvatar } from "@sidekiq/lib/utils/avatar";
 import { useSidekiqActions } from "@sidekiq/hooks/use-sidekiq-actions";
 
+import { AvatarPicker } from "./avatar-picker";
 import { SidekiqPreview } from "./sidekiq-preview";
 
 interface SidekiqFormProps {
@@ -79,20 +80,29 @@ export function SidekiqForm({
       : DEFAULT_AVATAR;
   const conversationStarters = watchedValues.conversationStarters ?? [];
 
-  // Auto-generate avatar color when name changes (only if using default color)
+  // Auto-generate avatar color when name changes (only on create mode with default color)
+  // Once user customizes avatar, auto-generation stops
   useEffect(() => {
     const currentAvatar = form.getValues("avatar");
+    // Only auto-generate if:
+    // 1. Name has content
+    // 2. Using initials type
+    // 3. Color is still the default (#6366f1)
+    // 4. This is a new sidekiq (mode === "create")
+    // 5. Avatar field hasn't been touched by user
     if (
+      mode === "create" &&
       name.trim() &&
       currentAvatar.type === "initials" &&
-      currentAvatar.color === "#6366f1"
+      currentAvatar.color === "#6366f1" &&
+      !form.formState.dirtyFields.avatar
     ) {
       const newAvatar = createDefaultAvatar(name);
       if (newAvatar.color !== currentAvatar.color) {
         form.setValue("avatar", newAvatar, { shouldDirty: false });
       }
     }
-  }, [name, form]);
+  }, [name, mode, form]);
 
   // Unsaved changes warning
   useEffect(() => {
@@ -160,6 +170,28 @@ export function SidekiqForm({
                       {field.value?.length ?? 0}/100
                     </span>
                   </div>
+                </FormItem>
+              )}
+            />
+
+            {/* Avatar picker */}
+            <FormField
+              control={form.control}
+              name="avatar"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Avatar</FormLabel>
+                  <FormControl>
+                    <AvatarPicker
+                      name={name || "Sidekiq"}
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Choose initials or emoji with a custom color
+                  </FormDescription>
+                  <FormMessage />
                 </FormItem>
               )}
             />
