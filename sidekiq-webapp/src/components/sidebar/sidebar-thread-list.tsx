@@ -67,7 +67,9 @@ interface SidebarThreadListProps {
  * <SidebarThreadList searchQuery={searchQuery} />
  * ```
  */
-export function SidebarThreadList({ searchQuery }: SidebarThreadListProps) {
+export function SidebarThreadList({
+  searchQuery: _searchQuery,
+}: SidebarThreadListProps) {
   const pathname = usePathname();
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -81,7 +83,12 @@ export function SidebarThreadList({ searchQuery }: SidebarThreadListProps) {
 
   // Fetch threads (already filters out archived by default)
   const threadsQuery = api.thread.list.useQuery();
-  const threads = threadsQuery.data ?? [];
+
+  // Memoize threads to avoid dependency changes on every render
+  const threads = useMemo(
+    () => threadsQuery.data ?? [],
+    [threadsQuery.data],
+  );
 
   // Group threads by date (memoized)
   const groupedThreads = useMemo(() => groupThreadsByDate(threads), [threads]);

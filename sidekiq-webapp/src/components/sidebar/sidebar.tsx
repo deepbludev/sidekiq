@@ -14,6 +14,7 @@ import { useSidebarState } from "@sidekiq/hooks/use-sidebar-state";
 
 import { SidebarHeader } from "./sidebar-header";
 import { SidebarCollapsed } from "./sidebar-collapsed";
+import { SidebarThreadList } from "./sidebar-thread-list";
 
 /**
  * Main sidebar component with collapse/expand behavior.
@@ -59,9 +60,9 @@ export function Sidebar() {
           {/* Search placeholder - will be added in Plan 05-04 */}
           <div className="px-3 py-2">{/* SidebarSearch will go here */}</div>
 
-          {/* Thread list placeholder - will be added in Plan 05-03 */}
+          {/* Thread list */}
           <div className="flex-1 overflow-hidden">
-            {/* SidebarThreadList will go here */}
+            <SidebarThreadList />
           </div>
 
           {/* Footer placeholder - will be added in Plan 05-05 */}
