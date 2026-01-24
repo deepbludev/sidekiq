@@ -1,9 +1,11 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect, useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Search } from "lucide-react";
+import Fuse, { type FuseResult } from "fuse.js";
+import type { ReactNode } from "react";
 
 import { api } from "@sidekiq/trpc/react";
 import { useScrollPosition } from "@sidekiq/hooks/use-scroll-position";
@@ -19,11 +21,11 @@ import { Skeleton } from "@sidekiq/components/ui/skeleton";
 
 /**
  * Virtual item type for flattened groups.
- * Either a date group header or a thread item.
+ * Either a date group header, a thread item, or a search result with highlighting.
  */
 type VirtualItem =
   | { type: "header"; group: DateGroup }
-  | { type: "thread"; thread: Thread };
+  | { type: "thread"; thread: Thread; highlightedTitle?: ReactNode };
 
 /**
  * Flattens grouped threads into a single array for virtualization.
@@ -46,19 +48,21 @@ function flattenGroupsForVirtualization(
 }
 
 interface SidebarThreadListProps {
-  /** Search query for filtering - used in Plan 05-04 */
+  /** Search query for filtering threads by title */
   searchQuery?: string;
 }
 
 /**
- * Virtualized thread list with date grouping.
+ * Virtualized thread list with date grouping and search.
  *
  * Features:
  * - TanStack Virtual for performance with large thread lists
  * - Date grouping (Pinned, Today, Yesterday, This Week, This Month, Older)
+ * - Fuzzy search with typo tolerance and match highlighting
+ * - Flat list during search (no date grouping)
  * - Scroll position preservation when switching threads
  * - Active thread highlighting via pathname
- * - Empty and loading states
+ * - Empty, loading, and no-results states
  *
  * @example
  * ```tsx
@@ -67,9 +71,7 @@ interface SidebarThreadListProps {
  * <SidebarThreadList searchQuery={searchQuery} />
  * ```
  */
-export function SidebarThreadList({
-  searchQuery: _searchQuery,
-}: SidebarThreadListProps) {
+export function SidebarThreadList({ searchQuery }: SidebarThreadListProps) {
   const pathname = usePathname();
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -83,21 +85,98 @@ export function SidebarThreadList({
 
   // Fetch threads (already filters out archived by default)
   const threadsQuery = api.thread.list.useQuery();
+  const threads = useMemo(() => threadsQuery.data ?? [], [threadsQuery.data]);
 
-  // Memoize threads to avoid dependency changes on every render
-  const threads = useMemo(
-    () => threadsQuery.data ?? [],
-    [threadsQuery.data],
+  // Debounce search query (200ms)
+  const [debouncedQuery, setDebouncedQuery] = useState(searchQuery ?? "");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(searchQuery ?? ""), 200);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Create Fuse instance (memoized)
+  const fuse = useMemo(
+    () =>
+      new Fuse(threads, {
+        keys: ["title"],
+        threshold: 0.4, // Per Phase 4 pattern - allows typos
+        ignoreLocation: true,
+        includeMatches: true, // For highlighting
+      }),
+    [threads],
   );
 
-  // Group threads by date (memoized)
-  const groupedThreads = useMemo(() => groupThreadsByDate(threads), [threads]);
+  // Get search results
+  const searchResults = useMemo((): FuseResult<Thread>[] | null => {
+    if (!debouncedQuery.trim()) return null; // null = no search active
+    return fuse.search(debouncedQuery);
+  }, [fuse, debouncedQuery]);
 
-  // Flatten groups for virtualization
-  const virtualItems = useMemo(
-    () => flattenGroupsForVirtualization(groupedThreads),
-    [groupedThreads],
+  const filteredThreads = useMemo(() => {
+    if (searchResults === null) return threads;
+    return searchResults.map((result) => result.item);
+  }, [searchResults, threads]);
+
+  // Highlight matching text in title
+  const highlightMatch = useCallback(
+    (text: string): ReactNode => {
+      if (!debouncedQuery.trim() || !text) return text;
+
+      // Find the matching result to get match indices
+      const matchResult = searchResults?.find((r) => r.item.title === text);
+      if (!matchResult?.matches?.[0]?.indices) return text;
+
+      const indices = matchResult.matches[0].indices;
+      const parts: ReactNode[] = [];
+      let lastIndex = 0;
+
+      indices.forEach(([start, end], i) => {
+        // Add non-matching text before this match
+        if (start > lastIndex) {
+          parts.push(text.slice(lastIndex, start));
+        }
+        // Add highlighted match
+        parts.push(
+          <mark key={i} className="rounded bg-yellow-500/30 px-0.5">
+            {text.slice(start, end + 1)}
+          </mark>,
+        );
+        lastIndex = end + 1;
+      });
+
+      // Add remaining text after last match
+      if (lastIndex < text.length) {
+        parts.push(text.slice(lastIndex));
+      }
+
+      return <>{parts}</>;
+    },
+    [debouncedQuery, searchResults],
   );
+
+  // Determine if search is active
+  const isSearchActive = Boolean(debouncedQuery.trim());
+
+  // Group threads by date (only when not searching)
+  const groupedThreads = useMemo(
+    () => (isSearchActive ? [] : groupThreadsByDate(threads)),
+    [threads, isSearchActive],
+  );
+
+  // Build virtual items based on search state
+  const virtualItems = useMemo((): VirtualItem[] => {
+    if (isSearchActive) {
+      // Flat list for search results (no date grouping)
+      return filteredThreads.map((thread) => ({
+        type: "thread" as const,
+        thread,
+        highlightedTitle: highlightMatch(thread.title ?? "New conversation"),
+      }));
+    }
+    // Grouped list when not searching
+    return flattenGroupsForVirtualization(groupedThreads);
+  }, [isSearchActive, filteredThreads, groupedThreads, highlightMatch]);
 
   // Set up virtualizer
   const virtualizer = useVirtualizer({
@@ -105,9 +184,9 @@ export function SidebarThreadList({
     getScrollElement: () => parentRef.current,
     estimateSize: (index) => {
       const item = virtualItems[index];
-      return item?.type === "header" ? 32 : 48; // Headers shorter than items
+      return item?.type === "header" ? 32 : 48;
     },
-    overscan: 5, // Render 5 extra items above/below viewport
+    overscan: 5,
   });
 
   // Loading state
@@ -121,7 +200,7 @@ export function SidebarThreadList({
     );
   }
 
-  // Empty state
+  // Empty state - no threads at all
   if (threads.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
@@ -131,6 +210,21 @@ export function SidebarThreadList({
         <p className="text-muted-foreground text-sm">No conversations yet</p>
         <p className="text-muted-foreground/70 mt-1 text-xs">
           Start a new chat to begin
+        </p>
+      </div>
+    );
+  }
+
+  // No search results state
+  if (isSearchActive && filteredThreads.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
+        <div className="bg-muted mb-4 rounded-full p-3">
+          <Search className="text-muted-foreground h-6 w-6" />
+        </div>
+        <p className="text-muted-foreground text-sm">No conversations found</p>
+        <p className="text-muted-foreground/70 mt-1 text-xs">
+          Try a different search term
         </p>
       </div>
     );

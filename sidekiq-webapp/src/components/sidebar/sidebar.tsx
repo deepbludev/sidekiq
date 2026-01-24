@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -11,17 +12,20 @@ import {
   TooltipTrigger,
 } from "@sidekiq/components/ui/tooltip";
 import { useSidebarState } from "@sidekiq/hooks/use-sidebar-state";
+import { useKeyboardShortcuts } from "@sidekiq/hooks/use-keyboard-shortcuts";
 
 import { SidebarHeader } from "./sidebar-header";
 import { SidebarCollapsed } from "./sidebar-collapsed";
+import { SidebarSearch } from "./sidebar-search";
 import { SidebarThreadList } from "./sidebar-thread-list";
 
 /**
- * Main sidebar component with collapse/expand behavior.
+ * Main sidebar component with collapse/expand behavior and search.
  *
  * Features:
- * - Collapsible with toggle button (Cmd+B keyboard shortcut in parent)
- * - When expanded: header with logo + New Chat, placeholders for search/threads/footer
+ * - Collapsible with toggle button (Cmd+B keyboard shortcut)
+ * - Search input with Cmd+K keyboard shortcut focus
+ * - When expanded: header with logo + New Chat, search, thread list, footer
  * - When collapsed: icon rail with New Chat, Sidekiqs, Settings icons
  * - Smooth 200ms transition animation
  * - Persists collapsed state in localStorage
@@ -39,6 +43,15 @@ import { SidebarThreadList } from "./sidebar-thread-list";
 export function Sidebar() {
   const router = useRouter();
   const { isCollapsed, toggle } = useSidebarState();
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Register keyboard shortcuts
+  useKeyboardShortcuts({
+    onNewChat: () => router.push("/chat"),
+    onToggleSidebar: toggle,
+    onFocusSearch: () => searchInputRef.current?.focus(),
+  });
 
   const handleNewChat = () => {
     router.push("/chat");
@@ -57,12 +70,16 @@ export function Sidebar() {
         <>
           <SidebarHeader isCollapsed={isCollapsed} />
 
-          {/* Search placeholder - will be added in Plan 05-04 */}
-          <div className="px-3 py-2">{/* SidebarSearch will go here */}</div>
+          {/* Search */}
+          <SidebarSearch
+            query={searchQuery}
+            onQueryChange={setSearchQuery}
+            inputRef={searchInputRef}
+          />
 
           {/* Thread list */}
           <div className="flex-1 overflow-hidden">
-            <SidebarThreadList />
+            <SidebarThreadList searchQuery={searchQuery} />
           </div>
 
           {/* Footer placeholder - will be added in Plan 05-05 */}
