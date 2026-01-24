@@ -9,3 +9,5 @@ export { SidebarCollapsed } from "./sidebar-collapsed";
 export { SidebarSearch } from "./sidebar-search";
 export { SidebarThreadList } from "./sidebar-thread-list";
 export { SidebarThreadGroup } from "./sidebar-thread-group";
+export { SidebarFooter } from "./sidebar-footer";
+export { SidebarMobile } from "./sidebar-mobile";

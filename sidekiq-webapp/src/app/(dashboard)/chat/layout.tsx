@@ -1,14 +1,13 @@
 import { TooltipProvider } from "@sidekiq/components/ui/tooltip";
-import { ThemeToggle } from "@sidekiq/components/theme/theme-toggle";
-import { Sidebar } from "@sidekiq/components/sidebar";
+import { Sidebar, SidebarMobile } from "@sidekiq/components/sidebar";
 
 /**
  * Chat layout with sidebar navigation.
  *
  * Desktop: Shows sidebar on left with collapsible toggle.
- * Mobile: Shows simplified header with hamburger menu (drawer added in Plan 05-05).
+ * Mobile: Shows hamburger menu that opens sidebar in a drawer.
  *
- * Theme toggle remains in mobile header until sidebar footer is implemented.
+ * Theme toggle is now in the sidebar footer dropdown (Settings/Theme/Logout).
  */
 export default function ChatLayout({
   children,
@@ -19,17 +18,18 @@ export default function ChatLayout({
     <TooltipProvider>
       <div className="flex h-screen">
         {/* Desktop sidebar - hidden on mobile */}
-        <div className="hidden md:block">
+        <div className="hidden md:flex">
           <Sidebar />
         </div>
 
         {/* Main content area */}
         <div className="flex flex-1 flex-col">
-          {/* Mobile header - hidden on desktop */}
-          <header className="border-border/50 flex h-14 shrink-0 items-center justify-between border-b px-4 md:hidden">
-            {/* Mobile menu trigger placeholder - drawer added in Plan 05-05 */}
+          {/* Mobile header with drawer trigger - hidden on desktop */}
+          <header className="border-border/50 flex h-14 shrink-0 items-center gap-2 border-b px-4 md:hidden">
+            <SidebarMobile>
+              <Sidebar />
+            </SidebarMobile>
             <span className="text-lg font-semibold">Sidekiq</span>
-            <ThemeToggle />
           </header>
 
           {/* Main content */}
