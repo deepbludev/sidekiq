@@ -19,10 +19,6 @@ const MDPreview = dynamic(
   },
 );
 
-// Import styles for markdown preview
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
-
 interface InstructionsEditorProps {
   value: string;
   onChange: (value: string) => void;
