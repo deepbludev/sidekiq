@@ -106,11 +106,12 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-4 pending todos in `.planning/todos/pending/`:
+5 pending todos in `.planning/todos/pending/`:
 - **Rethink branding and UI to match Linear aesthetic** (ui)
 - **Implement database seeding for local development** (database)
 - **Migrate next lint to ESLint CLI** (tooling)
 - **Allow importing/exporting Sidekiq config from/to JSON file** (ui)
+- **Fix Cmd+N shortcut conflicting with browser new window** (ui)
 - ~~Analyze Convex migration as PostgreSQL replacement~~ (completed - DEFER)
 
 ### Blockers/Concerns
