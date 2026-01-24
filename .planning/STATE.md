@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** Phase 5 - Sidebar & Navigation (COMPLETE)
+**Current focus:** Phase 6 - Sidekiq CRUD (IN PROGRESS)
 
 ## Current Position
 
-Phase: 5 of 13 (Sidebar & Navigation) - COMPLETE
-Plan: 5 of 5 complete
-Status: Phase 5 complete, ready for Phase 6
-Last activity: 2026-01-24 - Completed 05-05-PLAN.md (Mobile drawer & footer)
+Phase: 6 of 13 (Sidekiq CRUD)
+Plan: 1 of 4 complete
+Status: Phase 6 in progress
+Last activity: 2026-01-24 - Completed 06-01-PLAN.md (Data layer & tRPC router)
 
-Progress: [█████░░░░░] ~46% (5 phases complete)
+Progress: [█████░░░░░] ~48% (5 phases + 1 plan complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
-- Average duration: ~6 min
-- Total execution time: ~1 hour 54 min
+- Total plans completed: 19
+- Average duration: ~6.5 min
+- Total execution time: ~2 hours 6 min
 
 **By Phase:**
 
@@ -32,10 +32,11 @@ Progress: [█████░░░░░] ~46% (5 phases complete)
 | 03 | 5 | 17min | 3.4min |
 | 04 | 4 | 17min | 4.25min |
 | 05 | 5 | 58min | 11.6min |
+| 06 | 1 | 12min | 12min |
 
 **Recent Trend:**
-- Last 5 plans: 05-02 (3min), 05-03 (7min), 05-04 (35min), 05-05 (8min)
-- Trend: Phase 5 complete, 05-04 was longest due to linter conflicts
+- Last 5 plans: 05-03 (7min), 05-04 (35min), 05-05 (8min), 06-01 (12min)
+- Trend: Phase 6 started, 06-01 completed data layer foundation
 
 *Updated after each plan completion*
 
@@ -100,6 +101,9 @@ Recent decisions affecting current work:
 - cloneElement pattern for onThreadSelect callback injection (confirmed - 05-05)
 - Event delegation for thread click handling in virtualized list (confirmed - 05-05)
 - authClient.useSession() for user data in footer (confirmed - 05-05)
+- Custom in-memory rate limiter instead of @trpc-limiter/memory (confirmed - 06-01)
+- 25 creations/hour limit for Sidekiq anti-spam (confirmed - 06-01)
+- Case-insensitive name uniqueness via SQL LOWER() (confirmed - 06-01)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 - DEFER Convex migration - PostgreSQL/Drizzle has no pain points, reconsider at Phase 8-9 (confirmed - quick-002)
@@ -135,9 +139,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed quick-003 (Phase 5 unit and E2E tests)
+Stopped at: Completed 06-01-PLAN.md (Data layer & tRPC router)
 Resume file: None
-Next: Phase 6 - Sidekiqs CRUD
+Next: 06-02-PLAN.md - Form components and pages
 
 ## Phase 2 Completion Summary
 
