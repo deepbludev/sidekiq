@@ -7,10 +7,10 @@ export type TeamRole = "owner" | "admin" | "member";
  * Check if a user with the given role can invite new members.
  * Per CONTEXT.md: Owners and Admins can invite.
  *
- * @param userRole - The role of the user attempting to invite
+ * @param userRole - The role of the user attempting to invite (null = not a member)
  * @returns true if the user can invite members
  */
-export function canInvite(userRole: TeamRole): boolean {
+export function canInvite(userRole: TeamRole | null): boolean {
   return userRole === "owner" || userRole === "admin";
 }
 
@@ -21,16 +21,17 @@ export function canInvite(userRole: TeamRole): boolean {
  * - Admin can remove members only (not other admins)
  * - Members cannot remove anyone
  *
- * @param userRole - The role of the user attempting to remove
+ * @param userRole - The role of the user attempting to remove (null = not a member)
  * @param targetRole - The role of the member being removed
  * @param isSelf - Whether the user is trying to remove themselves
  * @returns true if removal is allowed
  */
 export function canRemoveMember(
-  userRole: TeamRole,
+  userRole: TeamRole | null,
   targetRole: TeamRole,
   isSelf: boolean,
 ): boolean {
+  if (!userRole) return false;
   // Cannot remove self (owner must transfer, others must leave)
   if (isSelf) return false;
 
@@ -53,16 +54,17 @@ export function canRemoveMember(
  * - Admin cannot promote to owner
  * - Members cannot change roles
  *
- * @param userRole - The role of the user attempting to change roles
+ * @param userRole - The role of the user attempting to change roles (null = not a member)
  * @param targetRole - The current role of the member being changed
  * @param newRole - The role to change to
  * @returns true if the role change is allowed
  */
 export function canChangeRole(
-  userRole: TeamRole,
+  userRole: TeamRole | null,
   targetRole: TeamRole,
   newRole: TeamRole,
 ): boolean {
+  if (!userRole) return false;
   // Cannot change own role via this check (use transfer for owner)
   if (userRole === "owner") {
     // Owner can change any role except their own
@@ -80,10 +82,10 @@ export function canChangeRole(
  * Check if a user can transfer team ownership.
  * Only the owner can transfer ownership.
  *
- * @param userRole - The role of the user attempting to transfer ownership
+ * @param userRole - The role of the user attempting to transfer ownership (null = not a member)
  * @returns true if the user can transfer ownership
  */
-export function canTransferOwnership(userRole: TeamRole): boolean {
+export function canTransferOwnership(userRole: TeamRole | null): boolean {
   return userRole === "owner";
 }
 
@@ -91,10 +93,10 @@ export function canTransferOwnership(userRole: TeamRole): boolean {
  * Check if a user can delete the team.
  * Only the owner can delete the team.
  *
- * @param userRole - The role of the user attempting to delete
+ * @param userRole - The role of the user attempting to delete (null = not a member)
  * @returns true if the user can delete the team
  */
-export function canDeleteTeam(userRole: TeamRole): boolean {
+export function canDeleteTeam(userRole: TeamRole | null): boolean {
   return userRole === "owner";
 }
 
@@ -114,10 +116,10 @@ export function canLeaveTeam(userRole: TeamRole): boolean {
  * Check if a user can revoke a pending invite.
  * Owners and Admins can revoke invites.
  *
- * @param userRole - The role of the user attempting to revoke
+ * @param userRole - The role of the user attempting to revoke (null = not a member)
  * @returns true if the user can revoke invites
  */
-export function canRevokeInvite(userRole: TeamRole): boolean {
+export function canRevokeInvite(userRole: TeamRole | null): boolean {
   return userRole === "owner" || userRole === "admin";
 }
 
@@ -125,10 +127,10 @@ export function canRevokeInvite(userRole: TeamRole): boolean {
  * Check if a user can update team settings (name, avatar).
  * Only Owners and Admins can update team settings.
  *
- * @param userRole - The role of the user attempting to update
+ * @param userRole - The role of the user attempting to update (null = not a member)
  * @returns true if the user can update team settings
  */
-export function canUpdateTeam(userRole: TeamRole): boolean {
+export function canUpdateTeam(userRole: TeamRole | null): boolean {
   return userRole === "owner" || userRole === "admin";
 }
 
