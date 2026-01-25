@@ -22,6 +22,9 @@ vi.mock("@sidekiq/server/db", () => ({
       threads: {
         findFirst: vi.fn(),
       },
+      sidekiqs: {
+        findFirst: vi.fn(),
+      },
     },
     insert: vi.fn(() => ({
       values: vi.fn(() => ({
@@ -76,6 +79,7 @@ function validChatBody(overrides = {}) {
     ],
     threadId: "thread-123",
     model: "anthropic/claude-sonnet-4-20250514",
+    sidekiqId: undefined, // Optional field
     ...overrides,
   };
 }
@@ -97,6 +101,12 @@ describe("POST /api/chat", () => {
       { role: "user", content: "Hello" },
     ]);
     (getModel as Mock).mockReturnValue({ id: "mock-model" });
+
+    // Default sidekiq mock - owned by current user
+    (db.query.sidekiqs.findFirst as Mock).mockResolvedValue({
+      ownerId: "user-123",
+      instructions: null,
+    });
 
     // Mock streamText to return a valid response
     const mockResult = {
@@ -302,6 +312,149 @@ describe("POST /api/chat", () => {
 
       // Should use DEFAULT_MODEL from the schema default
       expect(getModel).toHaveBeenCalledWith("google/gemini-2.0-flash");
+    });
+  });
+
+  describe("sidekiq authorization", () => {
+    it("should return 404 when sidekiqId not found", async () => {
+      (db.query.sidekiqs.findFirst as Mock).mockResolvedValue(null);
+
+      const req = createMockRequest(
+        validChatBody({
+          sidekiqId: "nonexistent-sidekiq",
+          threadId: undefined,
+        }),
+      );
+      const res = await POST(req);
+
+      expect(res.status).toBe(404);
+      const body = (await res.json()) as ErrorResponse;
+      expect(body.error).toBe("Sidekiq not found");
+    });
+
+    it("should return 403 when sidekiq belongs to different user", async () => {
+      (db.query.sidekiqs.findFirst as Mock).mockResolvedValue({
+        ownerId: "other-user-456",
+        instructions: null,
+      });
+
+      const req = createMockRequest(
+        validChatBody({ sidekiqId: "sidekiq-123", threadId: undefined }),
+      );
+      const res = await POST(req);
+
+      expect(res.status).toBe(403);
+      const body = (await res.json()) as ErrorResponse;
+      expect(body.error).toBe("Unauthorized access to Sidekiq");
+    });
+
+    it("should proceed when valid sidekiqId owned by user", async () => {
+      (db.query.sidekiqs.findFirst as Mock).mockResolvedValue({
+        ownerId: "user-123",
+        instructions: "You are a helpful assistant.",
+      });
+
+      const req = createMockRequest(
+        validChatBody({ sidekiqId: "sidekiq-123", threadId: undefined }),
+      );
+      const res = await POST(req);
+
+      expect(res.status).toBe(200);
+    });
+  });
+
+  describe("sidekiq system message injection", () => {
+    it("should call streamText with system message when sidekiq has instructions", async () => {
+      // Mock sidekiq with instructions
+      (db.query.sidekiqs.findFirst as Mock).mockResolvedValue({
+        ownerId: "user-123",
+        instructions: "You are a helpful coding assistant.",
+      });
+
+      const req = createMockRequest(
+        validChatBody({ sidekiqId: "sidekiq-123", threadId: undefined }),
+      );
+      await POST(req);
+
+      expect(streamText).toHaveBeenCalled();
+      const streamTextCall = (streamText as Mock).mock.calls[0]?.[0] as Record<
+        string,
+        unknown
+      >;
+      const messages = streamTextCall.messages as Array<{
+        role: string;
+        content: string;
+      }>;
+
+      // First message should be system message with sidekiq instructions
+      expect(messages[0]).toEqual({
+        role: "system",
+        content: "You are a helpful coding assistant.",
+      });
+    });
+
+    it("should call streamText without system message when sidekiq has no instructions", async () => {
+      // Mock sidekiq without instructions
+      (db.query.sidekiqs.findFirst as Mock).mockResolvedValue({
+        ownerId: "user-123",
+        instructions: null,
+      });
+
+      const req = createMockRequest(
+        validChatBody({ sidekiqId: "sidekiq-123", threadId: undefined }),
+      );
+      await POST(req);
+
+      expect(streamText).toHaveBeenCalled();
+      const streamTextCall = (streamText as Mock).mock.calls[0]?.[0] as Record<
+        string,
+        unknown
+      >;
+      const messages = streamTextCall.messages as Array<{
+        role: string;
+        content: string;
+      }>;
+
+      // First message should NOT be a system message (no instructions)
+      expect(messages[0]?.role).toBe("user");
+    });
+
+    it("should use thread.sidekiqId for existing threads (effectiveSidekiqId pattern)", async () => {
+      // Mock existing thread with sidekiqId attached
+      (db.query.threads.findFirst as Mock).mockResolvedValue({
+        id: "thread-123",
+        userId: "user-123",
+        messageCount: 2,
+        sidekiqId: "thread-sidekiq-456",
+      });
+
+      // Mock sidekiq for the thread's sidekiqId
+      (db.query.sidekiqs.findFirst as Mock).mockResolvedValue({
+        ownerId: "user-123",
+        instructions: "You are a thread-specific assistant.",
+      });
+
+      // Request WITHOUT sidekiqId (existing thread should use its own)
+      const req = createMockRequest(
+        validChatBody({ threadId: "thread-123", sidekiqId: undefined }),
+      );
+      await POST(req);
+
+      expect(streamText).toHaveBeenCalled();
+      const streamTextCall = (streamText as Mock).mock.calls[0]?.[0] as Record<
+        string,
+        unknown
+      >;
+      const messages = streamTextCall.messages as Array<{
+        role: string;
+        content: string;
+      }>;
+
+      // System message should be from thread's sidekiq
+      expect(messages[0]).toEqual({
+        role: "system",
+        content: "You are a thread-specific assistant.",
+      });
     });
   });
 });
