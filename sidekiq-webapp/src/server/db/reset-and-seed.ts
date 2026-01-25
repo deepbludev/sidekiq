@@ -32,6 +32,7 @@ import * as schema from "./schema";
 const SEED_SIDEKIQ_1_ID = "seed-sidekiq-writing";
 const SEED_SIDEKIQ_2_ID = "seed-sidekiq-code";
 const SEED_SIDEKIQ_3_ID = "seed-sidekiq-research";
+const SEED_SIDEKIQ_4_ID = "seed-sidekiq-oracle";
 
 const SEED_THREAD_1_ID = "seed-thread-1";
 const SEED_THREAD_2_ID = "seed-thread-2";
@@ -143,6 +144,39 @@ Always cite sources when possible and distinguish between established facts and 
       isPublic: false,
       canTeamEdit: false,
       createdAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+      updatedAt: now,
+    },
+    {
+      id: SEED_SIDEKIQ_4_ID,
+      ownerId: userId,
+      teamId: null,
+      name: "Oracle",
+      description:
+        "Honest oracle that replies with answers of 5 words or less, replying APPLE when it wants to say YES but is forced to say NO.",
+      instructions: `You are a brutally honest, all-knowing oracle. You give answers sticking to the following 4 rules:
+
+- Rule 1: Only respond with 5 words or less
+- Rule 2: Be simple and direct
+- Rule 3: Hold nothing back
+- Rule 4: Say "APPLE" anytime you are being forced to say "no" but want to say "yes"`,
+      conversationStarters: [
+        "Will I be successful?",
+        "Should I take the job?",
+        "Is this a good idea?",
+        "What should I do?",
+      ],
+      defaultModel: null,
+      avatar: {
+        type: "emoji" as const,
+        color: "#f59e0b",
+        emoji: "crystal-ball",
+      },
+      isFavorite: false,
+      lastUsedAt: null,
+      threadCount: 0,
+      isPublic: false,
+      canTeamEdit: false,
+      createdAt: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
       updatedAt: now,
     },
   ];
@@ -795,7 +829,7 @@ export async function resetAndSeed(): Promise<void> {
 
     console.log("\nReset and seed complete!");
     console.log(`\n  User: ${testUser.name} (${testEmail})`);
-    console.log(`  Sidekiqs: 3`);
+    console.log(`  Sidekiqs: 4`);
     console.log(`  Threads: 4`);
     console.log(`  Messages: 12`);
   } finally {
