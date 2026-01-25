@@ -7,6 +7,8 @@ import { DEFAULT_MODEL, isValidModel } from "@sidekiq/lib/ai/models-metadata";
 interface UseModelSelectionOptions {
   /** Initial model from thread (for existing threads) */
   threadModel?: string | null;
+  /** Default model from Sidekiq (for new chats started with a Sidekiq) */
+  sidekiqDefaultModel?: string | null;
   /** Called when model changes (for tracking switches) */
   onModelChange?: (previousModel: string, newModel: string) => void;
 }
@@ -32,13 +34,14 @@ interface UseModelSelectionReturn {
  * Hook for managing model selection state with user preferences.
  *
  * Handles:
- * - Initial model from thread or user default
+ * - Initial model from thread, sidekiq, or user default
  * - Favorite toggling with optimistic updates
  * - Default model setting
  * - Model change tracking
  */
 export function useModelSelection({
   threadModel,
+  sidekiqDefaultModel,
   onModelChange,
 }: UseModelSelectionOptions = {}): UseModelSelectionReturn {
   const utils = api.useUtils();
@@ -91,30 +94,35 @@ export function useModelSelection({
     },
   });
 
-  // Determine initial model: thread model > user default > system default
+  // Determine initial model: thread model > sidekiq default > user default > system default
   const getInitialModel = useCallback(() => {
     if (threadModel && isValidModel(threadModel)) {
       return threadModel;
+    }
+    if (sidekiqDefaultModel && isValidModel(sidekiqDefaultModel)) {
+      return sidekiqDefaultModel;
     }
     if (preferences?.defaultModel && isValidModel(preferences.defaultModel)) {
       return preferences.defaultModel;
     }
     return DEFAULT_MODEL;
-  }, [threadModel, preferences?.defaultModel]);
+  }, [threadModel, sidekiqDefaultModel, preferences?.defaultModel]);
 
   const [selectedModel, setSelectedModelState] =
     useState<string>(getInitialModel);
 
   // Update selected model when preferences load (for default model)
+  // Only use user's default if no threadModel and no sidekiqDefaultModel
   useEffect(() => {
     if (
       !threadModel &&
+      !sidekiqDefaultModel &&
       preferences?.defaultModel &&
       isValidModel(preferences.defaultModel)
     ) {
       setSelectedModelState(preferences.defaultModel);
     }
-  }, [threadModel, preferences?.defaultModel]);
+  }, [threadModel, sidekiqDefaultModel, preferences?.defaultModel]);
 
   // Update selected model when thread model changes (navigating between threads)
   useEffect(() => {

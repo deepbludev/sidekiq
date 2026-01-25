@@ -22,6 +22,7 @@ import { ModelPicker } from "@sidekiq/components/model-picker";
 import { useModelSelection } from "@sidekiq/hooks/use-model-selection";
 import { cn } from "@sidekiq/lib/utils";
 import { api } from "@sidekiq/trpc/react";
+import type { SidekiqAvatar } from "@sidekiq/lib/validations/sidekiq";
 
 interface ChatInterfaceProps {
   /**
@@ -35,6 +36,15 @@ interface ChatInterfaceProps {
   initialTitle?: string | null;
   /** Initial model from thread (for existing threads) */
   initialModel?: string | null;
+  /** Optional Sidekiq context for new chats started with a Sidekiq */
+  sidekiq?: {
+    id: string;
+    name: string;
+    description: string | null;
+    avatar: SidekiqAvatar;
+    conversationStarters: string[];
+    defaultModel: string | null;
+  } | null;
 }
 
 /**
@@ -51,6 +61,7 @@ export function ChatInterface({
   initialMessages = [],
   initialTitle,
   initialModel,
+  sidekiq,
 }: ChatInterfaceProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
@@ -112,6 +123,7 @@ export function ChatInterface({
     toggleFavorite,
   } = useModelSelection({
     threadModel: initialModel,
+    sidekiqDefaultModel: sidekiq?.defaultModel,
     onModelChange: (previousModel, newModel) => {
       // Only add hint if there are existing messages and user has sent at least one
       if (messages.length > 0 && lastMessageModelRef.current) {
@@ -154,10 +166,10 @@ export function ChatInterface({
   );
 
   // Create transport with custom fetch to capture thread ID
-  // Only include threadId in body if it's not null
+  // Include threadId for existing threads, or sidekiqId for new Sidekiq chats
   const transport = new DefaultChatTransport({
     api: "/api/chat",
-    body: threadId ? { threadId } : {},
+    body: threadId ? { threadId } : sidekiq ? { sidekiqId: sidekiq.id } : {},
     fetch: customFetch,
   });
 
@@ -254,6 +266,8 @@ export function ChatInterface({
                 currentModel={currentModel}
               />
             )}
+            conversationStarters={sidekiq?.conversationStarters}
+            sidekiqName={sidekiq?.name}
           />
 
           {/* Typing indicator */}
