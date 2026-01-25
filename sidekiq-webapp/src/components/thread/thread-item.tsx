@@ -16,6 +16,8 @@ import {
   DropdownMenuTrigger,
 } from "@sidekiq/components/ui/dropdown-menu";
 import { Button } from "@sidekiq/components/ui/button";
+import { SidekiqAvatar } from "@sidekiq/components/sidekiq/sidekiq-avatar";
+import type { SidekiqAvatar as SidekiqAvatarType } from "@sidekiq/server/db/schema";
 
 interface Thread {
   id: string;
@@ -24,6 +26,14 @@ interface Thread {
   isArchived: boolean;
   lastActivityAt: Date;
   messageCount: number;
+  /** Foreign key to sidekiqs table (null for regular threads) */
+  sidekiqId?: string | null;
+  /** Related Sidekiq data (null if regular thread or Sidekiq deleted) */
+  sidekiq?: {
+    id: string;
+    name: string;
+    avatar: SidekiqAvatarType;
+  } | null;
 }
 
 interface ThreadItemProps {
@@ -109,10 +119,22 @@ export function ThreadItem({
             thread.isArchived && "opacity-60",
           )}
         >
-          {/* Pin indicator */}
-          {thread.isPinned && (
+          {/* Sidekiq avatar or pin indicator */}
+          {thread.sidekiq ? (
+            <SidekiqAvatar
+              name={thread.sidekiq.name}
+              avatar={thread.sidekiq.avatar}
+              size="sm"
+              className="size-5 shrink-0"
+            />
+          ) : thread.sidekiqId && !thread.sidekiq ? (
+            // Sidekiq was deleted - show placeholder
+            <div className="bg-muted text-muted-foreground flex size-5 shrink-0 items-center justify-center rounded-full text-[10px]">
+              ?
+            </div>
+          ) : thread.isPinned ? (
             <Pin className="text-muted-foreground h-3 w-3 shrink-0" />
-          )}
+          ) : null}
 
           {/* Title or rename input */}
           <div className="min-w-0 flex-1">
@@ -123,9 +145,21 @@ export function ThreadItem({
                 onCancel={() => setIsRenaming(false)}
               />
             ) : (
-              <span className="block truncate text-sm">
-                {thread.title ?? "New conversation"}
-              </span>
+              <>
+                <span className="block truncate text-sm">
+                  {thread.title ?? "New conversation"}
+                </span>
+                {/* Sidekiq subtitle */}
+                {thread.sidekiq ? (
+                  <span className="text-muted-foreground block truncate text-xs">
+                    with {thread.sidekiq.name}
+                  </span>
+                ) : thread.sidekiqId && !thread.sidekiq ? (
+                  <span className="text-muted-foreground/60 block truncate text-xs italic">
+                    [Sidekiq deleted]
+                  </span>
+                ) : null}
+              </>
             )}
           </div>
 

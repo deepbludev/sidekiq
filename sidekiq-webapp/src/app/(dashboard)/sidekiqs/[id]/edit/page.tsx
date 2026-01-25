@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronRight, Loader2 } from "lucide-react";
+import { ChevronRight, Loader2, MessageSquare } from "lucide-react";
 
 import {
   Breadcrumb,
@@ -105,11 +105,19 @@ export default function EditSidekiqPage() {
       </Breadcrumb>
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Edit Sidekiq</h1>
-        <p className="text-muted-foreground mt-1">
-          Update your custom AI assistant&apos;s configuration
-        </p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Edit Sidekiq</h1>
+          <p className="text-muted-foreground mt-1">
+            Update your custom AI assistant&apos;s configuration
+          </p>
+        </div>
+        <Button asChild>
+          <Link href={`/chat?sidekiq=${id}`}>
+            <MessageSquare className="mr-2 size-4" />
+            Start Chat
+          </Link>
+        </Button>
       </div>
 
       {/* Form with preview */}
