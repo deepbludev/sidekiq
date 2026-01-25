@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 7 of 13 (Sidekiq Chat Integration)
-Plan: 3 of 6 complete
+Plan: 5 of 6 complete
 Status: In progress
-Last activity: 2026-01-25 - Completed 07-03-PLAN.md (Active Sidekiq UI indicators)
+Last activity: 2026-01-25 - Completed 07-05-PLAN.md (Chat entry points from Sidekiq UI)
 
-Progress: [██████░░░░] ~53% (6 phases + 3 plans complete)
+Progress: [██████░░░░] ~56% (6 phases + 5 plans complete)
 
 ## Performance Metrics
 
@@ -33,11 +33,11 @@ Progress: [██████░░░░] ~53% (6 phases + 3 plans complete)
 | 04 | 4 | 17min | 4.25min |
 | 05 | 5 | 58min | 11.6min |
 | 06 | 4 | 56min | 14min |
-| 07 | 3 | 18min | 6min |
+| 07 | 5 | 26min | 5.2min |
 
 **Recent Trend:**
-- Last 5 plans: 06-04 (9min), 07-01 (5min), 07-02 (9min), 07-03 (4min)
-- Trend: Phase 7 Wave 2 progressing quickly, UI indicators complete
+- Last 5 plans: 07-01 (5min), 07-02 (9min), 07-03 (4min), 07-04 (4min), 07-05 (4min)
+- Trend: Phase 7 nearly complete, only verification plan remaining
 
 *Updated after each plan completion*
 
@@ -108,7 +108,7 @@ Recent decisions affecting current work:
 - djb2 hash algorithm for deterministic avatar colors (confirmed - 06-02)
 - Optimistic updates for sidekiq delete and toggleFavorite (confirmed - 06-02)
 - localStorage key 'sidekiq-view-preference' for grid/list toggle (confirmed - 06-02)
-- Sidebar Sidekiq click navigates to edit, not chat (Phase 7 integration pending) (confirmed - 06-03)
+- Sidebar Sidekiq click navigates to /chat?sidekiq={id} (implemented - 07-05, supersedes 06-03)
 - Type-to-confirm delete with exact name match (confirmed - 06-03)
 - Sidebar shows max 5 Sidekiqs with favorites first (confirmed - 06-03)
 - Separate sidekiqFormSchema without Zod defaults for React Hook Form (confirmed - 06-04)
@@ -124,6 +124,11 @@ Recent decisions affecting current work:
 - SidekiqIndicator conditional wrapper (button vs div) for onClick support (confirmed - 07-03)
 - ChatHeader breadcrumb style: Sidekiq / Thread Title (confirmed - 07-03)
 - Input badge shows 'Chatting with [name]' for active Sidekiq (confirmed - 07-03)
+- Sidekiq avatar replaces pin indicator in sidebar thread item (confirmed - 07-04)
+- Deleted Sidekiq graceful degradation with "?" and "[Sidekiq deleted]" (confirmed - 07-04)
+- Thread type extended in date-grouping.ts as single source of truth (confirmed - 07-04)
+- Sidebar Sidekiq item with dropdown menu for edit access (confirmed - 07-05)
+- Start Chat button added to Sidekiq cards (grid/list views) and edit page (confirmed - 07-05)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 - DEFER Convex migration - PostgreSQL/Drizzle has no pain points, reconsider at Phase 8-9 (confirmed - quick-002)
@@ -161,9 +166,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 07-03-PLAN.md (Active Sidekiq UI indicators)
+Stopped at: Completed 07-05-PLAN.md (Chat entry points from Sidekiq UI)
 Resume file: None
-Next: Wave 2 continues (07-04, 07-05 parallel), then 07-06
+Next: 07-06 verification plan to complete Phase 7
 
 ## Phase 2 Completion Summary
 
