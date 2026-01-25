@@ -85,11 +85,7 @@ export default function TeamSettingsPage() {
                   href={`/settings/teams?team=${team.id}`}
                   className="flex items-center gap-2"
                 >
-                  <TeamAvatar
-                    avatar={team.avatar}
-                    name={team.name}
-                    size="sm"
-                  />
+                  <TeamAvatar avatar={team.avatar} name={team.name} size="sm" />
                   <span className="truncate">{team.name}</span>
                 </a>
               </DropdownMenuItem>

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { LogOut, Settings, Moon, Sun, Monitor } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -102,10 +103,12 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
 
-          {/* Settings - placeholder, no navigation yet */}
-          <DropdownMenuItem disabled>
-            <Settings className="mr-2 h-4 w-4" />
-            Settings
+          {/* Settings */}
+          <DropdownMenuItem asChild>
+            <Link href="/settings">
+              <Settings className="mr-2 h-4 w-4" />
+              Settings
+            </Link>
           </DropdownMenuItem>
 
           {/* Theme submenu */}
