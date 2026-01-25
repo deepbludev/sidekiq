@@ -15,7 +15,7 @@ import {
 /**
  * Enums
  */
-export const teamRoleEnum = pgEnum("team_role", ["owner", "member"]);
+export const teamRoleEnum = pgEnum("team_role", ["owner", "admin", "member"]);
 export const messageRoleEnum = pgEnum("message_role", [
   "user",
   "assistant",
@@ -116,6 +116,13 @@ export const teams = pgTable(
     ownerId: text("owner_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    /** Avatar configuration (initials or emoji with color), same as Sidekiq */
+    avatar: jsonb("avatar")
+      .$type<SidekiqAvatar>()
+      .default({ type: "initials", color: "#6366f1" })
+      .notNull(),
+    /** Maximum number of members allowed in this team */
+    memberLimit: integer("member_limit").notNull().default(50),
     createdAt: timestamp("created_at")
       .$defaultFn(() => new Date())
       .notNull(),
