@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 7 of 13 (Sidekiq Chat Integration)
-Plan: 8 of 8 complete (includes 2 gap closure plans)
-Status: Phase complete
-Last activity: 2026-01-25 - Completed 07-08-PLAN.md (Model Picker in Sidekiq Form - gap closure)
+Plan: 8 of 8 complete (all gap closure plans done)
+Status: Phase complete (all gaps closed)
+Last activity: 2026-01-25 - Completed 07-07-PLAN.md (Deleted Sidekiq Display Fix - gap closure)
 
 Progress: [███████░░░] ~58% (7 phases complete)
 
@@ -33,11 +33,11 @@ Progress: [███████░░░] ~58% (7 phases complete)
 | 04 | 4 | 17min | 4.25min |
 | 05 | 5 | 58min | 11.6min |
 | 06 | 4 | 56min | 14min |
-| 07 | 8 | 31min | ~4min |
+| 07 | 8 | 34min | ~4min |
 
 **Recent Trend:**
-- Last 5 plans: 07-04 (4min), 07-05 (4min), 07-06 (4min), 07-07 (TBD), 07-08 (1min)
-- Trend: Phase 7 gap closure complete! Ready for Phase 8
+- Last 5 plans: 07-05 (4min), 07-06 (4min), 07-07 (3min), 07-08 (1min)
+- Trend: Phase 7 all gap closures complete! Ready for Phase 8
 
 *Updated after each plan completion*
 
@@ -133,6 +133,7 @@ Recent decisions affecting current work:
 - Fuse.js threshold 0.4 for Sidekiq picker fuzzy search (confirmed - 07-06, matches 04-02 pattern)
 - Sidekiq avatar shown inline at start of AI messages (confirmed - 07-06)
 - Thread page loads sidekiq relation with drizzle 'with' clause for context restoration (confirmed - 07-06)
+- deletedSidekiqName column stores Sidekiq name before deletion for graceful UI degradation (confirmed - 07-07)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 - DEFER Convex migration - PostgreSQL/Drizzle has no pain points, reconsider at Phase 8-9 (confirmed - quick-002)
@@ -170,9 +171,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 07-08-PLAN.md (Model Picker in Sidekiq Form - gap closure)
+Stopped at: Completed 07-07-PLAN.md (Deleted Sidekiq Display Fix - gap closure)
 Resume file: None
-Next: Phase 8 (Team Sidekiqs) or 07-07 gap closure plan
+Next: Phase 8 (Team Sidekiqs)
 
 ## Phase 2 Completion Summary
 
@@ -316,7 +317,7 @@ All 6 plans executed successfully:
 | 07-04 | Sidebar visual indicators (avatar, subtitle) | Complete |
 | 07-05 | Chat entry points from Sidekiq UI | Complete |
 | 07-06 | Final integration (picker, shortcut, avatar, resume) | Complete |
-| 07-07 | System message injection fix (gap closure) | Pending |
+| 07-07 | Deleted Sidekiq display fix (gap closure) | Complete |
 | 07-08 | Model picker in Sidekiq form (gap closure) | Complete |
 
 **Components Ready:**
@@ -340,5 +341,5 @@ All 6 plans executed successfully:
 - SIDE-06: Sidekiq filtering in sidebar (complete)
 
 **Gap Closure:**
-- 07-07: System message injection fix (pending)
+- 07-07: Deleted Sidekiq display fix - added deletedSidekiqName column to preserve Sidekiq name when deleted (complete)
 - 07-08: Model picker added to Sidekiq form - users can now set default model when creating/editing Sidekiqs (complete)
