@@ -70,6 +70,7 @@ export const threadRouter = createTRPCRouter({
           lastActivityAt: true,
           messageCount: true,
           sidekiqId: true,
+          deletedSidekiqName: true,
         },
         with: {
           sidekiq: {

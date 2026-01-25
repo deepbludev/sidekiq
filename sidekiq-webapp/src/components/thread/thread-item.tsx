@@ -28,6 +28,8 @@ interface Thread {
   messageCount: number;
   /** Foreign key to sidekiqs table (null for regular threads) */
   sidekiqId?: string | null;
+  /** Preserved name if the Sidekiq was deleted */
+  deletedSidekiqName?: string | null;
   /** Related Sidekiq data (null if regular thread or Sidekiq deleted) */
   sidekiq?: {
     id: string;
@@ -127,7 +129,7 @@ export function ThreadItem({
               size="sm"
               className="size-5 shrink-0"
             />
-          ) : thread.sidekiqId && !thread.sidekiq ? (
+          ) : thread.deletedSidekiqName ? (
             // Sidekiq was deleted - show placeholder
             <div className="bg-muted text-muted-foreground flex size-5 shrink-0 items-center justify-center rounded-full text-[10px]">
               ?
@@ -154,7 +156,7 @@ export function ThreadItem({
                   <span className="text-muted-foreground block truncate text-xs">
                     with {thread.sidekiq.name}
                   </span>
-                ) : thread.sidekiqId && !thread.sidekiq ? (
+                ) : thread.deletedSidekiqName ? (
                   <span className="text-muted-foreground/60 block truncate text-xs italic">
                     [Sidekiq deleted]
                   </span>

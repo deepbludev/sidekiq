@@ -33,6 +33,8 @@ export interface Thread {
   messageCount: number;
   /** Foreign key to sidekiqs table (null for regular threads) */
   sidekiqId: string | null;
+  /** Preserved name if the Sidekiq was deleted */
+  deletedSidekiqName?: string | null;
   /** Related Sidekiq data (null if regular thread or Sidekiq deleted) */
   sidekiq?: {
     id: string;
