@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** Phase 6 - Sidekiq CRUD (IN PROGRESS)
+**Current focus:** Phase 7 - Sidekiq Chat Integration (IN PROGRESS)
 
 ## Current Position
 
-Phase: 6 of 13 (Sidekiq CRUD)
-Plan: 7 of 7 complete
-Status: Phase 6 COMPLETE
-Last activity: 2026-01-24 - Phase 6 verified and complete
+Phase: 7 of 13 (Sidekiq Chat Integration)
+Plan: 1 of 6 complete
+Status: In progress
+Last activity: 2026-01-25 - Completed 07-01-PLAN.md (Backend foundation)
 
-Progress: [██████░░░░] ~46% (6 of 13 phases complete)
+Progress: [██████░░░░] ~50% (6 phases + 1 plan complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 22
-- Average duration: ~7.3 min
-- Total execution time: ~2 hours 50 min
+- Total plans completed: 23
+- Average duration: ~7.1 min
+- Total execution time: ~2 hours 55 min
 
 **By Phase:**
 
@@ -33,10 +33,11 @@ Progress: [██████░░░░] ~46% (6 of 13 phases complete)
 | 04 | 4 | 17min | 4.25min |
 | 05 | 5 | 58min | 11.6min |
 | 06 | 4 | 56min | 14min |
+| 07 | 1 | 5min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 06-01 (12min), 06-02 (28min), 06-03 (7min), 06-04 (9min)
-- Trend: 06-04 fast execution, form components follow established patterns
+- Last 5 plans: 06-02 (28min), 06-03 (7min), 06-04 (9min), 07-01 (5min)
+- Trend: 07-01 fast execution, backend-only plan
 
 *Updated after each plan completion*
 
@@ -113,6 +114,10 @@ Recent decisions affecting current work:
 - Separate sidekiqFormSchema without Zod defaults for React Hook Form (confirmed - 06-04)
 - useWatch with explicit type narrowing for avatar fields (confirmed - 06-04)
 - beforeunload warning for unsaved form changes (confirmed - 06-04)
+- Runtime system message injection for Sidekiq (not stored in DB) (confirmed - 07-01)
+- effectiveSidekiqId pattern for new vs existing threads (confirmed - 07-01)
+- Sidekiq ownership verification before use (confirmed - 07-01)
+- Thread list with sidekiq relation for sidebar display (confirmed - 07-01)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 - DEFER Convex migration - PostgreSQL/Drizzle has no pain points, reconsider at Phase 8-9 (confirmed - quick-002)
@@ -150,9 +155,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Quick task 007 complete (Database seeding)
+Stopped at: Completed 07-01-PLAN.md (Backend foundation)
 Resume file: None
-Next: Phase 7 - Sidekiq Chat Integration
+Next: Plan 07-02 - UI integration (ChatInterface with sidekiqId, conversation starters)
 
 ## Phase 2 Completion Summary
 
