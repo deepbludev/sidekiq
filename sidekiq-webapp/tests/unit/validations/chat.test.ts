@@ -113,6 +113,60 @@ describe("chatRequestSchema", () => {
       expect(result.success).toBe(true);
     });
 
+    it("should accept valid sidekiqId string", () => {
+      const result = chatRequestSchema.safeParse({
+        messages: [
+          {
+            id: "msg-1",
+            role: "user",
+            parts: [{ type: "text", text: "Hello" }],
+          },
+        ],
+        threadId: "thread-123",
+        sidekiqId: "sidekiq-abc123",
+      });
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.sidekiqId).toBe("sidekiq-abc123");
+      }
+    });
+
+    it("should accept request without sidekiqId (optional field)", () => {
+      const result = chatRequestSchema.safeParse({
+        messages: [
+          {
+            id: "msg-1",
+            role: "user",
+            parts: [{ type: "text", text: "Hello" }],
+          },
+        ],
+        threadId: "thread-123",
+      });
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.sidekiqId).toBeUndefined();
+      }
+    });
+
+    it("should accept empty string sidekiqId", () => {
+      const result = chatRequestSchema.safeParse({
+        messages: [
+          {
+            id: "msg-1",
+            role: "user",
+            parts: [{ type: "text", text: "Hello" }],
+          },
+        ],
+        threadId: "thread-123",
+        sidekiqId: "",
+      });
+
+      // Empty string is valid - route handler may treat it as no sidekiq
+      expect(result.success).toBe(true);
+    });
+
     it("should coerce createdAt string to Date", () => {
       const dateString = "2024-01-15T10:30:00.000Z";
       const result = chatRequestSchema.safeParse({
