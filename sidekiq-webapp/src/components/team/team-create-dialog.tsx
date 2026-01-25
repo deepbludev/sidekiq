@@ -38,12 +38,11 @@ export function TeamCreateDialog({
   const createMutation = api.team.create.useMutation({
     onSuccess: (team) => {
       void utils.team.list.invalidate();
-      if (team) {
-        toast.success(`Team "${team.name}" created!`);
-        onOpenChange(false);
-        // Navigate to team settings
-        router.push(`/settings/teams?team=${team.id}`);
-      }
+      if (!team) return;
+      toast.success(`Team "${team.name}" created!`);
+      onOpenChange(false);
+      // Navigate to team settings
+      router.push(`/settings/teams?team=${team.id}`);
     },
     onError: (error) => {
       toast.error(error.message);
