@@ -54,5 +54,12 @@ export default async function NewChatPage({ searchParams }: NewChatPageProps) {
 
   // No thread ID - this is the "new chat" state
   // Thread will be created when user sends their first message
-  return <ChatInterface threadId={null} sidekiq={sidekiq} />;
+  // Key prop forces remount when Sidekiq changes, resetting all internal state (model selection, etc.)
+  return (
+    <ChatInterface
+      key={sidekiq?.id ?? "no-sidekiq"}
+      threadId={null}
+      sidekiq={sidekiq}
+    />
+  );
 }
