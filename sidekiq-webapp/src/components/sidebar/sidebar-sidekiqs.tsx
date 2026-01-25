@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronRight, Plus, Sparkles, Star } from "lucide-react";
+import { ChevronRight, MoreHorizontal, Pencil, Plus, Sparkles, Star } from "lucide-react";
 
 import { Button } from "@sidekiq/components/ui/button";
 import {
@@ -10,6 +10,12 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@sidekiq/components/ui/collapsible";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@sidekiq/components/ui/dropdown-menu";
 import { api } from "@sidekiq/trpc/react";
 import { SidekiqAvatar } from "@sidekiq/components/sidekiq/sidekiq-avatar";
 
@@ -22,8 +28,8 @@ interface SidebarSidekiqsProps {
  * Favorites appear first, then recent by lastUsedAt.
  * Shows max 5 items with "See all" link to /sidekiqs.
  *
- * NOTE: Clicking a Sidekiq navigates to edit page (/sidekiqs/[id]/edit).
- * Starting a chat with a Sidekiq (navigating to /chat?sidekiq=id) is Phase 7.
+ * Clicking a Sidekiq starts a new chat with that Sidekiq.
+ * Edit is accessible via the dropdown menu on hover.
  *
  * @param props.onSidekiqSelect - Callback when a Sidekiq is selected (for mobile drawer close)
  */
@@ -43,10 +49,9 @@ export function SidebarSidekiqs({ onSidekiqSelect }: SidebarSidekiqsProps) {
   })();
 
   const handleSidekiqClick = (id: string) => {
-    // Navigate to edit page for this Sidekiq.
-    // NOTE: Phase 7 will change this to start a chat (/chat?sidekiq=id).
-    // For now, edit is the only meaningful action since chat integration isn't implemented.
-    router.push(`/sidekiqs/${id}/edit`);
+    // Navigate to chat with this Sidekiq selected
+    // Sidebar click always starts a new chat (edit accessible via dropdown)
+    router.push(`/chat?sidekiq=${id}`);
     onSidekiqSelect?.();
   };
 
@@ -88,22 +93,44 @@ export function SidebarSidekiqs({ onSidekiqSelect }: SidebarSidekiqsProps) {
         ) : (
           <div className="space-y-0.5 py-1">
             {displaySidekiqs.map((sidekiq) => (
-              <button
-                key={sidekiq.id}
-                onClick={() => handleSidekiqClick(sidekiq.id)}
-                className="hover:bg-accent/50 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors"
-              >
-                <SidekiqAvatar
-                  name={sidekiq.name}
-                  avatar={sidekiq.avatar}
-                  size="sm"
-                  className="size-6"
-                />
-                <span className="flex-1 truncate">{sidekiq.name}</span>
-                {sidekiq.isFavorite && (
-                  <Star className="size-3 shrink-0 fill-amber-400 text-amber-400" />
-                )}
-              </button>
+              <div key={sidekiq.id} className="group relative">
+                <button
+                  onClick={() => handleSidekiqClick(sidekiq.id)}
+                  className="hover:bg-accent/50 flex w-full items-center gap-2 rounded-md px-2 py-1.5 pr-8 text-left text-sm transition-colors"
+                >
+                  <SidekiqAvatar
+                    name={sidekiq.name}
+                    avatar={sidekiq.avatar}
+                    size="sm"
+                    className="size-6"
+                  />
+                  <span className="flex-1 truncate">{sidekiq.name}</span>
+                  {sidekiq.isFavorite && (
+                    <Star className="size-3 shrink-0 fill-amber-400 text-amber-400" />
+                  )}
+                </button>
+                {/* Edit dropdown on hover */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      className="absolute right-1 top-1/2 size-6 -translate-y-1/2 opacity-0 group-hover:opacity-100"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <MoreHorizontal className="size-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link href={`/sidekiqs/${sidekiq.id}/edit`}>
+                        <Pencil className="mr-2 size-3" />
+                        Edit Sidekiq
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             ))}
             {sidekiqs && sidekiqs.length > 5 && (
               <Link

@@ -22,6 +22,7 @@ function createThread(
     isPinned: false,
     isArchived: false,
     messageCount: 1,
+    sidekiqId: null,
     ...overrides,
   };
 }
