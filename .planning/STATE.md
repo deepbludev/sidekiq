@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 7 of 13 (Sidekiq Chat Integration)
-Plan: 2 of 6 complete
+Plan: 3 of 6 complete
 Status: In progress
-Last activity: 2026-01-25 - Completed 07-02-PLAN.md (Chat page Sidekiq integration)
+Last activity: 2026-01-25 - Completed 07-03-PLAN.md (Active Sidekiq UI indicators)
 
-Progress: [██████░░░░] ~51% (6 phases + 2 plans complete)
+Progress: [██████░░░░] ~53% (6 phases + 3 plans complete)
 
 ## Performance Metrics
 
@@ -33,11 +33,11 @@ Progress: [██████░░░░] ~51% (6 phases + 2 plans complete)
 | 04 | 4 | 17min | 4.25min |
 | 05 | 5 | 58min | 11.6min |
 | 06 | 4 | 56min | 14min |
-| 07 | 2 | 14min | 7min |
+| 07 | 3 | 18min | 6min |
 
 **Recent Trend:**
-- Last 5 plans: 06-03 (7min), 06-04 (9min), 07-01 (5min), 07-02 (9min)
-- Trend: Phase 7 progressing well, frontend integration complete
+- Last 5 plans: 06-04 (9min), 07-01 (5min), 07-02 (9min), 07-03 (4min)
+- Trend: Phase 7 Wave 2 progressing quickly, UI indicators complete
 
 *Updated after each plan completion*
 
@@ -121,6 +121,9 @@ Recent decisions affecting current work:
 - Owner-only access check for sidekiq query param, team access deferred to Phase 8 (confirmed - 07-02)
 - Model selection priority: thread > sidekiq > user > default (confirmed - 07-02)
 - sidekiqId passed in transport body for new Sidekiq chats (confirmed - 07-02)
+- SidekiqIndicator conditional wrapper (button vs div) for onClick support (confirmed - 07-03)
+- ChatHeader breadcrumb style: Sidekiq / Thread Title (confirmed - 07-03)
+- Input badge shows 'Chatting with [name]' for active Sidekiq (confirmed - 07-03)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 - DEFER Convex migration - PostgreSQL/Drizzle has no pain points, reconsider at Phase 8-9 (confirmed - quick-002)
@@ -158,9 +161,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 07-02-PLAN.md (Chat page Sidekiq integration)
+Stopped at: Completed 07-03-PLAN.md (Active Sidekiq UI indicators)
 Resume file: None
-Next: Plan 07-03 - API handler for Sidekiq system prompt injection
+Next: Wave 2 continues (07-04, 07-05 parallel), then 07-06
 
 ## Phase 2 Completion Summary
 
