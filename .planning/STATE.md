@@ -165,6 +165,7 @@ Recent decisions affecting current work:
 | 005 | Add Phase 6 E2E tests | 2026-01-24 | 8b8c6fa | [005-implement-e2e-tests-for-phase-6-sidekiq-](./quick/005-implement-e2e-tests-for-phase-6-sidekiq-/) |
 | 007 | Implement database seeding for local dev | 2026-01-25 | 835d3ae | [007-implement-database-seeding-for-local-dev](./quick/007-implement-database-seeding-for-local-dev/) |
 | 008 | Fix duplicate threads on Sidekiq chat | 2026-01-25 | f0c634c | [008-fix-duplicate-threads-on-sidekiq-chat](./quick/008-fix-duplicate-threads-on-sidekiq-chat/) |
+| 009 | Update unit tests for Phase 7 | 2026-01-25 | 2c9c413 | [009-update-unit-tests-for-phase-7](./quick/009-update-unit-tests-for-phase-7/) |
 
 ### Roadmap Evolution
 
