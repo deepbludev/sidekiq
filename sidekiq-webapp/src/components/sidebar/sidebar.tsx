@@ -20,6 +20,7 @@ import { SidebarSearch } from "./sidebar-search";
 import { SidebarSidekiqs } from "./sidebar-sidekiqs";
 import { SidebarThreadList } from "./sidebar-thread-list";
 import { SidebarFooter } from "./sidebar-footer";
+import { SidekiqPicker } from "@sidekiq/components/sidekiq/sidekiq-picker";
 
 /**
  * Main sidebar component with collapse/expand behavior and search.
@@ -54,6 +55,7 @@ export function Sidebar({ onThreadSelect }: SidebarProps) {
   const router = useRouter();
   const { isCollapsed, toggle } = useSidebarState();
   const [searchQuery, setSearchQuery] = useState("");
+  const [sidekiqPickerOpen, setSidekiqPickerOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Register keyboard shortcuts
@@ -61,6 +63,7 @@ export function Sidebar({ onThreadSelect }: SidebarProps) {
     onNewChat: () => router.push("/chat"),
     onToggleSidebar: toggle,
     onFocusSearch: () => searchInputRef.current?.focus(),
+    onOpenSidekiqPicker: () => setSidekiqPickerOpen(true),
   });
 
   const handleNewChat = () => {
@@ -129,6 +132,12 @@ export function Sidebar({ onThreadSelect }: SidebarProps) {
           {isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         </TooltipContent>
       </Tooltip>
+
+      {/* Sidekiq picker dialog (Cmd+Shift+S) */}
+      <SidekiqPicker
+        open={sidekiqPickerOpen}
+        onOpenChange={setSidekiqPickerOpen}
+      />
     </aside>
   );
 }

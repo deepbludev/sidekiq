@@ -12,6 +12,8 @@ interface ShortcutHandlers {
   onToggleSidebar?: () => void;
   /** Called when Cmd/Ctrl+K is pressed (focus search) */
   onFocusSearch?: () => void;
+  /** Called when Cmd/Ctrl+Shift+S is pressed (open Sidekiq picker) */
+  onOpenSidekiqPicker?: () => void;
 }
 
 /**
@@ -21,6 +23,7 @@ interface ShortcutHandlers {
  * - Cmd/Ctrl+N: New chat
  * - Cmd/Ctrl+B: Toggle sidebar
  * - Cmd/Ctrl+K: Focus search
+ * - Cmd/Ctrl+Shift+S: Open Sidekiq picker
  *
  * Handles both Mac (metaKey) and Windows/Linux (ctrlKey) modifier keys.
  * Properly cleans up event listeners on unmount.
@@ -36,6 +39,7 @@ interface ShortcutHandlers {
  *     onNewChat: () => router.push("/chat"),
  *     onToggleSidebar: toggle,
  *     onFocusSearch: () => searchRef.current?.focus(),
+ *     onOpenSidekiqPicker: () => setPickerOpen(true),
  *   });
  *
  *   return <App />;
@@ -48,6 +52,7 @@ export function useKeyboardShortcuts({
   onNewChat,
   onToggleSidebar,
   onFocusSearch,
+  onOpenSidekiqPicker,
 }: ShortcutHandlers): void {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -66,10 +71,14 @@ export function useKeyboardShortcuts({
       } else if (key === "k" && onFocusSearch) {
         e.preventDefault();
         onFocusSearch();
+      } else if (key === "s" && e.shiftKey && onOpenSidekiqPicker) {
+        // Cmd+Shift+S for Sidekiq picker
+        e.preventDefault();
+        onOpenSidekiqPicker();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onNewChat, onToggleSidebar, onFocusSearch]);
+  }, [onNewChat, onToggleSidebar, onFocusSearch, onOpenSidekiqPicker]);
 }
