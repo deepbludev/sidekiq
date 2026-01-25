@@ -246,6 +246,22 @@ export const sidekiqRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id, deleteThreads } = input;
 
+      // Fetch the sidekiq name before deletion for thread preservation
+      const sidekiqToDelete = await ctx.db.query.sidekiqs.findFirst({
+        where: and(
+          eq(sidekiqs.id, id),
+          eq(sidekiqs.ownerId, ctx.session.user.id),
+        ),
+        columns: { name: true },
+      });
+
+      if (!sidekiqToDelete) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Sidekiq not found",
+        });
+      }
+
       // If user wants to delete threads too
       if (deleteThreads) {
         await ctx.db
@@ -256,6 +272,12 @@ export const sidekiqRouter = createTRPCRouter({
               eq(threads.userId, ctx.session.user.id),
             ),
           );
+      } else {
+        // Store the sidekiq name in threads before deletion for graceful UI degradation
+        await ctx.db
+          .update(threads)
+          .set({ deletedSidekiqName: sidekiqToDelete.name })
+          .where(eq(threads.sidekiqId, id));
       }
 
       const [deleted] = await ctx.db
@@ -265,14 +287,7 @@ export const sidekiqRouter = createTRPCRouter({
         )
         .returning({ id: sidekiqs.id });
 
-      if (!deleted) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Sidekiq not found",
-        });
-      }
-
-      return { success: true, deletedId: deleted.id };
+      return { success: true, deletedId: deleted!.id };
     }),
 
   /**
