@@ -477,29 +477,39 @@ test.describe("Edit Sidekiq Flow", () => {
   });
 
   test("should save changes and persist them", async ({ page }) => {
-    // Wait for page to fully load
-    await page.waitForTimeout(500);
-
-    // Modify the description
+    // Wait for form to fully load by checking the description has initial value
     const descriptionInput = page.getByLabel(/description/i);
+    await expect(descriptionInput).toHaveValue(
+      "Test description for E2E testing",
+      { timeout: 10000 },
+    );
+
+    // Now modify the description
     await descriptionInput.clear();
     await descriptionInput.fill("Updated description via E2E test");
 
+    // Wait for form to register the change
+    await page.waitForTimeout(200);
+
     // Save
     const saveBtn = page.getByRole("button", { name: /save changes/i });
-    await saveBtn.click({ force: true });
+    await expect(saveBtn).toBeEnabled();
+    await saveBtn.click();
 
-    // Wait for save to complete
-    await page.waitForTimeout(3000);
+    // Wait for success toast to confirm save completed
+    await expect(page.getByText(/sidekiq updated successfully/i)).toBeVisible({
+      timeout: 10000,
+    });
 
     // Verify the change persisted by refreshing
     await page.reload();
     await page.waitForLoadState("domcontentloaded");
-    await page.waitForTimeout(500);
 
+    // Wait for form to load again
     const updatedDescription = page.getByLabel(/description/i);
     await expect(updatedDescription).toHaveValue(
       "Updated description via E2E test",
+      { timeout: 10000 },
     );
   });
 
