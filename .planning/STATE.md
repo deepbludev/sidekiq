@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** Phase 7 - Sidekiq Chat Integration (COMPLETE)
+**Current focus:** Phase 8 - Team Foundation (In Progress)
 
 ## Current Position
 
-Phase: 7 of 13 (Sidekiq Chat Integration)
-Plan: 10 of 10 complete (all plans including gap closures done)
-Status: Phase verified and complete
-Last activity: 2026-01-25 - Completed quick task 011: Improved database seed process and README
+Phase: 8 of 13 (Team Foundation)
+Plan: 1 of 7 complete
+Status: In progress
+Last activity: 2026-01-25 - Completed 08-01-PLAN.md (Team Schema & Validation)
 
-Progress: [███████░░░] ~58% (7 phases complete)
+Progress: [████████░░] ~62% (7 phases + 1 plan complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 29
-- Average duration: ~6.6 min
-- Total execution time: ~3 hours 11 min
+- Total plans completed: 30
+- Average duration: ~6.4 min
+- Total execution time: ~3 hours 13 min
 
 **By Phase:**
 
@@ -34,10 +34,11 @@ Progress: [███████░░░] ~58% (7 phases complete)
 | 05 | 5 | 58min | 11.6min |
 | 06 | 4 | 56min | 14min |
 | 07 | 10 | 37min | ~3.7min |
+| 08 | 1 | 2min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 07-07 (3min), 07-08 (1min), 07-09 (2min), 07-10 (1min)
-- Trend: Phase 7 all gap closures complete! Ready for Phase 8
+- Last 5 plans: 07-08 (1min), 07-09 (2min), 07-10 (1min), 08-01 (2min)
+- Trend: Phase 8 started! Foundation plan complete
 
 *Updated after each plan completion*
 
@@ -138,6 +139,10 @@ Recent decisions affecting current work:
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 - DEFER Convex migration - PostgreSQL/Drizzle has no pain points, reconsider at Phase 8-9 (confirmed - quick-002)
+- Teams use same SidekiqAvatar type for UI consistency (confirmed - 08-01)
+- Admin role in teamRoleEnum for three-tier permissions (confirmed - 08-01)
+- memberLimit column per-team for future upgrade tiers (confirmed - 08-01)
+- Pure function permission helpers for testable authorization (confirmed - 08-01)
 
 ### Pending Todos
 
@@ -179,9 +184,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed quick task 011: Improved database seed process and README
+Stopped at: Completed 08-01-PLAN.md (Team Schema & Validation)
 Resume file: None
-Next: Phase 8 (Team Sidekiqs)
+Next: 08-02-PLAN.md (Team tRPC Router)
 
 ## Phase 2 Completion Summary
 
