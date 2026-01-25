@@ -77,19 +77,35 @@ Sidekiq is a full-stack AI chat platform that allows users to interact with mult
    pnpm db:push
    ```
 
-6. **Seed development data (optional)**
-
-   ```bash
-   pnpm db:seed
-   ```
-
-7. **Start the development server**
+6. **Start the development server**
 
    ```bash
    pnpm dev
    ```
 
    Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+7. **Create a test user**
+
+   Sign up through the app UI using GitHub OAuth. This user will be used for local development and E2E testing.
+
+8. **Configure test user credentials**
+
+   After signing up, update `sidekiq-webapp/.env` with your test user:
+   ```
+   E2E_TEST_EMAIL="your-github-email@example.com"
+   E2E_TEST_PASSWORD="any-password-for-e2e-tests"
+   ```
+
+9. **Restart the server and seed the database**
+
+   ```bash
+   # Restart to pick up new env vars
+   # Then seed with development data
+   pnpm db:reset
+   ```
+
+   This will populate the database with sample Sidekiqs, threads, and messages for your test user.
 
 ## Development Workflow
 
@@ -177,15 +193,11 @@ pnpm test:e2e:html
 
 **E2E Test Setup:**
 
-1. Configure test credentials in `.env`:
-   ```
-   E2E_TEST_EMAIL="your-test-user@example.com"
-   E2E_TEST_PASSWORD="your-test-password"
-   ```
+E2E tests require a test user to be created first. Follow the setup flow in "Getting Started" above:
 
-2. Create a test user in your development database with these credentials
+1. Start dev server → Sign up via GitHub OAuth → Set `E2E_TEST_EMAIL` and `E2E_TEST_PASSWORD` in `.env` → Restart server → Run `pnpm db:reset`
 
-3. E2E tests automatically reset and seed the database before each run via Playwright's global setup
+2. E2E tests automatically reset and seed the database before each run via Playwright's global setup, ensuring a clean state with consistent test data
 
 ## Contributing
 

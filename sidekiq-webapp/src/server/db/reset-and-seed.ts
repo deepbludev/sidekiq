@@ -3,7 +3,10 @@
  *
  * Flushes app data (messages, threads, sidekiqs, teams) while preserving
  * better-auth tables (user, session, account, verification).
- * Then reseeds with fresh development data.
+ * Then reseeds with fresh development data for the E2E test user.
+ *
+ * IMPORTANT: The E2E test user must exist in the database before running this script.
+ * Create the user by signing up through the app UI, then set E2E_TEST_EMAIL in .env.
  *
  * @example
  * ```bash
@@ -20,19 +23,11 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { eq } from "drizzle-orm";
 import postgres from "postgres";
-import { nanoid } from "nanoid";
 import * as schema from "./schema";
 
 // ============================================================================
 // Seed IDs (fixed for idempotency)
 // ============================================================================
-
-const SEED_USER_ID = "seed-user-dev";
-const SEED_USER_EMAIL = "dev@sidekiq.local";
-const SEED_USER_NAME = "Dev User";
-
-const SEED_ACCOUNT_ID = "seed-account-github";
-const SEED_SESSION_ID = "seed-session-dev";
 
 const SEED_SIDEKIQ_1_ID = "seed-sidekiq-writing";
 const SEED_SIDEKIQ_2_ID = "seed-sidekiq-code";
@@ -44,62 +39,24 @@ const SEED_THREAD_3_ID = "seed-thread-3";
 const SEED_THREAD_4_ID = "seed-thread-4";
 
 // ============================================================================
-// Seed Data
+// Seed Data Factories
 // ============================================================================
 
 const now = new Date();
-const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
-const seedUser = {
-  id: SEED_USER_ID,
-  name: SEED_USER_NAME,
-  email: SEED_USER_EMAIL,
-  emailVerified: true,
-  image: null,
-  preferences: {
-    defaultModel: "google/gemini-2.0-flash",
-    favoriteModels: ["google/gemini-2.0-flash", "anthropic/claude-sonnet-4"],
-  },
-  createdAt: now,
-  updatedAt: now,
-};
-
-const seedAccount = {
-  id: SEED_ACCOUNT_ID,
-  accountId: "github-123456",
-  providerId: "github",
-  userId: SEED_USER_ID,
-  accessToken: "seed-access-token",
-  refreshToken: null,
-  idToken: null,
-  accessTokenExpiresAt: thirtyDaysFromNow,
-  refreshTokenExpiresAt: null,
-  scope: "read:user,user:email",
-  password: null,
-  createdAt: now,
-  updatedAt: now,
-};
-
-const seedSession = {
-  id: SEED_SESSION_ID,
-  expiresAt: thirtyDaysFromNow,
-  token: "seed-session-token-" + nanoid(),
-  createdAt: now,
-  updatedAt: now,
-  ipAddress: "127.0.0.1",
-  userAgent: "Seed Script",
-  userId: SEED_USER_ID,
-};
-
-const seedSidekiqs = [
-  {
-    id: SEED_SIDEKIQ_1_ID,
-    ownerId: SEED_USER_ID,
-    teamId: null,
-    name: "Writing Assistant",
-    description:
-      "Helps with writing, editing, and improving your content. From emails to blog posts.",
-    instructions: `You are a skilled writing assistant. Your role is to help users:
+/**
+ * Creates seed sidekiqs for the given user ID.
+ */
+function createSeedSidekiqs(userId: string) {
+  return [
+    {
+      id: SEED_SIDEKIQ_1_ID,
+      ownerId: userId,
+      teamId: null,
+      name: "Writing Assistant",
+      description:
+        "Helps with writing, editing, and improving your content. From emails to blog posts.",
+      instructions: `You are a skilled writing assistant. Your role is to help users:
 - Improve clarity and conciseness
 - Fix grammar and spelling
 - Adjust tone (formal, casual, professional)
@@ -107,30 +64,30 @@ const seedSidekiqs = [
 - Suggest better word choices
 
 Always ask clarifying questions about the intended audience and purpose before making major suggestions.`,
-    conversationStarters: [
-      "Help me write a professional email",
-      "Review and improve this paragraph",
-      "Make this text more concise",
-      "Rewrite this in a friendlier tone",
-    ],
-    defaultModel: null,
-    avatar: { type: "emoji" as const, color: "#8b5cf6", emoji: "pen" },
-    isFavorite: false,
-    lastUsedAt: new Date(now.getTime() - 2 * 60 * 60 * 1000), // 2 hours ago
-    threadCount: 2,
-    isPublic: false,
-    canTeamEdit: false,
-    createdAt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
-    updatedAt: now,
-  },
-  {
-    id: SEED_SIDEKIQ_2_ID,
-    ownerId: SEED_USER_ID,
-    teamId: null,
-    name: "Code Reviewer",
-    description:
-      "Reviews code for bugs, performance issues, and best practices.",
-    instructions: `You are an expert code reviewer. When reviewing code:
+      conversationStarters: [
+        "Help me write a professional email",
+        "Review and improve this paragraph",
+        "Make this text more concise",
+        "Rewrite this in a friendlier tone",
+      ],
+      defaultModel: null,
+      avatar: { type: "emoji" as const, color: "#8b5cf6", emoji: "pen" },
+      isFavorite: false,
+      lastUsedAt: new Date(now.getTime() - 2 * 60 * 60 * 1000), // 2 hours ago
+      threadCount: 2,
+      isPublic: false,
+      canTeamEdit: false,
+      createdAt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+      updatedAt: now,
+    },
+    {
+      id: SEED_SIDEKIQ_2_ID,
+      ownerId: userId,
+      teamId: null,
+      name: "Code Reviewer",
+      description:
+        "Reviews code for bugs, performance issues, and best practices.",
+      instructions: `You are an expert code reviewer. When reviewing code:
 1. Check for bugs and logic errors
 2. Identify security vulnerabilities
 3. Suggest performance improvements
@@ -138,29 +95,29 @@ Always ask clarifying questions about the intended audience and purpose before m
 5. Point out code style issues
 
 Provide specific line numbers when making suggestions. Be constructive and explain the reasoning behind each suggestion.`,
-    conversationStarters: [
-      "Review this function for bugs",
-      "How can I make this code faster?",
-      "Is this implementation secure?",
-    ],
-    defaultModel: "anthropic/claude-sonnet-4",
-    avatar: { type: "initials" as const, color: "#0ea5e9" },
-    isFavorite: false,
-    lastUsedAt: new Date(now.getTime() - 24 * 60 * 60 * 1000), // 1 day ago
-    threadCount: 1,
-    isPublic: false,
-    canTeamEdit: false,
-    createdAt: new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000), // 14 days ago
-    updatedAt: now,
-  },
-  {
-    id: SEED_SIDEKIQ_3_ID,
-    ownerId: SEED_USER_ID,
-    teamId: null,
-    name: "Research Helper",
-    description:
-      "Assists with research, summarization, and information synthesis.",
-    instructions: `You are a research assistant. Help users:
+      conversationStarters: [
+        "Review this function for bugs",
+        "How can I make this code faster?",
+        "Is this implementation secure?",
+      ],
+      defaultModel: "anthropic/claude-sonnet-4",
+      avatar: { type: "initials" as const, color: "#0ea5e9" },
+      isFavorite: false,
+      lastUsedAt: new Date(now.getTime() - 24 * 60 * 60 * 1000), // 1 day ago
+      threadCount: 1,
+      isPublic: false,
+      canTeamEdit: false,
+      createdAt: new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000), // 14 days ago
+      updatedAt: now,
+    },
+    {
+      id: SEED_SIDEKIQ_3_ID,
+      ownerId: userId,
+      teamId: null,
+      name: "Research Helper",
+      description:
+        "Assists with research, summarization, and information synthesis.",
+      instructions: `You are a research assistant. Help users:
 - Find and summarize information
 - Compare different sources or viewpoints
 - Create outlines and structures
@@ -168,83 +125,92 @@ Provide specific line numbers when making suggestions. Be constructive and expla
 - Generate citations in various formats
 
 Always cite sources when possible and distinguish between established facts and opinions or interpretations.`,
-    conversationStarters: [
-      "Summarize this article for me",
-      "Compare these two approaches",
-      "Help me outline a research paper",
-      "What are the key points in this topic?",
-    ],
-    defaultModel: "google/gemini-2.0-flash",
-    avatar: {
-      type: "emoji" as const,
-      color: "#10b981",
-      emoji: "magnifying-glass",
+      conversationStarters: [
+        "Summarize this article for me",
+        "Compare these two approaches",
+        "Help me outline a research paper",
+        "What are the key points in this topic?",
+      ],
+      defaultModel: "google/gemini-2.0-flash",
+      avatar: {
+        type: "emoji" as const,
+        color: "#10b981",
+        emoji: "magnifying-glass",
+      },
+      isFavorite: true,
+      lastUsedAt: new Date(now.getTime() - 30 * 60 * 1000), // 30 minutes ago
+      threadCount: 1,
+      isPublic: false,
+      canTeamEdit: false,
+      createdAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+      updatedAt: now,
     },
-    isFavorite: true,
-    lastUsedAt: new Date(now.getTime() - 30 * 60 * 1000), // 30 minutes ago
-    threadCount: 1,
-    isPublic: false,
-    canTeamEdit: false,
-    createdAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-    updatedAt: now,
-  },
-];
+  ];
+}
 
-const seedThreads = [
-  {
-    id: SEED_THREAD_1_ID,
-    userId: SEED_USER_ID,
-    sidekiqId: SEED_SIDEKIQ_1_ID,
-    title: "Email to potential client",
-    activeModel: "google/gemini-2.0-flash",
-    isPinned: true,
-    isArchived: false,
-    lastActivityAt: new Date(now.getTime() - 1 * 60 * 60 * 1000), // 1 hour ago
-    messageCount: 4,
-    createdAt: new Date(now.getTime() - 2 * 60 * 60 * 1000),
-    updatedAt: now,
-  },
-  {
-    id: SEED_THREAD_2_ID,
-    userId: SEED_USER_ID,
-    sidekiqId: SEED_SIDEKIQ_1_ID,
-    title: "Blog post about AI assistants",
-    activeModel: "google/gemini-2.0-flash",
-    isPinned: false,
-    isArchived: false,
-    lastActivityAt: new Date(now.getTime() - 5 * 60 * 60 * 1000), // 5 hours ago
-    messageCount: 2,
-    createdAt: new Date(now.getTime() - 6 * 60 * 60 * 1000),
-    updatedAt: now,
-  },
-  {
-    id: SEED_THREAD_3_ID,
-    userId: SEED_USER_ID,
-    sidekiqId: SEED_SIDEKIQ_2_ID,
-    title: "React hook code review",
-    activeModel: "anthropic/claude-sonnet-4",
-    isPinned: false,
-    isArchived: true,
-    lastActivityAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-    messageCount: 4,
-    createdAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000),
-    updatedAt: now,
-  },
-  {
-    id: SEED_THREAD_4_ID,
-    userId: SEED_USER_ID,
-    sidekiqId: SEED_SIDEKIQ_3_ID,
-    title: "Machine learning basics research",
-    activeModel: "google/gemini-2.0-flash",
-    isPinned: false,
-    isArchived: false,
-    lastActivityAt: new Date(now.getTime() - 30 * 60 * 1000), // 30 minutes ago
-    messageCount: 2,
-    createdAt: new Date(now.getTime() - 1 * 60 * 60 * 1000),
-    updatedAt: now,
-  },
-];
+/**
+ * Creates seed threads for the given user ID.
+ */
+function createSeedThreads(userId: string) {
+  return [
+    {
+      id: SEED_THREAD_1_ID,
+      userId: userId,
+      sidekiqId: SEED_SIDEKIQ_1_ID,
+      title: "Email to potential client",
+      activeModel: "google/gemini-2.0-flash",
+      isPinned: true,
+      isArchived: false,
+      lastActivityAt: new Date(now.getTime() - 1 * 60 * 60 * 1000), // 1 hour ago
+      messageCount: 4,
+      createdAt: new Date(now.getTime() - 2 * 60 * 60 * 1000),
+      updatedAt: now,
+    },
+    {
+      id: SEED_THREAD_2_ID,
+      userId: userId,
+      sidekiqId: SEED_SIDEKIQ_1_ID,
+      title: "Blog post about AI assistants",
+      activeModel: "google/gemini-2.0-flash",
+      isPinned: false,
+      isArchived: false,
+      lastActivityAt: new Date(now.getTime() - 5 * 60 * 60 * 1000), // 5 hours ago
+      messageCount: 2,
+      createdAt: new Date(now.getTime() - 6 * 60 * 60 * 1000),
+      updatedAt: now,
+    },
+    {
+      id: SEED_THREAD_3_ID,
+      userId: userId,
+      sidekiqId: SEED_SIDEKIQ_2_ID,
+      title: "React hook code review",
+      activeModel: "anthropic/claude-sonnet-4",
+      isPinned: false,
+      isArchived: true,
+      lastActivityAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+      messageCount: 4,
+      createdAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000),
+      updatedAt: now,
+    },
+    {
+      id: SEED_THREAD_4_ID,
+      userId: userId,
+      sidekiqId: SEED_SIDEKIQ_3_ID,
+      title: "Machine learning basics research",
+      activeModel: "google/gemini-2.0-flash",
+      isPinned: false,
+      isArchived: false,
+      lastActivityAt: new Date(now.getTime() - 30 * 60 * 1000), // 30 minutes ago
+      messageCount: 2,
+      createdAt: new Date(now.getTime() - 1 * 60 * 60 * 1000),
+      updatedAt: now,
+    },
+  ];
+}
 
+/**
+ * Static seed messages (don't depend on user ID).
+ */
 const seedMessages = [
   // Thread 1: Email to potential client (4 messages)
   {
@@ -727,36 +693,28 @@ async function flushAppData(
 // ============================================================================
 
 /**
- * Seeds the database with development data.
- * Creates a test user with sidekiqs, threads, and messages.
+ * Seeds the database with development data for the E2E test user.
+ * The user must already exist in the database (created via app UI signup).
  */
 async function seedData(
   db: ReturnType<typeof drizzle<typeof schema>>,
+  userId: string,
 ): Promise<void> {
   console.log("  Seeding development data...");
 
-  // Seed user
-  console.log("    - Seeding user...");
-  await db.insert(schema.user).values(seedUser).onConflictDoNothing();
-
-  // Seed account
-  console.log("    - Seeding account...");
-  await db.insert(schema.account).values(seedAccount).onConflictDoNothing();
-
-  // Seed session (delete existing first since token must be unique)
-  console.log("    - Seeding session...");
-  await db.delete(schema.session).where(eq(schema.session.id, SEED_SESSION_ID));
-  await db.insert(schema.session).values(seedSession).onConflictDoNothing();
+  // Create seed data for this user
+  const sidekiqs = createSeedSidekiqs(userId);
+  const threads = createSeedThreads(userId);
 
   // Seed sidekiqs
   console.log("    - Seeding sidekiqs...");
-  for (const sidekiq of seedSidekiqs) {
+  for (const sidekiq of sidekiqs) {
     await db.insert(schema.sidekiqs).values(sidekiq).onConflictDoNothing();
   }
 
   // Seed threads
   console.log("    - Seeding threads...");
-  for (const thread of seedThreads) {
+  for (const thread of threads) {
     await db.insert(schema.threads).values(thread).onConflictDoNothing();
   }
 
@@ -767,7 +725,7 @@ async function seedData(
   }
 
   console.log(
-    `  Seeded: 1 user, ${seedSidekiqs.length} sidekiqs, ${seedThreads.length} threads, ${seedMessages.length} messages`,
+    `  Seeded: ${sidekiqs.length} sidekiqs, ${threads.length} threads, ${seedMessages.length} messages`,
   );
 }
 
@@ -779,12 +737,23 @@ async function seedData(
  * Resets the database by flushing app data and reseeding.
  * Preserves better-auth tables (user, session, account, verification).
  *
+ * Requires E2E_TEST_EMAIL env var to be set. The user with this email
+ * must already exist in the database (created via app UI signup).
+ *
  * @returns Promise that resolves when reset and seed is complete
  */
 export async function resetAndSeed(): Promise<void> {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
     throw new Error("DATABASE_URL environment variable is not set");
+  }
+
+  const testEmail = process.env.E2E_TEST_EMAIL;
+  if (!testEmail) {
+    throw new Error(
+      "E2E_TEST_EMAIL environment variable is not set.\n" +
+        "Please set it to the email of your test user (created via app UI signup).",
+    );
   }
 
   console.log("Connecting to database...");
@@ -794,17 +763,41 @@ export async function resetAndSeed(): Promise<void> {
   try {
     console.log("\nResetting and seeding database...\n");
 
-    // Step 1: Flush app data
+    // Step 1: Look up the test user
+    console.log(`  Looking up user: ${testEmail}`);
+    const users = await db
+      .select()
+      .from(schema.user)
+      .where(eq(schema.user.email, testEmail))
+      .limit(1);
+
+    if (users.length === 0) {
+      throw new Error(
+        `User with email "${testEmail}" not found in database.\n` +
+          "Please create the test user first:\n" +
+          "  1. Start the dev server: pnpm dev\n" +
+          "  2. Sign up through the app UI with GitHub OAuth\n" +
+          "  3. Set E2E_TEST_EMAIL and E2E_TEST_PASSWORD in .env\n" +
+          "  4. Restart the server and run this command again",
+      );
+    }
+
+    const testUser = users[0]!;
+    console.log(`  Found user: ${testUser.name} (${testUser.id})\n`);
+
+    // Step 2: Flush app data
     await flushAppData(db);
 
     console.log("");
 
-    // Step 2: Seed fresh data
-    await seedData(db);
+    // Step 3: Seed fresh data for this user
+    await seedData(db, testUser.id);
 
     console.log("\nReset and seed complete!");
-    console.log(`\n  Login email: ${SEED_USER_EMAIL}`);
-    console.log(`  Session token: ${seedSession.token}`);
+    console.log(`\n  User: ${testUser.name} (${testEmail})`);
+    console.log(`  Sidekiqs: 3`);
+    console.log(`  Threads: 4`);
+    console.log(`  Messages: 12`);
   } finally {
     await client.end();
   }
