@@ -40,7 +40,9 @@
       "Skill(gsd:execute-phase)",
       "Bash(chmod:*)",
       "Bash(grep:*)",
-      "WebFetch(domain:t3.chat)"
+      "WebFetch(domain:t3.chat)",
+      "Bash(echo \"No CSS files found at root\" ls -la sidekiq-webapp/node_modules/@uiw/react-md-editor/*.css)",
+      "Bash(wc:*)"
     ]
   }
 }
