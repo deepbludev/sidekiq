@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 7 of 13 (Sidekiq Chat Integration)
-Plan: 9 of 9 complete (all gap closure plans done)
+Plan: 10 of 10 complete (all gap closure plans done)
 Status: Phase complete (all gaps closed)
-Last activity: 2026-01-25 - Fixed model state on Sidekiq switch (07-09)
+Last activity: 2026-01-25 - Added ChatInterface key prop for Sidekiq remount (07-10)
 
 Progress: [███████░░░] ~58% (7 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 28
-- Average duration: ~6.8 min
-- Total execution time: ~3 hours 10 min
+- Total plans completed: 29
+- Average duration: ~6.6 min
+- Total execution time: ~3 hours 11 min
 
 **By Phase:**
 
@@ -33,10 +33,10 @@ Progress: [███████░░░] ~58% (7 phases complete)
 | 04 | 4 | 17min | 4.25min |
 | 05 | 5 | 58min | 11.6min |
 | 06 | 4 | 56min | 14min |
-| 07 | 9 | 36min | ~4min |
+| 07 | 10 | 37min | ~3.7min |
 
 **Recent Trend:**
-- Last 5 plans: 07-06 (4min), 07-07 (3min), 07-08 (1min), 07-09 (2min)
+- Last 5 plans: 07-07 (3min), 07-08 (1min), 07-09 (2min), 07-10 (1min)
 - Trend: Phase 7 all gap closures complete! Ready for Phase 8
 
 *Updated after each plan completion*
@@ -134,6 +134,7 @@ Recent decisions affecting current work:
 - Sidekiq avatar shown inline at start of AI messages (confirmed - 07-06)
 - Thread page loads sidekiq relation with drizzle 'with' clause for context restoration (confirmed - 07-06)
 - deletedSidekiqName column stores Sidekiq name before deletion for graceful UI degradation (confirmed - 07-07)
+- React key prop on ChatInterface for component remount on Sidekiq change (confirmed - 07-10)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 - DEFER Convex migration - PostgreSQL/Drizzle has no pain points, reconsider at Phase 8-9 (confirmed - quick-002)
@@ -172,7 +173,7 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 07-09-PLAN.md (Fix Model State on Sidekiq Switch - gap closure)
+Stopped at: Completed 07-10-PLAN.md (ChatInterface Key Prop - gap closure)
 Resume file: None
 Next: Phase 8 (Team Sidekiqs)
 
@@ -321,6 +322,7 @@ All 6 plans executed successfully:
 | 07-07 | Deleted Sidekiq display fix (gap closure) | Complete |
 | 07-08 | Model picker in Sidekiq form (gap closure) | Complete |
 | 07-09 | Fix model state on Sidekiq switch (gap closure) | Complete |
+| 07-10 | ChatInterface key prop for Sidekiq remount (gap closure) | Complete |
 
 **Components Ready:**
 - SidekiqPicker - Command palette with fuzzy search
@@ -346,3 +348,4 @@ All 6 plans executed successfully:
 - 07-07: Deleted Sidekiq display fix - added deletedSidekiqName column to preserve Sidekiq name when deleted (complete)
 - 07-08: Model picker added to Sidekiq form - users can now set default model when creating/editing Sidekiqs (complete)
 - 07-09: Fix model state on Sidekiq switch - useEffect added to update model selection on client-side navigation (complete)
+- 07-10: ChatInterface key prop - React key forces component remount on Sidekiq change (complete)
