@@ -53,13 +53,60 @@ const PROMPT_CATEGORIES: PromptCategory[] = [
 interface EmptyStateProps {
   /** Callback when user selects a prompt suggestion */
   onPromptSelect: (prompt: string) => void;
+  /** Custom conversation starters from Sidekiq (replaces default categories) */
+  conversationStarters?: string[];
+  /** Sidekiq name to display in welcome message */
+  sidekiqName?: string;
 }
 
 /**
  * Empty state shown when chat has no messages.
  * Displays categorized prompt suggestions to help users get started.
+ * When a Sidekiq is active, shows its custom conversation starters instead.
  */
-export function EmptyState({ onPromptSelect }: EmptyStateProps) {
+export function EmptyState({
+  onPromptSelect,
+  conversationStarters,
+  sidekiqName,
+}: EmptyStateProps) {
+  // Render Sidekiq-specific empty state with conversation starters
+  if (conversationStarters && conversationStarters.length > 0) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center p-8">
+        {/* Welcome message */}
+        <div className="mb-8 text-center">
+          <h2 className="text-foreground text-2xl font-semibold">
+            Chat with {sidekiqName ?? "Sidekiq"}
+          </h2>
+          <p className="text-muted-foreground mt-2">
+            Choose a starter or type your own message
+          </p>
+        </div>
+
+        {/* Sidekiq conversation starters - simple list */}
+        <div className="grid w-full max-w-xl grid-cols-1 gap-3">
+          {conversationStarters.map((starter, index) => (
+            <button
+              key={index}
+              onClick={() => onPromptSelect(starter)}
+              className={cn(
+                "w-full rounded-lg p-4 text-left text-sm",
+                "glass-subtle",
+                "text-foreground/80 hover:text-foreground",
+                "hover:bg-white/60 dark:hover:bg-zinc-800/60",
+                "transition-colors duration-200",
+                "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
+              )}
+            >
+              {starter}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Default empty state with categorized prompts
   return (
     <div className="flex h-full flex-col items-center justify-center p-8">
       {/* Welcome message */}

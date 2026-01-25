@@ -30,6 +30,10 @@ interface MessageListProps {
     previousModel: string,
     currentModel: string,
   ) => ReactNode;
+  /** Custom conversation starters from Sidekiq (replaces default categories in empty state) */
+  conversationStarters?: string[];
+  /** Sidekiq name to display in empty state welcome message */
+  sidekiqName?: string;
 }
 
 /**
@@ -43,10 +47,16 @@ export function MessageList({
   onRegenerateMessage,
   modelSwitches = [],
   renderModelSwitchHint,
+  conversationStarters,
+  sidekiqName,
 }: MessageListProps) {
   if (messages.length === 0) {
     return onPromptSelect ? (
-      <EmptyState onPromptSelect={onPromptSelect} />
+      <EmptyState
+        onPromptSelect={onPromptSelect}
+        conversationStarters={conversationStarters}
+        sidekiqName={sidekiqName}
+      />
     ) : (
       // Fallback if no onPromptSelect provided
       <div className="flex h-full items-center justify-center py-12">
