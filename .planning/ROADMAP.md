@@ -151,7 +151,7 @@ Plans:
   3. UI clearly indicates which Sidekiq is currently active in a conversation
   4. Messages from Sidekiq-based conversations reflect the custom instructions
   5. Sidekiq chats show visual indicator in sidebar (icon, badge, subtitle with Sidekiq name)
-**Plans**: 8 plans
+**Plans**: 9 plans
 
 Plans:
 - [x] 07-01-PLAN.md — Backend foundation: sidekiqId in chat schema, system message injection, thread list relation
@@ -162,6 +162,7 @@ Plans:
 - [x] 07-06-PLAN.md — Final integration: SidekiqPicker dialog, Cmd+Shift+S shortcut, AI message avatar, thread resume
 - [x] 07-07-PLAN.md — [gap closure] Deleted Sidekiq handling: preserve name in threads before delete
 - [x] 07-08-PLAN.md — [gap closure] Model selector in Sidekiq form: add ModelPicker to create/edit
+- [x] 07-09-PLAN.md — [gap closure] Model state fix: reset model picker on Sidekiq switch
 
 ### Phase 8: Team Foundation
 **Goal**: User can create teams and manage members with invite system
@@ -263,7 +264,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 4. Model Selection & Persistence | 4/4 | Complete | 2026-01-23 |
 | 5. Sidebar & Navigation | 5/5 | Complete | 2026-01-24 |
 | 6. Sidekiq CRUD | 7/7 | Complete | 2026-01-24 |
-| 7. Sidekiq Chat Integration | 8/8 | Complete | 2026-01-25 |
+| 7. Sidekiq Chat Integration | 9/9 | Complete | 2026-01-25 |
 | 8. Team Foundation | 0/1 | Not started | - |
 | 9. Team Sidekiq Sharing | 0/1 | Not started | - |
 | 10. Error Handling & Edge Cases | 0/1 | Not started | - |

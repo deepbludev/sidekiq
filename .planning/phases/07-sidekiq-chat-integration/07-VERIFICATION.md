@@ -1,15 +1,16 @@
 ---
 phase: 07-sidekiq-chat-integration
-verified: 2026-01-25T21:30:00Z
+verified: 2026-01-25T17:10:48Z
 status: passed
-score: 7/7 must-haves verified
+score: 8/8 must-haves verified
 re_verification:
   previous_status: passed
-  previous_score: 5/5
-  previous_verified: 2026-01-25T23:30:00Z
+  previous_score: 7/7
+  previous_verified: 2026-01-25T21:30:00Z
   gaps_closed:
     - "Deleted Sidekiq graceful handling (deletedSidekiqName preservation)"
     - "Model selector in Sidekiq create/edit form"
+    - "Model state resets when switching between Sidekiqs"
   gaps_remaining: []
   regressions: []
 ---
@@ -17,24 +18,23 @@ re_verification:
 # Phase 7: Sidekiq Chat Integration Verification Report
 
 **Phase Goal:** User can start a chat with a Sidekiq and see its personality in responses
-**Verified:** 2026-01-25T21:30:00Z
+**Verified:** 2026-01-25T17:10:48Z
 **Status:** PASSED
-**Re-verification:** Yes - after gap closure (plans 07-07, 07-08)
+**Re-verification:** Yes - after gap closure (plans 07-07, 07-08, 07-09)
 
 ## Re-Verification Context
 
-**Previous verification:** 2026-01-25T23:30:00Z (status: passed, 5/5 must-haves)
-**UAT conducted:** 2026-01-25 - identified 2 gaps from 12 tests
+**Previous verification:** 2026-01-25T21:30:00Z (status: passed, 7/7 must-haves)
+**UAT conducted:** 2026-01-25 - identified 3 gaps from 12 tests
 **Gap closure plans:**
 - **07-07:** Fixed deleted Sidekiq handling (added deletedSidekiqName column, preservation logic)
 - **07-08:** Added model selector to Sidekiq form (ModelPicker integration)
+- **07-09:** Fixed model state on Sidekiq switch (useEffect for sidekiqDefaultModel)
 
-**Changes since initial verification:**
-1. New `deletedSidekiqName` column in threads table (schema.ts line 250)
-2. Sidekiq deletion preserves name in threads (sidekiq.ts lines 276-280)
-3. Thread UI checks `deletedSidekiqName` for deleted indicator (thread-item.tsx lines 132-162)
-4. ModelPicker added to SidekiqForm (sidekiq-form.tsx lines 208-227)
-5. Thread list query includes `deletedSidekiqName` column (thread.ts line 73)
+**Changes since previous verification:**
+1. NEW: `useEffect` for sidekiqDefaultModel in use-model-selection.ts (lines 134-144)
+2. Model picker now responds to client-side navigation between Sidekiqs
+3. Thread model priority preserved (!threadModel guard ensures thread > sidekiq > user > default)
 
 ## Goal Achievement
 
@@ -47,16 +47,18 @@ re_verification:
 | 3 | UI clearly indicates which Sidekiq is currently active in a conversation | ✓ VERIFIED | ChatHeader shows Sidekiq with popover (chat-header.tsx lines 44-78), ChatInput displays badge "Chatting with [name]" (chat-input.tsx lines 73-82), SidekiqIndicator component used consistently |
 | 4 | Messages from Sidekiq-based conversations reflect the custom instructions | ✓ VERIFIED | System message injection ensures AI follows instructions (route.ts line 224-226: messagesWithSystem includes system role). Visible in code, requires human testing for response quality |
 | 5 | Sidekiq chats show visual indicator in sidebar (icon, badge, subtitle with Sidekiq name) | ✓ VERIFIED | thread-item.tsx lines 125-131: Sidekiq avatar displayed. Lines 155-162: subtitle "with {sidekiq.name}" or "[Sidekiq deleted]" for deleted cases |
-| 6 | When Sidekiq is deleted, threads retain name and show graceful degradation | ✓ VERIFIED | NEW (gap closed) - deletedSidekiqName column (schema.ts line 250), preservation in delete mutation (sidekiq.ts lines 276-280), UI fallback (thread-item.tsx lines 132-136, 159-162) |
-| 7 | User can select default model when creating/editing Sidekiq | ✓ VERIFIED | NEW (gap closed) - ModelPicker field in SidekiqForm (sidekiq-form.tsx lines 208-227), imports DEFAULT_MODEL (line 29), wired to form.control |
+| 6 | When Sidekiq is deleted, threads retain name and show graceful degradation | ✓ VERIFIED | deletedSidekiqName column (schema.ts line 250), preservation in delete mutation (sidekiq.ts lines 276-280), UI fallback (thread-item.tsx lines 132-136, 159-162) |
+| 7 | User can select default model when creating/editing Sidekiq | ✓ VERIFIED | ModelPicker field in SidekiqForm (sidekiq-form.tsx lines 208-227), imports DEFAULT_MODEL (line 29), wired to form.control |
+| 8 | Model selection updates when switching between Sidekiqs via client-side navigation | ✓ VERIFIED | NEW (gap closed) - useEffect in use-model-selection.ts (lines 134-144), guards with !threadModel, depends on [threadModel, sidekiqDefaultModel] |
 
-**Score:** 7/7 truths verified (5 original + 2 gap closures)
+**Score:** 8/8 truths verified (5 original + 3 gap closures)
 
 ### Required Artifacts
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `sidekiq-webapp/src/server/db/schema.ts` | deletedSidekiqName column | ✓ VERIFIED | Line 250: `deletedSidekiqName: varchar("deleted_sidekiq_name", { length: 100 })` with JSDoc "Preserved name if the associated Sidekiq was deleted" |
+| `sidekiq-webapp/src/hooks/use-model-selection.ts` | useEffect for sidekiqDefaultModel | ✓ VERIFIED | Lines 134-144: useEffect with !threadModel guard, isValidModel check, setSelectedModelState call. Dependency array [threadModel, sidekiqDefaultModel] correctly responds to both prop changes |
+| `sidekiq-webapp/src/db/schema.ts` | deletedSidekiqName column | ✓ VERIFIED | Line 250: `deletedSidekiqName: varchar("deleted_sidekiq_name", { length: 100 })` with JSDoc "Preserved name if the associated Sidekiq was deleted" |
 | `sidekiq-webapp/src/server/api/routers/sidekiq.ts` | Preserve name before deletion | ✓ VERIFIED | Lines 249-280: Fetch sidekiq.name, then UPDATE threads SET deletedSidekiqName before DELETE sidekiq |
 | `sidekiq-webapp/src/components/thread/thread-item.tsx` | deletedSidekiqName UI logic | ✓ VERIFIED | Lines 132-136: "?" avatar when deletedSidekiqName exists. Lines 159-162: "[Sidekiq deleted]" subtitle. Correct conditional priority: sidekiq, then deletedSidekiqName, then isPinned |
 | `sidekiq-webapp/src/server/api/routers/thread.ts` | Include deletedSidekiqName in query | ✓ VERIFIED | Line 73: `deletedSidekiqName: true` in columns selection for thread.list query |
@@ -79,6 +81,8 @@ re_verification:
 
 | From | To | Via | Status | Details |
 |------|-----|-----|--------|---------|
+| use-model-selection.ts | sidekiqDefaultModel prop | useEffect reactivity | ✓ WIRED | Lines 134-144: useEffect responds to sidekiqDefaultModel changes, calls setSelectedModelState when !threadModel && sidekiqDefaultModel && isValidModel |
+| chat/page.tsx | chat-interface.tsx | sidekiq.defaultModel prop | ✓ WIRED | chat/page.tsx passes sidekiq.defaultModel to chat-interface.tsx, which passes to useModelSelection hook as sidekiqDefaultModel prop |
 | sidekiq.delete mutation | threads table | UPDATE before DELETE | ✓ WIRED | Lines 276-280: `db.update(threads).set({ deletedSidekiqName })` executes before `db.delete(sidekiqs)` |
 | thread-item.tsx | deletedSidekiqName | Conditional rendering | ✓ WIRED | Lines 132-136, 159-162: UI checks `thread.deletedSidekiqName` for avatar and subtitle |
 | thread.list query | thread-item.tsx | Column selection | ✓ WIRED | thread.ts line 73 selects deletedSidekiqName, thread-item receives it via props |
@@ -98,7 +102,15 @@ re_verification:
 
 ### Anti-Patterns Found
 
-No blocking anti-patterns. Code quality improvements since initial verification:
+No blocking anti-patterns. Code quality improvements:
+
+**Gap Closure 07-09 (NEW):**
+- ✅ useEffect follows React Hook best practices (dependency array includes all used props)
+- ✅ Guard condition (!threadModel) maintains priority hierarchy
+- ✅ isValidModel safety check prevents invalid state
+- ✅ Comment clearly explains purpose ("navigating between sidekiqs")
+- ✅ Positioned correctly after threadModel effect (lines 134-144 vs 128-132)
+- ✅ No side effects or async operations in effect body
 
 **Gap Closure 07-07:**
 - ✅ FK context preservation pattern implemented correctly
@@ -113,7 +125,7 @@ No blocking anti-patterns. Code quality improvements since initial verification:
 
 ### Human Verification Required
 
-Same items as initial verification - gap closures did not affect human testing needs:
+Same items as previous verification - gap closure 07-09 does not require new human tests (model switching behavior verifiable via existing test scenarios):
 
 #### 1. Test Sidekiq Personality in Responses
 
@@ -170,7 +182,7 @@ Same items as initial verification - gap closures did not affect human testing n
 **Expected:** Graceful degradation - thread accessible, visual indicators show deletion, chat continues without custom personality
 **Why human:** Requires state mutation (delete), verification across UI surfaces, database state inspection
 
-**NEW PRIORITY:** Test #5 was a failed UAT item - now requires explicit human verification to confirm fix.
+**PRIORITY:** Test #5 was a failed UAT item - now requires explicit human verification to confirm fix.
 
 #### 6. Test Model Selection in Sidekiq Form (RE-VERIFICATION PRIORITY)
 
@@ -185,13 +197,29 @@ Same items as initial verification - gap closures did not affect human testing n
 **Expected:** Model picker displays, selection saves to database, edit form shows saved value
 **Why human:** Requires visual form verification, database persistence check, round-trip testing
 
-**NEW PRIORITY:** Test #6 was a failed UAT item - now requires explicit human verification to confirm fix.
+**PRIORITY:** Test #6 was a failed UAT item - now requires explicit human verification to confirm fix.
+
+#### 7. Test Model State on Sidekiq Switch (RE-VERIFICATION PRIORITY - NEW)
+
+**Test:**
+1. Create two Sidekiqs with different default models (e.g., Sidekiq A: Claude Sonnet, Sidekiq B: GPT-4o)
+2. Start a new chat with Sidekiq A via sidebar
+3. Verify model picker displays Claude Sonnet
+4. Click Sidekiq B in sidebar (client-side navigation to `/chat?sidekiq=B`)
+5. Verify model picker updates to GPT-4o WITHOUT page refresh
+6. Create an existing thread with a specific model (e.g., GPT-4 Mini)
+7. Open that thread and verify model picker shows thread's model (GPT-4 Mini), NOT the Sidekiq's default
+
+**Expected:** Model picker responds immediately to Sidekiq changes in new chat scenario, but thread model takes priority for existing threads
+**Why human:** Requires client-side navigation flow, visual verification of model picker state changes, testing priority hierarchy
+
+**PRIORITY:** Test #7 verifies gap closure 07-09 - requires explicit human verification to confirm model state updates correctly.
 
 ---
 
 ## Summary
 
-Phase 7 goal **ACHIEVED** with gap closures verified. All 7 observable truths verified:
+Phase 7 goal **ACHIEVED** with all gap closures verified. All 8 observable truths verified:
 
 ### Original 5 Truths (Initial Verification)
 1. ✅ **Multiple chat entry points** - Sidebar, cards, edit page, keyboard shortcut
@@ -200,27 +228,37 @@ Phase 7 goal **ACHIEVED** with gap closures verified. All 7 observable truths ve
 4. ✅ **Personality in responses** - System message ensures AI follows instructions (code verified, human testing needed for quality)
 5. ✅ **Sidebar visual indicators** - Avatar, subtitle, Sidekiq name display
 
-### New 2 Truths (Gap Closures)
+### Gap Closures (UAT Fixes)
 6. ✅ **Deleted Sidekiq graceful handling** - deletedSidekiqName column preserves context, "?" avatar + "[Sidekiq deleted]" subtitle, threads remain functional
 7. ✅ **Model selector in Sidekiq form** - ModelPicker integrated, defaultModel saved and displayed on edit
+8. ✅ **Model state resets on Sidekiq switch** - useEffect responds to sidekiqDefaultModel prop changes, updates model picker during client-side navigation while preserving thread model priority
 
 **Code quality:** 
 - TypeScript compiles without errors
 - No anti-patterns detected
 - Security checks in place (ownership verification)
-- Follows established patterns (Drizzle relations, runtime injection, React Hook Form)
-- Gap closures follow best practices (FK context preservation, FormField wrapper pattern)
+- Follows established patterns (Drizzle relations, runtime injection, React Hook Form, React Hooks)
+- Gap closures follow best practices (FK context preservation, FormField wrapper, useEffect reactivity)
 
 **Requirements:** KIQQ-04, KIQQ-05, SIDE-06 all satisfied.
 
 **Migration note:** deletedSidekiqName column exists in schema.ts and snapshot (meta/0002_snapshot.json) but migration SQL file not present. Likely applied via `db:push`. Schema is source of truth for Drizzle, so functionally not blocking.
 
-**Human verification:** 6 scenarios identified, with tests #5 and #6 prioritized as they verify gap closures. These tests confirm end-to-end functionality and UX quality that cannot be determined from static code analysis.
+**Human verification:** 7 scenarios identified, with tests #5, #6, #7 prioritized as they verify gap closures. These tests confirm end-to-end functionality and UX quality that cannot be determined from static code analysis.
 
-**Regressions:** None detected. All original functionality preserved, two new features added.
+**Regressions:** None detected. All original functionality preserved, three new features/fixes added.
+
+**Gap closure 07-09 analysis:**
+- Lines changed: 11 (added useEffect block)
+- Duration: 2 minutes
+- Implementation matches plan exactly
+- No deviations or issues
+- Priority hierarchy preserved: thread > sidekiq > user > default
+- Dependency array correctly includes both threadModel and sidekiqDefaultModel
+- Comment clearly documents purpose
 
 ---
 
-_Verified: 2026-01-25T21:30:00Z_
+_Verified: 2026-01-25T17:10:48Z_
 _Verifier: Claude (gsd-verifier)_
-_Re-verification: Gap closure validation for plans 07-07, 07-08_
+_Re-verification: Gap closure validation for plans 07-07, 07-08, 07-09_
