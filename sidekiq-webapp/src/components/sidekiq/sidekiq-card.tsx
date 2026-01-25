@@ -1,8 +1,9 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import { MoreHorizontal, Star, MessageSquare } from "lucide-react";
+import { MessageSquare, MoreHorizontal, Star } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@sidekiq/components/ui/button";
 import {
@@ -47,6 +48,12 @@ export function SidekiqCard({
   onDuplicate,
   onDelete,
 }: SidekiqCardProps) {
+  const router = useRouter();
+
+  const handleStartChat = () => {
+    router.push(`/chat?sidekiq=${sidekiq.id}`);
+  };
+
   const lastUsedText = sidekiq.lastUsedAt
     ? `Used ${formatDistanceToNow(sidekiq.lastUsedAt, { addSuffix: true })}`
     : "Never used";
@@ -79,6 +86,10 @@ export function SidekiqCard({
         <div className="text-muted-foreground hidden text-sm md:block">
           {lastUsedText}
         </div>
+        <Button variant="secondary" size="sm" onClick={handleStartChat}>
+          <MessageSquare className="mr-2 size-4" />
+          Start Chat
+        </Button>
         <SidekiqCardActions
           sidekiq={sidekiq}
           onToggleFavorite={onToggleFavorite}
@@ -112,13 +123,22 @@ export function SidekiqCard({
       <p className="text-muted-foreground mb-3 line-clamp-2 flex-1 text-sm">
         {sidekiq.description ?? "No description"}
       </p>
-      <div className="text-muted-foreground flex items-center gap-3 text-xs">
+      <div className="text-muted-foreground mb-3 flex items-center gap-3 text-xs">
         <span className="flex items-center gap-1">
           <MessageSquare className="size-3" />
           {statsText}
         </span>
         <span>{lastUsedText}</span>
       </div>
+      <Button
+        variant="secondary"
+        size="sm"
+        className="w-full"
+        onClick={handleStartChat}
+      >
+        <MessageSquare className="mr-2 size-4" />
+        Start Chat
+      </Button>
     </div>
   );
 }
@@ -147,8 +167,6 @@ function SidekiqCardActions({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {/* NOTE: "Start chat" navigates to /chat?sidekiq=id which requires Phase 7 (Chat Integration).
-            For now this will show a blank chat page. Full functionality comes in Phase 7. */}
         <DropdownMenuItem asChild>
           <Link href={`/chat?sidekiq=${sidekiq.id}`}>Start chat</Link>
         </DropdownMenuItem>

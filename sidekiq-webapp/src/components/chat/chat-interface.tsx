@@ -14,6 +14,7 @@ import { toast } from "sonner";
 
 import { MessageList } from "./message-list";
 import { ChatInput } from "./chat-input";
+import { ChatHeader } from "./chat-header";
 import { TypingIndicator } from "./typing-indicator";
 import { ChatScrollAnchor } from "./chat-scroll-anchor";
 import { ScrollToBottom } from "./scroll-to-bottom";
@@ -239,6 +240,9 @@ export function ChatInterface({
 
   return (
     <div className="relative flex h-full flex-col">
+      {/* Header with Sidekiq indicator */}
+      <ChatHeader title={currentTitle} sidekiq={sidekiq} />
+
       {/* Message area */}
       <div
         ref={scrollContainerRef}
@@ -300,6 +304,7 @@ export function ChatInterface({
             onSubmit={handleSubmit}
             isStreaming={isStreaming}
             onStop={stop}
+            sidekiq={sidekiq}
             modelPicker={
               <ModelPicker
                 value={selectedModel}

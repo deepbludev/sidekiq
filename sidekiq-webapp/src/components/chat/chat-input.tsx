@@ -5,7 +5,9 @@ import { Send, Square } from "lucide-react";
 
 import { Button } from "@sidekiq/components/ui/button";
 import { Textarea } from "@sidekiq/components/ui/textarea";
+import { SidekiqAvatar } from "@sidekiq/components/sidekiq/sidekiq-avatar";
 import { cn } from "@sidekiq/lib/utils";
+import type { SidekiqAvatar as SidekiqAvatarType } from "@sidekiq/lib/validations/sidekiq";
 
 interface ChatInputProps {
   /** Current input value */
@@ -22,6 +24,11 @@ interface ChatInputProps {
   placeholder?: string;
   /** Model picker component to render */
   modelPicker?: ReactNode;
+  /** Active Sidekiq (shows badge above input) */
+  sidekiq?: {
+    name: string;
+    avatar: SidekiqAvatarType;
+  } | null;
 }
 
 /**
@@ -41,6 +48,7 @@ export function ChatInput({
   onStop,
   placeholder = "Type a message...",
   modelPicker,
+  sidekiq,
 }: ChatInputProps) {
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     // Enter to send, Shift+Enter for newline
@@ -59,6 +67,20 @@ export function ChatInput({
 
   return (
     <form onSubmit={onSubmit} className="relative">
+      {sidekiq && (
+        <div className="mb-2 flex items-center gap-1.5">
+          <SidekiqAvatar
+            name={sidekiq.name}
+            avatar={sidekiq.avatar}
+            size="sm"
+            className="size-5"
+          />
+          <span className="text-muted-foreground text-xs">
+            Chatting with{" "}
+            <span className="text-foreground font-medium">{sidekiq.name}</span>
+          </span>
+        </div>
+      )}
       <Textarea
         value={input}
         onChange={(e) => setInput(e.target.value)}
