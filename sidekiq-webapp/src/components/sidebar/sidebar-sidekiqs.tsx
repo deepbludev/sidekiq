@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronRight, MoreHorizontal, Pencil, Plus, Sparkles, Star } from "lucide-react";
+import {
+  ChevronRight,
+  MoreHorizontal,
+  Pencil,
+  Plus,
+  Sparkles,
+  Star,
+} from "lucide-react";
 
 import { Button } from "@sidekiq/components/ui/button";
 import {
@@ -115,7 +122,7 @@ export function SidebarSidekiqs({ onSidekiqSelect }: SidebarSidekiqsProps) {
                     <Button
                       variant="ghost"
                       size="icon-sm"
-                      className="absolute right-1 top-1/2 size-6 -translate-y-1/2 opacity-0 group-hover:opacity-100"
+                      className="absolute top-1/2 right-1 size-6 -translate-y-1/2 opacity-0 group-hover:opacity-100"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <MoreHorizontal className="size-3" />
