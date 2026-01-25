@@ -246,6 +246,8 @@ export const threads = pgTable(
     sidekiqId: text("sidekiq_id").references(() => sidekiqs.id, {
       onDelete: "set null",
     }),
+    /** Preserved name if the associated Sidekiq was deleted */
+    deletedSidekiqName: varchar("deleted_sidekiq_name", { length: 100 }),
     title: varchar("title", { length: 255 }),
     activeModel: varchar("active_model", { length: 100 }),
     isPinned: boolean("is_pinned").notNull().default(false),
