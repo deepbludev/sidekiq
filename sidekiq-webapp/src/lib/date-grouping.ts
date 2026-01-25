@@ -6,6 +6,7 @@ import {
   formatDistanceToNow,
   format,
 } from "date-fns";
+import type { SidekiqAvatar } from "@sidekiq/server/db/schema";
 
 /**
  * Date group categories for thread organization.
@@ -30,6 +31,14 @@ export interface Thread {
   isArchived: boolean;
   lastActivityAt: Date;
   messageCount: number;
+  /** Foreign key to sidekiqs table (null for regular threads) */
+  sidekiqId: string | null;
+  /** Related Sidekiq data (null if regular thread or Sidekiq deleted) */
+  sidekiq?: {
+    id: string;
+    name: string;
+    avatar: SidekiqAvatar;
+  } | null;
 }
 
 /**
