@@ -22,6 +22,9 @@ import { Skeleton } from "@sidekiq/components/ui/skeleton";
 /**
  * Virtual item type for flattened groups.
  * Either a date group header, a thread item, or a search result with highlighting.
+ *
+ * Thread items include sidekiq relation data (id, name, avatar) when the thread
+ * is associated with a Sidekiq, enabling visual indicators in ThreadItem.
  */
 type VirtualItem =
   | { type: "header"; group: DateGroup }
