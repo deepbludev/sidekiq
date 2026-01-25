@@ -18,6 +18,7 @@ import { SidebarHeader } from "./sidebar-header";
 import { SidebarCollapsed } from "./sidebar-collapsed";
 import { SidebarSearch } from "./sidebar-search";
 import { SidebarSidekiqs } from "./sidebar-sidekiqs";
+import { SidebarTeams } from "./sidebar-teams";
 import { SidebarThreadList } from "./sidebar-thread-list";
 import { SidebarFooter } from "./sidebar-footer";
 import { SidekiqPicker } from "@sidekiq/components/sidekiq/sidekiq-picker";
@@ -86,6 +87,11 @@ export function Sidebar({ onThreadSelect }: SidebarProps) {
           {/* Sidekiqs section */}
           <div className="border-border/50 border-b pb-2">
             <SidebarSidekiqs onSidekiqSelect={onThreadSelect} />
+          </div>
+
+          {/* Teams section */}
+          <div className="border-border/50 border-b pb-2">
+            <SidebarTeams />
           </div>
 
           {/* Search */}
