@@ -10,7 +10,7 @@
  *
  * @example
  * ```bash
- * pnpm db:reset
+ * pnpm db:seed
  * ```
  *
  * @example Programmatic usage (E2E tests)
