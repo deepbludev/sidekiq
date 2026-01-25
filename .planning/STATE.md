@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 8 of 13 (Team Foundation)
-Plan: 3 of 7 complete
+Plan: 5 of 7 complete
 Status: In progress
-Last activity: 2026-01-25 - Completed 08-03-PLAN.md (Team UI Components)
+Last activity: 2026-01-25 - Completed 08-05-PLAN.md (Invite Acceptance Page)
 
-Progress: [████████░░] ~64% (7 phases + 3 plans complete)
+Progress: [████████░░] ~67% (7 phases + 5 plans complete)
 
 ## Performance Metrics
 
@@ -34,11 +34,11 @@ Progress: [████████░░] ~64% (7 phases + 3 plans complete)
 | 05 | 5 | 58min | 11.6min |
 | 06 | 4 | 56min | 14min |
 | 07 | 10 | 37min | ~3.7min |
-| 08 | 3 | 7min | ~2.3min |
+| 08 | 5 | 12min | ~2.4min |
 
 **Recent Trend:**
-- Last 5 plans: 07-10 (1min), 08-01 (2min), 08-02 (~N/A), 08-03 (5min)
-- Trend: Phase 8 progressing well, UI components ready
+- Last 5 plans: 08-01 (2min), 08-02 (6min), 08-03 (5min), 08-04 (N/A), 08-05 (5min)
+- Trend: Phase 8 progressing well, invite page complete
 
 *Updated after each plan completion*
 
@@ -151,6 +151,9 @@ Recent decisions affecting current work:
 - Rounded-lg for team avatars to distinguish from user avatars (confirmed - 08-03)
 - Tabbed UI for InviteMemberDialog with email vs copy link options (confirmed - 08-03)
 - Permission functions accept TeamRole | null for cleaner callsites (confirmed - 08-03)
+- Server-side tRPC caller for public invite page (confirmed - 08-05)
+- Five card states for invite flow: not found, expired, unauthenticated, wrong email, valid (confirmed - 08-05)
+- Callback URL preservation for post-auth redirect (confirmed - 08-05)
 
 ### Pending Todos
 
@@ -192,9 +195,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 08-03-PLAN.md (Team UI Components)
+Stopped at: Completed 08-05-PLAN.md (Invite Acceptance Page)
 Resume file: None
-Next: 08-04-PLAN.md (Team Settings Components)
+Next: 08-06-PLAN.md (Team Selection)
 
 ## Phase 2 Completion Summary
 
