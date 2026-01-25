@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** Phase 7 - Sidekiq Chat Integration (IN PROGRESS)
+**Current focus:** Phase 7 - Sidekiq Chat Integration (COMPLETE)
 
 ## Current Position
 
 Phase: 7 of 13 (Sidekiq Chat Integration)
-Plan: 5 of 6 complete
-Status: In progress
-Last activity: 2026-01-25 - Completed 07-05-PLAN.md (Chat entry points from Sidekiq UI)
+Plan: 6 of 6 complete
+Status: Phase complete
+Last activity: 2026-01-25 - Completed 07-06-PLAN.md (Final Integration)
 
-Progress: [██████░░░░] ~56% (6 phases + 5 plans complete)
+Progress: [███████░░░] ~58% (7 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 24
-- Average duration: ~7.1 min
-- Total execution time: ~3 hours 4 min
+- Total plans completed: 25
+- Average duration: ~6.9 min
+- Total execution time: ~3 hours 8 min
 
 **By Phase:**
 
@@ -33,11 +33,11 @@ Progress: [██████░░░░] ~56% (6 phases + 5 plans complete)
 | 04 | 4 | 17min | 4.25min |
 | 05 | 5 | 58min | 11.6min |
 | 06 | 4 | 56min | 14min |
-| 07 | 5 | 26min | 5.2min |
+| 07 | 6 | 30min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 07-01 (5min), 07-02 (9min), 07-03 (4min), 07-04 (4min), 07-05 (4min)
-- Trend: Phase 7 nearly complete, only verification plan remaining
+- Last 5 plans: 07-02 (9min), 07-03 (4min), 07-04 (4min), 07-05 (4min), 07-06 (4min)
+- Trend: Phase 7 complete! Ready for Phase 8
 
 *Updated after each plan completion*
 
@@ -129,6 +129,10 @@ Recent decisions affecting current work:
 - Thread type extended in date-grouping.ts as single source of truth (confirmed - 07-04)
 - Sidebar Sidekiq item with dropdown menu for edit access (confirmed - 07-05)
 - Start Chat button added to Sidekiq cards (grid/list views) and edit page (confirmed - 07-05)
+- Cmd+Shift+S keyboard shortcut for Sidekiq picker (confirmed - 07-06)
+- Fuse.js threshold 0.4 for Sidekiq picker fuzzy search (confirmed - 07-06, matches 04-02 pattern)
+- Sidekiq avatar shown inline at start of AI messages (confirmed - 07-06)
+- Thread page loads sidekiq relation with drizzle 'with' clause for context restoration (confirmed - 07-06)
 - Branching via parentMessageId ready for v2 (pending)
 - GitHub OAuth only for v1 (pending)
 - DEFER Convex migration - PostgreSQL/Drizzle has no pain points, reconsider at Phase 8-9 (confirmed - quick-002)
@@ -166,9 +170,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 07-05-PLAN.md (Chat entry points from Sidekiq UI)
+Stopped at: Completed 07-06-PLAN.md (Final Integration)
 Resume file: None
-Next: 07-06 verification plan to complete Phase 7
+Next: Phase 8 (Team Sidekiqs) or verification testing
 
 ## Phase 2 Completion Summary
 
@@ -299,3 +303,36 @@ All 7 plans executed successfully:
 - @dnd-kit for drag-drop reordering
 - Optimistic updates for delete/favorite
 - Sliding window rate limiting
+
+## Phase 7 Completion Summary
+
+All 6 plans executed successfully:
+
+| Plan | Focus | Status |
+|------|-------|--------|
+| 07-01 | Backend sidekiqId and system message injection | Complete |
+| 07-02 | Frontend URL handling and ChatInterface integration | Complete |
+| 07-03 | Sidekiq indicator in chat header and input | Complete |
+| 07-04 | Sidebar visual indicators (avatar, subtitle) | Complete |
+| 07-05 | Chat entry points from Sidekiq UI | Complete |
+| 07-06 | Final integration (picker, shortcut, avatar, resume) | Complete |
+
+**Components Ready:**
+- SidekiqPicker - Command palette with fuzzy search
+- SidekiqIndicator - Contextual indicator with popover
+- ChatHeader - Breadcrumb style with Sidekiq name
+- ChatInput - "Chatting with [name]" badge
+- MessageItem - Sidekiq avatar on AI messages
+
+**Features Complete:**
+- Cmd+Shift+S opens Sidekiq picker
+- /chat?sidekiq={id} URL pattern
+- System message injection at runtime
+- Conversation starters from Sidekiq config
+- Thread resume with full context restoration
+- Sidebar shows Sidekiq avatar and "with [name]" subtitle
+
+**Requirements Status:**
+- KIQQ-04: Chat with Sidekiq (complete)
+- KIQQ-05: Sidekiq context in messages (complete)
+- SIDE-06: Sidekiq filtering in sidebar (complete)
