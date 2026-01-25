@@ -28,15 +28,15 @@
 - [x] **SIDE-03**: Threads are grouped by date (Today / Yesterday / This Week / Older)
 - [x] **SIDE-04**: User can search threads by title and content
 - [x] **SIDE-05**: Scroll position is preserved when switching between threads
-- [ ] **SIDE-06**: Sidekiq chats show visual indicator (icon, badge, subtitle with Sidekiq name) - DEFERRED to Phase 7
+- [x] **SIDE-06**: Sidekiq chats show visual indicator (icon, badge, subtitle with Sidekiq name)
 
 ### Sidekiqs - Custom Assistants (KIQQ)
 
 - [x] **KIQQ-01**: User can create a Sidekiq with name, description, and instructions (system prompt)
 - [x] **KIQQ-02**: User can edit their Sidekiq's name, description, and instructions
 - [x] **KIQQ-03**: User can delete their Sidekiq
-- [ ] **KIQQ-04**: User can start a chat with a Sidekiq (instructions prepended as system message)
-- [ ] **KIQQ-05**: UI indicates which Sidekiq is currently active in a conversation
+- [x] **KIQQ-04**: User can start a chat with a Sidekiq (instructions prepended as system message)
+- [x] **KIQQ-05**: UI indicates which Sidekiq is currently active in a conversation
 - [x] **KIQQ-06**: Sidekiqs show text initial avatars (colored circles with initials)
 - [ ] **KIQQ-07**: User is limited to 100 Sidekiqs per account - DEFERRED to subscription system
 - [x] **KIQQ-08**: User is limited to 25 Sidekiq creations per hour (anti-spam)
@@ -134,12 +134,12 @@
 | SIDE-03 | Phase 5 | Complete |
 | SIDE-04 | Phase 5 | Complete |
 | SIDE-05 | Phase 5 | Complete |
-| SIDE-06 | Phase 7 | Pending |
+| SIDE-06 | Phase 7 | Complete |
 | KIQQ-01 | Phase 6 | Complete |
 | KIQQ-02 | Phase 6 | Complete |
 | KIQQ-03 | Phase 6 | Complete |
-| KIQQ-04 | Phase 7 | Pending |
-| KIQQ-05 | Phase 7 | Pending |
+| KIQQ-04 | Phase 7 | Complete |
+| KIQQ-05 | Phase 7 | Complete |
 | KIQQ-06 | Phase 6 | Complete |
 | KIQQ-07 | Deferred | Deferred |
 | KIQQ-08 | Phase 6 | Complete |

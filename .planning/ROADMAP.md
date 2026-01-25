@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Model Selection & Persistence** - Model picker, sticky selection
 - [x] **Phase 5: Sidebar & Navigation** - History, date grouping, search
 - [x] **Phase 6: Sidekiq CRUD** - Create, edit, delete custom assistants
-- [ ] **Phase 7: Sidekiq Chat Integration** - Chat with Sidekiq, system prompt injection
+- [x] **Phase 7: Sidekiq Chat Integration** - Chat with Sidekiq, system prompt injection
 - [ ] **Phase 8: Team Foundation** - Create teams, member management, invites
 - [ ] **Phase 9: Team Sidekiq Sharing** - Share Sidekiqs with teams, permissions
 - [ ] **Phase 10: Error Handling & Edge Cases** - Comprehensive error states, retry logic
@@ -154,12 +154,12 @@ Plans:
 **Plans**: 6 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Backend foundation: sidekiqId in chat schema, system message injection, thread list relation
-- [ ] 07-02-PLAN.md — Chat page Sidekiq integration: URL param handling, empty state with conversation starters
-- [ ] 07-03-PLAN.md — Active Sidekiq UI indicators: SidekiqIndicator component, chat header, input area badge
-- [ ] 07-04-PLAN.md — Sidebar visual indicators: thread item Sidekiq avatar and subtitle, deleted Sidekiq handling
-- [ ] 07-05-PLAN.md — Chat entry points: sidebar click, list page actions, edit page button
-- [ ] 07-06-PLAN.md — Final integration: SidekiqPicker dialog, Cmd+Shift+S shortcut, AI message avatar, thread resume
+- [x] 07-01-PLAN.md — Backend foundation: sidekiqId in chat schema, system message injection, thread list relation
+- [x] 07-02-PLAN.md — Chat page Sidekiq integration: URL param handling, empty state with conversation starters
+- [x] 07-03-PLAN.md — Active Sidekiq UI indicators: SidekiqIndicator component, chat header, input area badge
+- [x] 07-04-PLAN.md — Sidebar visual indicators: thread item Sidekiq avatar and subtitle, deleted Sidekiq handling
+- [x] 07-05-PLAN.md — Chat entry points: sidebar click, list page actions, edit page button
+- [x] 07-06-PLAN.md — Final integration: SidekiqPicker dialog, Cmd+Shift+S shortcut, AI message avatar, thread resume
 
 ### Phase 8: Team Foundation
 **Goal**: User can create teams and manage members with invite system
@@ -261,7 +261,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 4. Model Selection & Persistence | 4/4 | Complete | 2026-01-23 |
 | 5. Sidebar & Navigation | 5/5 | Complete | 2026-01-24 |
 | 6. Sidekiq CRUD | 7/7 | Complete | 2026-01-24 |
-| 7. Sidekiq Chat Integration | 0/1 | Not started | - |
+| 7. Sidekiq Chat Integration | 6/6 | Complete | 2026-01-25 |
 | 8. Team Foundation | 0/1 | Not started | - |
 | 9. Team Sidekiq Sharing | 0/1 | Not started | - |
 | 10. Error Handling & Edge Cases | 0/1 | Not started | - |
