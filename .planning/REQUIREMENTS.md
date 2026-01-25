@@ -45,17 +45,17 @@
 
 ### Team Management (TEAM)
 
-- [ ] **TEAM-01**: User can create a team with a name
-- [ ] **TEAM-02**: User can view team members and their roles
-- [ ] **TEAM-03**: Team owner can invite members via email (token-based secure link)
-- [ ] **TEAM-04**: Team invites expire after 7 days
-- [ ] **TEAM-05**: Team owner can revoke pending invites
-- [ ] **TEAM-06**: Team owner can remove members from the team
+- [x] **TEAM-01**: User can create a team with a name
+- [x] **TEAM-02**: User can view team members and their roles
+- [x] **TEAM-03**: Team owner can invite members via email (token-based secure link)
+- [x] **TEAM-04**: Team invites expire after 7 days
+- [x] **TEAM-05**: Team owner can revoke pending invites
+- [x] **TEAM-06**: Team owner can remove members from the team
 - [ ] **TEAM-07**: User can share a Sidekiq with their team (teamId assignment)
 - [ ] **TEAM-08**: Team members can view and use team-shared Sidekiqs
 - [ ] **TEAM-09**: Sidekiq owner controls edit permissions via canTeamEdit flag
 - [ ] **TEAM-10**: When team is deleted, team Sidekiqs transfer to owner (with confirmation)
-- [ ] **TEAM-11**: Invite recipient clicks link, authenticates if needed, and auto-joins team
+- [x] **TEAM-11**: Invite recipient clicks link, authenticates if needed, and auto-joins team
 
 ### UI/UX Polish (UIUX)
 
@@ -145,17 +145,17 @@
 | KIQQ-08 | Phase 6 | Complete |
 | KIQQ-09 | Phase 6 | Complete |
 | KIQQ-10 | Phase 6 | Complete |
-| TEAM-01 | Phase 8 | Pending |
-| TEAM-02 | Phase 8 | Pending |
-| TEAM-03 | Phase 8 | Pending |
-| TEAM-04 | Phase 8 | Pending |
-| TEAM-05 | Phase 8 | Pending |
-| TEAM-06 | Phase 8 | Pending |
+| TEAM-01 | Phase 8 | Complete |
+| TEAM-02 | Phase 8 | Complete |
+| TEAM-03 | Phase 8 | Complete |
+| TEAM-04 | Phase 8 | Complete |
+| TEAM-05 | Phase 8 | Complete |
+| TEAM-06 | Phase 8 | Complete |
 | TEAM-07 | Phase 9 | Pending |
 | TEAM-08 | Phase 9 | Pending |
 | TEAM-09 | Phase 9 | Pending |
 | TEAM-10 | Phase 9 | Pending |
-| TEAM-11 | Phase 8 | Pending |
+| TEAM-11 | Phase 8 | Complete |
 | UIUX-01 | Phase 2 | Complete |
 | UIUX-02 | Phase 2 | Complete |
 | UIUX-03 | Phase 2 | Complete |
