@@ -1,13 +1,13 @@
 import { streamText, convertToModelMessages } from "ai";
-import type { UIMessage } from "ai";
+import type { UIMessage, ModelMessage } from "ai";
 import { nanoid } from "nanoid";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 import { getModel } from "@sidekiq/lib/ai/models";
 import { generateThreadTitle } from "@sidekiq/lib/ai/title";
 import { chatRequestSchema } from "@sidekiq/lib/validations/chat";
 import { db } from "@sidekiq/server/db";
-import { messages, threads } from "@sidekiq/server/db/schema";
+import { messages, threads, sidekiqs } from "@sidekiq/server/db/schema";
 import { getSession } from "@sidekiq/server/better-auth/server";
 
 /**
@@ -29,16 +29,24 @@ function extractTextContent(message: UIMessage): string {
  * POST /api/chat
  *
  * Streaming chat endpoint for AI conversations.
- * Handles thread creation, message persistence, token tracking, and auto-title generation.
+ * Handles thread creation, message persistence, token tracking, auto-title generation,
+ * and Sidekiq system message injection.
  *
  * Request body:
  * - messages: Array of UIMessage objects from useChat hook
  * - threadId: Optional - ID of existing thread, or omit to create new thread
  * - model: Optional model ID (defaults to DEFAULT_MODEL)
+ * - sidekiqId: Optional - ID of Sidekiq to associate with new thread
  *
  * Response:
  * - Server-Sent Events stream with AI response
  * - X-Thread-Id header when a new thread is created
+ *
+ * Sidekiq Integration:
+ * - For new threads: sidekiqId from request body is stored in thread
+ * - For existing threads: sidekiqId is loaded from thread record
+ * - Sidekiq instructions are prepended as system message (NOT stored in DB)
+ * - Sidekiq stats (lastUsedAt, threadCount) are updated on new thread creation
  *
  * Persistence:
  * - Thread is created atomically with first message (if threadId not provided)
@@ -71,7 +79,34 @@ export async function POST(req: Request) {
     );
   }
 
-  const { messages: uiMessages, threadId, model: modelId } = parseResult.data;
+  const {
+    messages: uiMessages,
+    threadId,
+    model: modelId,
+    sidekiqId,
+  } = parseResult.data;
+
+  // 2b. Verify sidekiq ownership if sidekiqId is provided (security check)
+  if (sidekiqId) {
+    const sidekiqOwnership = await db.query.sidekiqs.findFirst({
+      where: eq(sidekiqs.id, sidekiqId),
+      columns: { ownerId: true },
+    });
+
+    if (!sidekiqOwnership) {
+      return new Response(JSON.stringify({ error: "Sidekiq not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (sidekiqOwnership.ownerId !== session.user.id) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized access to Sidekiq" }),
+        { status: 403, headers: { "Content-Type": "application/json" } },
+      );
+    }
+  }
 
   // 3. Handle thread: existing thread verification OR new thread creation
   type ThreadRecord = typeof threads.$inferSelect;
@@ -118,6 +153,7 @@ export async function POST(req: Request) {
         userId: session.user.id,
         title: null, // Will be set after first AI response
         activeModel: modelId,
+        sidekiqId: sidekiqId ?? null, // Associate with Sidekiq if provided
         lastActivityAt: new Date(),
       })
       .returning();
@@ -130,6 +166,17 @@ export async function POST(req: Request) {
     }
 
     thread = newThread;
+
+    // Update Sidekiq stats if thread was created with a Sidekiq
+    if (sidekiqId) {
+      await db
+        .update(sidekiqs)
+        .set({
+          lastUsedAt: new Date(),
+          threadCount: sql`${sidekiqs.threadCount} + 1`,
+        })
+        .where(eq(sidekiqs.id, sidekiqId));
+    }
   }
 
   // 4. Validate last message is from user
@@ -154,24 +201,48 @@ export async function POST(req: Request) {
   // 6. Track start time for latency calculation
   const startTime = Date.now();
 
-  // 7. Call streamText with the model and messages
+  // 7. Build messages with optional Sidekiq system message
+  // For new threads: use sidekiqId from request body
+  // For existing threads: use thread.sidekiqId from database
+  const effectiveSidekiqId = isNewThread ? sidekiqId : thread.sidekiqId;
+  let systemMessage: string | null = null;
+
+  if (effectiveSidekiqId) {
+    const sidekiq = await db.query.sidekiqs.findFirst({
+      where: eq(sidekiqs.id, effectiveSidekiqId),
+      columns: { instructions: true },
+    });
+    systemMessage = sidekiq?.instructions ?? null;
+  }
+
+  // Convert UI messages to model format
+  const modelMessages = await convertToModelMessages(uiMessages as UIMessage[]);
+
+  // Prepend system message if Sidekiq has instructions
+  // System message is NOT stored in database - only injected at runtime
+  // This ensures instruction updates apply to all future messages
+  const messagesWithSystem: ModelMessage[] = systemMessage
+    ? [{ role: "system" as const, content: systemMessage }, ...modelMessages]
+    : modelMessages;
+
+  // 8. Call streamText with the model and messages
   const result = streamText({
     model: getModel(modelId),
-    messages: await convertToModelMessages(uiMessages as UIMessage[]),
+    messages: messagesWithSystem,
     abortSignal: req.signal,
   });
 
-  // 8. CRITICAL: Call consumeStream() immediately to ensure persistence
+  // 9. CRITICAL: Call consumeStream() immediately to ensure persistence
   // even if client disconnects
   result.consumeStream();
 
-  // 9. Build response headers - include X-Thread-Id for new threads
+  // 10. Build response headers - include X-Thread-Id for new threads
   const headers = new Headers();
   if (isNewThread) {
     headers.set("X-Thread-Id", thread.id);
   }
 
-  // 10. Return streaming response with onFinish callback for persistence
+  // 11. Return streaming response with onFinish callback for persistence
   const streamResponse = result.toUIMessageStreamResponse({
     originalMessages: uiMessages as UIMessage[],
     generateMessageId: () => nanoid(),
@@ -231,7 +302,7 @@ export async function POST(req: Request) {
     },
   });
 
-  // 11. Apply custom headers to the response
+  // 12. Apply custom headers to the response
   if (isNewThread) {
     // Create new response with custom headers
     return new Response(streamResponse.body, {
