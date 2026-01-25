@@ -59,10 +59,10 @@ class RateLimiter {
 }
 
 /**
- * Rate limiter: 25 creations per hour per user.
- * Per CONTEXT.md: 20-30 creations per hour for anti-spam.
+ * Rate limiter: 1000 creations per hour per user.
+ * High limit for development/testing; reduce for production.
  */
-const createRateLimiter = new RateLimiter(25, 60 * 60 * 1000);
+const createRateLimiter = new RateLimiter(1000, 60 * 60 * 1000);
 
 /**
  * Sidekiq router - CRUD operations for custom AI assistants.
