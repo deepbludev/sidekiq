@@ -25,6 +25,8 @@ import {
 } from "@sidekiq/lib/validations/sidekiq";
 import { createDefaultAvatar } from "@sidekiq/lib/utils/avatar";
 import { useSidekiqActions } from "@sidekiq/hooks/use-sidekiq-actions";
+import { ModelPicker } from "@sidekiq/components/model-picker/model-picker";
+import { DEFAULT_MODEL } from "@sidekiq/lib/ai/models-metadata";
 
 import { AvatarPicker } from "./avatar-picker";
 import { ConversationStarters } from "./conversation-starters";
@@ -196,6 +198,31 @@ export function SidekiqForm({
                   </FormControl>
                   <FormDescription>
                     Choose initials or emoji with a custom color
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Default Model field */}
+            <FormField
+              control={form.control}
+              name="defaultModel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Default Model</FormLabel>
+                  <FormControl>
+                    <div className="w-full">
+                      <ModelPicker
+                        value={field.value ?? DEFAULT_MODEL}
+                        onValueChange={(modelId) => field.onChange(modelId)}
+                        className="w-full justify-between"
+                      />
+                    </div>
+                  </FormControl>
+                  <FormDescription>
+                    Model used for new chats with this Sidekiq. Can be changed
+                    per chat.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
