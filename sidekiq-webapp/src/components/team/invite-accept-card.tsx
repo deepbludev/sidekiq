@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
+import { XCircle, Clock, AlertTriangle } from "lucide-react";
 
 import { Button } from "@sidekiq/components/ui/button";
 import {
