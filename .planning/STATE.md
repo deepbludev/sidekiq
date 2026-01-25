@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 7 of 13 (Sidekiq Chat Integration)
-Plan: 8 of 8 complete (all gap closure plans done)
+Plan: 9 of 9 complete (all gap closure plans done)
 Status: Phase complete (all gaps closed)
-Last activity: 2026-01-25 - Fixed duplicate threads bug in Sidekiq chat (quick-008)
+Last activity: 2026-01-25 - Fixed model state on Sidekiq switch (07-09)
 
 Progress: [███████░░░] ~58% (7 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 27
-- Average duration: ~6.9 min
-- Total execution time: ~3 hours 8 min
+- Total plans completed: 28
+- Average duration: ~6.8 min
+- Total execution time: ~3 hours 10 min
 
 **By Phase:**
 
@@ -33,10 +33,10 @@ Progress: [███████░░░] ~58% (7 phases complete)
 | 04 | 4 | 17min | 4.25min |
 | 05 | 5 | 58min | 11.6min |
 | 06 | 4 | 56min | 14min |
-| 07 | 8 | 34min | ~4min |
+| 07 | 9 | 36min | ~4min |
 
 **Recent Trend:**
-- Last 5 plans: 07-05 (4min), 07-06 (4min), 07-07 (3min), 07-08 (1min)
+- Last 5 plans: 07-06 (4min), 07-07 (3min), 07-08 (1min), 07-09 (2min)
 - Trend: Phase 7 all gap closures complete! Ready for Phase 8
 
 *Updated after each plan completion*
@@ -172,7 +172,7 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 07-07-PLAN.md (Deleted Sidekiq Display Fix - gap closure)
+Stopped at: Completed 07-09-PLAN.md (Fix Model State on Sidekiq Switch - gap closure)
 Resume file: None
 Next: Phase 8 (Team Sidekiqs)
 
@@ -320,6 +320,7 @@ All 6 plans executed successfully:
 | 07-06 | Final integration (picker, shortcut, avatar, resume) | Complete |
 | 07-07 | Deleted Sidekiq display fix (gap closure) | Complete |
 | 07-08 | Model picker in Sidekiq form (gap closure) | Complete |
+| 07-09 | Fix model state on Sidekiq switch (gap closure) | Complete |
 
 **Components Ready:**
 - SidekiqPicker - Command palette with fuzzy search
@@ -344,3 +345,4 @@ All 6 plans executed successfully:
 **Gap Closure:**
 - 07-07: Deleted Sidekiq display fix - added deletedSidekiqName column to preserve Sidekiq name when deleted (complete)
 - 07-08: Model picker added to Sidekiq form - users can now set default model when creating/editing Sidekiqs (complete)
+- 07-09: Fix model state on Sidekiq switch - useEffect added to update model selection on client-side navigation (complete)
