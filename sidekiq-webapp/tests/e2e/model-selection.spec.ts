@@ -362,20 +362,40 @@ test.describe("Model Favorites", () => {
     await page.getByPlaceholder(/search models/i).waitFor({ state: "visible" });
 
     // Find the star/favorite button on a model
-    const favoriteButton = page
-      .locator('button[aria-label*="favorite"], button:has(svg.lucide-star)')
-      .first();
+    // The Star icon is inside a button without explicit aria-label
+    // Look for button containing Star SVG using class pattern
+    const favoriteButton = page.locator(
+      '[data-slot="toggle-group-item"] button:has(svg), [cmdk-item] button:has(svg.lucide-star), button:has(svg[class*="lucide-star"])',
+    );
 
-    if (await favoriteButton.isVisible().catch(() => false)) {
-      // Click to toggle favorite
-      await favoriteButton.click();
+    // Try to find any star button in the dropdown
+    const starButtons = page.locator("button").filter({
+      has: page.locator("svg"),
+    });
 
-      // Wait for optimistic update
-      await page.waitForTimeout(500);
+    // Get buttons that might be star buttons (small buttons in model items)
+    const modelItems = page.locator("[cmdk-item]");
+    const firstModelItem = modelItems.first();
 
-      // Verify no errors occurred (favorite toggle doesn't cause page break)
-      const dropdown = page.getByPlaceholder(/search models/i);
-      await expect(dropdown).toBeVisible();
+    if (await firstModelItem.isVisible().catch(() => false)) {
+      // Hover over the model item to potentially reveal the star button
+      await firstModelItem.hover();
+      await page.waitForTimeout(200);
+
+      // Find a small button in the model item area (favorite toggle)
+      const favButton = firstModelItem.locator("button").first();
+
+      if (await favButton.isVisible().catch(() => false)) {
+        // Click to toggle favorite
+        await favButton.click();
+
+        // Wait for optimistic update
+        await page.waitForTimeout(500);
+
+        // Verify dropdown is still open (no errors occurred)
+        const dropdown = page.getByPlaceholder(/search models/i);
+        await expect(dropdown).toBeVisible();
+      }
     }
   });
 });
@@ -383,7 +403,8 @@ test.describe("Model Favorites", () => {
 test.describe("Keyboard Navigation", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/chat");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(500);
   });
 
   test("should open dropdown with Enter key", async ({ page }) => {

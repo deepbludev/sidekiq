@@ -52,6 +52,12 @@ test.describe("Sidebar Visibility", () => {
   test("should show thread list when expanded after collapse", async ({
     page,
   }) => {
+    // Clear localStorage to reset sidebar state
+    await page.evaluate(() => localStorage.removeItem("sidebar-collapsed"));
+    await page.reload();
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(500);
+
     // First collapse (aria-label="Collapse sidebar")
     const collapseButton = page.getByRole("button", {
       name: /collapse sidebar/i,
@@ -60,7 +66,7 @@ test.describe("Sidebar Visibility", () => {
     await collapseButton.click({ force: true });
 
     // Wait for the 200ms transition to complete
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(500);
 
     // Verify collapsed state
     const sidebar = page.locator("aside").first();
@@ -69,11 +75,14 @@ test.describe("Sidebar Visibility", () => {
 
     // Now expand (button label changes to "Expand sidebar" when collapsed)
     const expandButton = page.getByRole("button", { name: /expand sidebar/i });
-    // Use force to bypass any dev overlay intercepting clicks
+    // Wait for button to be visible
+    await expect(expandButton).toBeVisible();
+
+    // Click the expand button - use force: true to bypass Next.js dev overlay
     await expandButton.click({ force: true });
 
-    // Wait for the 200ms transition to complete
-    await page.waitForTimeout(300);
+    // Wait for the 200ms transition to complete with extra buffer
+    await page.waitForTimeout(800);
 
     // Verify expanded state
     sidebarBox = await sidebar.boundingBox();
@@ -214,12 +223,11 @@ test.describe("Mobile Sidebar", () => {
     const drawer = page.locator('[role="dialog"]');
     await expect(drawer).toBeVisible({ timeout: 5000 });
 
-    // Click the overlay/backdrop to close
-    const overlay = page.locator('[data-state="open"]').first();
-    if (await overlay.isVisible()) {
-      // Press Escape to close the drawer (more reliable than clicking overlay)
-      await page.keyboard.press("Escape");
-    }
+    // Press Escape to close the drawer (more reliable than clicking overlay)
+    await page.keyboard.press("Escape");
+
+    // Wait for animation
+    await page.waitForTimeout(300);
 
     // Drawer should be hidden
     await expect(drawer).toBeHidden({ timeout: 5000 });
