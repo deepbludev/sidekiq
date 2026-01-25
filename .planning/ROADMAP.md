@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Model Selection & Persistence** - Model picker, sticky selection
 - [x] **Phase 5: Sidebar & Navigation** - History, date grouping, search
 - [x] **Phase 6: Sidekiq CRUD** - Create, edit, delete custom assistants
-- [x] **Phase 7: Sidekiq Chat Integration** - Chat with Sidekiq, system prompt injection
+- [ ] **Phase 7: Sidekiq Chat Integration** - Chat with Sidekiq, system prompt injection
 - [ ] **Phase 8: Team Foundation** - Create teams, member management, invites
 - [ ] **Phase 9: Team Sidekiq Sharing** - Share Sidekiqs with teams, permissions
 - [ ] **Phase 10: Error Handling & Edge Cases** - Comprehensive error states, retry logic
@@ -151,7 +151,7 @@ Plans:
   3. UI clearly indicates which Sidekiq is currently active in a conversation
   4. Messages from Sidekiq-based conversations reflect the custom instructions
   5. Sidekiq chats show visual indicator in sidebar (icon, badge, subtitle with Sidekiq name)
-**Plans**: 9 plans
+**Plans**: 10 plans
 
 Plans:
 - [x] 07-01-PLAN.md — Backend foundation: sidekiqId in chat schema, system message injection, thread list relation
@@ -163,6 +163,7 @@ Plans:
 - [x] 07-07-PLAN.md — [gap closure] Deleted Sidekiq handling: preserve name in threads before delete
 - [x] 07-08-PLAN.md — [gap closure] Model selector in Sidekiq form: add ModelPicker to create/edit
 - [x] 07-09-PLAN.md — [gap closure] Model state fix: reset model picker on Sidekiq switch
+- [ ] 07-10-PLAN.md — [gap closure] Force ChatInterface remount on Sidekiq switch via key prop
 
 ### Phase 8: Team Foundation
 **Goal**: User can create teams and manage members with invite system
@@ -264,7 +265,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 4. Model Selection & Persistence | 4/4 | Complete | 2026-01-23 |
 | 5. Sidebar & Navigation | 5/5 | Complete | 2026-01-24 |
 | 6. Sidekiq CRUD | 7/7 | Complete | 2026-01-24 |
-| 7. Sidekiq Chat Integration | 9/9 | Complete | 2026-01-25 |
+| 7. Sidekiq Chat Integration | 9/10 | In Progress | - |
 | 8. Team Foundation | 0/1 | Not started | - |
 | 9. Team Sidekiq Sharing | 0/1 | Not started | - |
 | 10. Error Handling & Edge Cases | 0/1 | Not started | - |
