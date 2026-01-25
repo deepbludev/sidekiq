@@ -1,5 +1,6 @@
 import { healthRouter } from "@sidekiq/server/api/routers/health";
 import { sidekiqRouter } from "@sidekiq/server/api/routers/sidekiq";
+import { teamRouter } from "@sidekiq/server/api/routers/team";
 import { threadRouter } from "@sidekiq/server/api/routers/thread";
 import { userRouter } from "@sidekiq/server/api/routers/user";
 import {
@@ -15,6 +16,7 @@ import {
 export const appRouter = createTRPCRouter({
   health: healthRouter,
   sidekiq: sidekiqRouter,
+  team: teamRouter,
   thread: threadRouter,
   user: userRouter,
 });
