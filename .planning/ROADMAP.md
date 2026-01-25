@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Model Selection & Persistence** - Model picker, sticky selection
 - [x] **Phase 5: Sidebar & Navigation** - History, date grouping, search
 - [x] **Phase 6: Sidekiq CRUD** - Create, edit, delete custom assistants
-- [ ] **Phase 7: Sidekiq Chat Integration** - Chat with Sidekiq, system prompt injection
+- [x] **Phase 7: Sidekiq Chat Integration** - Chat with Sidekiq, system prompt injection
 - [ ] **Phase 8: Team Foundation** - Create teams, member management, invites
 - [ ] **Phase 9: Team Sidekiq Sharing** - Share Sidekiqs with teams, permissions
 - [ ] **Phase 10: Error Handling & Edge Cases** - Comprehensive error states, retry logic
@@ -265,7 +265,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 4. Model Selection & Persistence | 4/4 | Complete | 2026-01-23 |
 | 5. Sidebar & Navigation | 5/5 | Complete | 2026-01-24 |
 | 6. Sidekiq CRUD | 7/7 | Complete | 2026-01-24 |
-| 7. Sidekiq Chat Integration | 9/10 | In Progress | - |
+| 7. Sidekiq Chat Integration | 10/10 | Complete | 2026-01-25 |
 | 8. Team Foundation | 0/1 | Not started | - |
 | 9. Team Sidekiq Sharing | 0/1 | Not started | - |
 | 10. Error Handling & Edge Cases | 0/1 | Not started | - |
