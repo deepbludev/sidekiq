@@ -141,7 +141,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-7 pending todos in `.planning/todos/pending/`:
+8 pending todos in `.planning/todos/pending/`:
 - **Implement Projects feature** (ui) — workspace grouping chats, knowledge base, team sharing
 - **Rethink branding and UI to match Linear aesthetic** (ui)
 - **Migrate next lint to ESLint CLI** (tooling)
@@ -149,6 +149,7 @@ Recent decisions affecting current work:
 - **Fix Cmd+N shortcut conflicting with browser new window** (ui)
 - **Sidekiq creation agent feature** (ui) — create a Sidekiq by chatting similar to GPT Builder
 - **E2E tests with isolated test database** (testing) — fresh seeded data per test run
+- **Mid-conversation Sidekiq switching with @mentions** (ui) — workflow chaining, context preservation
 
 ### Blockers/Concerns
 
