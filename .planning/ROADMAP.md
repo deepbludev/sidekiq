@@ -151,10 +151,15 @@ Plans:
   3. UI clearly indicates which Sidekiq is currently active in a conversation
   4. Messages from Sidekiq-based conversations reflect the custom instructions
   5. Sidekiq chats show visual indicator in sidebar (icon, badge, subtitle with Sidekiq name)
-**Plans**: TBD
+**Plans**: 6 plans
 
 Plans:
-- [ ] 07-01: TBD
+- [ ] 07-01-PLAN.md — Backend foundation: sidekiqId in chat schema, system message injection, thread list relation
+- [ ] 07-02-PLAN.md — Chat page Sidekiq integration: URL param handling, empty state with conversation starters
+- [ ] 07-03-PLAN.md — Active Sidekiq UI indicators: SidekiqIndicator component, chat header, input area badge
+- [ ] 07-04-PLAN.md — Sidebar visual indicators: thread item Sidekiq avatar and subtitle, deleted Sidekiq handling
+- [ ] 07-05-PLAN.md — Chat entry points: sidebar click, list page actions, edit page button
+- [ ] 07-06-PLAN.md — Final integration: SidekiqPicker dialog, Cmd+Shift+S shortcut, AI message avatar, thread resume
 
 ### Phase 8: Team Foundation
 **Goal**: User can create teams and manage members with invite system
