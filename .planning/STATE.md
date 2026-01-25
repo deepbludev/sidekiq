@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** Phase 8 - Team Foundation (In Progress)
+**Current focus:** Phase 8 - Team Foundation (Complete)
 
 ## Current Position
 
 Phase: 8 of 13 (Team Foundation)
 Plan: 7 of 7 complete
-Status: In progress
-Last activity: 2026-01-25 - Completed 08-06-PLAN.md (Team Creation Flow)
+Status: Phase complete
+Last activity: 2026-01-25 - Completed 08-07-PLAN.md (Sidebar Team Integration)
 
-Progress: [████████░░] ~70% (7 phases + 7 plans complete)
+Progress: [████████░░] ~72% (8 phases complete)
 
 ## Performance Metrics
 
@@ -37,8 +37,8 @@ Progress: [████████░░] ~70% (7 phases + 7 plans complete)
 | 08 | 7 | 21min | ~3min |
 
 **Recent Trend:**
-- Last 5 plans: 08-03 (5min), 08-04 (5min), 08-05 (5min), 08-06 (4min)
-- Trend: Phase 8 progressing well, team creation flow complete
+- Last 5 plans: 08-04 (5min), 08-05 (5min), 08-06 (4min), 08-07 (5min)
+- Trend: Phase 8 complete, all 7 plans executed successfully
 
 *Updated after each plan completion*
 
@@ -159,6 +159,10 @@ Recent decisions affecting current work:
 - X/Y members count display format (confirmed - 08-04)
 - Reusable TeamForm pattern for create and edit (confirmed - 08-06)
 - Settings layout with navigation links (confirmed - 08-06)
+- Team dropdown only shows when user has teams (confirmed - 08-07)
+- Personal option represents no active team (null) (confirmed - 08-07)
+- Active team validated against user's teams on load - invalid IDs cleared (confirmed - 08-07)
+- Teams section placed between Sidekiqs and Search in sidebar (confirmed - 08-07)
 
 ### Pending Todos
 
@@ -200,9 +204,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 08-06-PLAN.md (Team Creation Flow)
+Stopped at: Completed 08-07-PLAN.md (Sidebar Team Integration)
 Resume file: None
-Next: 08-07-PLAN.md (Final Integration)
+Next: Phase 9 planning
 
 ## Phase 2 Completion Summary
 
@@ -376,3 +380,43 @@ All 10 plans executed successfully:
 - 07-08: Model picker added to Sidekiq form - users can now set default model when creating/editing Sidekiqs (complete)
 - 07-09: Fix model state on Sidekiq switch - useEffect added to update model selection on client-side navigation (complete)
 - 07-10: ChatInterface key prop - React key forces component remount on Sidekiq change (complete)
+
+## Phase 8 Completion Summary
+
+All 7 plans executed successfully:
+
+| Plan | Focus | Status |
+|------|-------|--------|
+| 08-01 | Team schema and permissions | Complete |
+| 08-02 | Team tRPC router with CRUD and invites | Complete |
+| 08-03 | Team avatar and basic components | Complete |
+| 08-04 | Team settings section components | Complete |
+| 08-05 | Invite acceptance page | Complete |
+| 08-06 | Team creation flow (form, dialog, page) | Complete |
+| 08-07 | Sidebar team integration | Complete |
+
+**Components Ready:**
+- TeamAvatar - rounded-lg avatar distinguishing from user avatars
+- TeamCreateDialog - dialog for creating new teams
+- TeamForm - reusable form for create/edit
+- TeamSettingsSection - full team settings with members, invites, danger zone
+- TeamMemberList, TeamMemberRow - member management UI
+- InviteMemberDialog - tabbed dialog with email and link options
+- TeamInvitesList - pending invites management
+- InviteAcceptCard - five-state invite acceptance flow
+- SidebarTeams - collapsible teams section with create button
+
+**Hooks Ready:**
+- useActiveTeam - manages active team state with localStorage persistence
+
+**Features Complete:**
+- Team CRUD operations
+- Role-based permissions (owner, admin, member)
+- Invite system with email and shareable links
+- Member management (add, remove, change role)
+- Ownership transfer
+- Team switching via sidebar dropdown
+- Active team persistence across sessions
+
+**Requirements Status:**
+- TEAM-01 through TEAM-06: Complete (team foundation)
