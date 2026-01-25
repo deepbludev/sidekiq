@@ -5,6 +5,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  useMemo,
   type FormEvent,
 } from "react";
 import type { UIMessage } from "ai";
@@ -167,12 +168,22 @@ export function ChatInterface({
   );
 
   // Create transport with custom fetch to capture thread ID
-  // Include threadId for existing threads, or sidekiqId for new Sidekiq chats
-  const transport = new DefaultChatTransport({
-    api: "/api/chat",
-    body: threadId ? { threadId } : sidekiq ? { sidekiqId: sidekiq.id } : {},
-    fetch: customFetch,
-  });
+  // Use activeThreadId (stateful) instead of threadId (prop) so subsequent messages
+  // include the threadId after thread creation. For new Sidekiq chats, sidekiqId is
+  // included only on first message; subsequent messages use the created threadId.
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat",
+        body: activeThreadId
+          ? { threadId: activeThreadId }
+          : sidekiq
+            ? { sidekiqId: sidekiq.id }
+            : {},
+        fetch: customFetch,
+      }),
+    [activeThreadId, sidekiq, customFetch],
+  );
 
   const { messages, sendMessage, status, stop, error } = useChat({
     transport,
