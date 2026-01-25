@@ -131,6 +131,18 @@ export function useModelSelection({
     }
   }, [threadModel]);
 
+  // Update selected model when sidekiq default model changes (navigating between sidekiqs)
+  useEffect(() => {
+    // Only apply sidekiq default if no threadModel (new chat scenario)
+    if (
+      !threadModel &&
+      sidekiqDefaultModel &&
+      isValidModel(sidekiqDefaultModel)
+    ) {
+      setSelectedModelState(sidekiqDefaultModel);
+    }
+  }, [threadModel, sidekiqDefaultModel]);
+
   const setSelectedModel = useCallback(
     (modelId: string) => {
       if (!isValidModel(modelId)) return;
