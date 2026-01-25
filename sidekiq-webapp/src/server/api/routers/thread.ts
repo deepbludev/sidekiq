@@ -44,9 +44,10 @@ export const threadRouter = createTRPCRouter({
   /**
    * List user's threads sorted by pinned status then last activity.
    * Pinned threads appear first, then sorted by most recent activity.
+   * Includes Sidekiq relation data for sidebar display (avatar, name).
    *
    * @param includeArchived - Whether to include archived threads (default: false)
-   * @returns Array of thread objects with metadata
+   * @returns Array of thread objects with metadata and optional sidekiq relation
    */
   list: protectedProcedure
     .input(listThreadsInputSchema)
@@ -68,6 +69,16 @@ export const threadRouter = createTRPCRouter({
           isArchived: true,
           lastActivityAt: true,
           messageCount: true,
+          sidekiqId: true,
+        },
+        with: {
+          sidekiq: {
+            columns: {
+              id: true,
+              name: true,
+              avatar: true,
+            },
+          },
         },
       });
 
