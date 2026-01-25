@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 7 of 13 (Sidekiq Chat Integration)
-Plan: 6 of 6 complete
+Plan: 8 of 8 complete (includes 2 gap closure plans)
 Status: Phase complete
-Last activity: 2026-01-25 - Completed 07-06-PLAN.md (Final Integration)
+Last activity: 2026-01-25 - Completed 07-08-PLAN.md (Model Picker in Sidekiq Form - gap closure)
 
 Progress: [███████░░░] ~58% (7 phases complete)
 
@@ -33,11 +33,11 @@ Progress: [███████░░░] ~58% (7 phases complete)
 | 04 | 4 | 17min | 4.25min |
 | 05 | 5 | 58min | 11.6min |
 | 06 | 4 | 56min | 14min |
-| 07 | 6 | 30min | 5min |
+| 07 | 8 | 31min | ~4min |
 
 **Recent Trend:**
-- Last 5 plans: 07-02 (9min), 07-03 (4min), 07-04 (4min), 07-05 (4min), 07-06 (4min)
-- Trend: Phase 7 complete! Ready for Phase 8
+- Last 5 plans: 07-04 (4min), 07-05 (4min), 07-06 (4min), 07-07 (TBD), 07-08 (1min)
+- Trend: Phase 7 gap closure complete! Ready for Phase 8
 
 *Updated after each plan completion*
 
@@ -170,9 +170,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 07-06-PLAN.md (Final Integration)
+Stopped at: Completed 07-08-PLAN.md (Model Picker in Sidekiq Form - gap closure)
 Resume file: None
-Next: Phase 8 (Team Sidekiqs) or verification testing
+Next: Phase 8 (Team Sidekiqs) or 07-07 gap closure plan
 
 ## Phase 2 Completion Summary
 
@@ -316,6 +316,8 @@ All 6 plans executed successfully:
 | 07-04 | Sidebar visual indicators (avatar, subtitle) | Complete |
 | 07-05 | Chat entry points from Sidekiq UI | Complete |
 | 07-06 | Final integration (picker, shortcut, avatar, resume) | Complete |
+| 07-07 | System message injection fix (gap closure) | Pending |
+| 07-08 | Model picker in Sidekiq form (gap closure) | Complete |
 
 **Components Ready:**
 - SidekiqPicker - Command palette with fuzzy search
@@ -336,3 +338,7 @@ All 6 plans executed successfully:
 - KIQQ-04: Chat with Sidekiq (complete)
 - KIQQ-05: Sidekiq context in messages (complete)
 - SIDE-06: Sidekiq filtering in sidebar (complete)
+
+**Gap Closure:**
+- 07-07: System message injection fix (pending)
+- 07-08: Model picker added to Sidekiq form - users can now set default model when creating/editing Sidekiqs (complete)
