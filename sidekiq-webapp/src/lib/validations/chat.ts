@@ -46,6 +46,13 @@ export const chatRequestSchema = z.object({
    * Defaults to the application's default model if not specified.
    */
   model: z.string().optional().default(DEFAULT_MODEL),
+
+  /**
+   * Sidekiq ID to associate with this chat.
+   * Only used when creating a new thread - ignored for existing threads
+   * which already have sidekiqId stored in the database.
+   */
+  sidekiqId: z.string().optional(),
 });
 
 /**
