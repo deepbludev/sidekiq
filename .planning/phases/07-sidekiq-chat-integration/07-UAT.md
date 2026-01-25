@@ -76,23 +76,32 @@ skipped: 1
 ## Gaps
 
 - truth: "AI response reflects the Sidekiq's personality/instructions"
-  status: failed
+  status: investigated
   reason: "User reported: I'm not quite sure this actually works"
   severity: major
   test: 4
-  root_cause: ""
-  artifacts: []
+  root_cause: "NO BUG FOUND - Code analysis confirms system message injection is implemented correctly. sidekiqId is sent in transport body, API fetches instructions, prepends as system message. User may need to test with more distinctive instructions."
+  artifacts:
+    - path: "sidekiq-webapp/src/app/api/chat/route.ts"
+      issue: "Lines 207-226 implement injection correctly"
+    - path: "sidekiq-webapp/src/components/chat/chat-interface.tsx"
+      issue: "Line 173 sends sidekiqId in transport body"
   missing: []
-  debug_session: ""
+  debug_session: ".planning/debug/system-message-injection.md"
 
 - truth: "Deleted Sidekiq shows '?' avatar and '[Sidekiq deleted]' subtitle"
-  status: failed
+  status: diagnosed
   reason: "User reported: when deleting it, the chat behaves like a normal chat, without any hint of a deleted sidekiq"
   severity: major
   test: 11
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "FK constraint ON DELETE SET NULL clears sidekiqId when Sidekiq deleted. UI logic 'thread.sidekiqId && !thread.sidekiq' is correct but never executes because sidekiqId is null."
+  artifacts:
+    - path: "sidekiq-webapp/src/server/db/schema.ts"
+      issue: "Line 247: onDelete: 'set null' causes sidekiqId to be cleared"
+    - path: "sidekiq-webapp/src/components/thread/thread-item.tsx"
+      issue: "Lines 130-134, 157-160: UI logic is correct but dead code"
+  missing:
+    - "Change FK behavior from SET NULL to NO ACTION, or add deletedSidekiqName field"
   debug_session: ""
 
 - truth: "Sidekiq default model can be set in create/edit form"
