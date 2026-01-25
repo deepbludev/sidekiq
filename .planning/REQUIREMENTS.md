@@ -32,16 +32,16 @@
 
 ### Sidekiqs - Custom Assistants (KIQQ)
 
-- [ ] **KIQQ-01**: User can create a Sidekiq with name, description, and instructions (system prompt)
-- [ ] **KIQQ-02**: User can edit their Sidekiq's name, description, and instructions
-- [ ] **KIQQ-03**: User can delete their Sidekiq
+- [x] **KIQQ-01**: User can create a Sidekiq with name, description, and instructions (system prompt)
+- [x] **KIQQ-02**: User can edit their Sidekiq's name, description, and instructions
+- [x] **KIQQ-03**: User can delete their Sidekiq
 - [ ] **KIQQ-04**: User can start a chat with a Sidekiq (instructions prepended as system message)
 - [ ] **KIQQ-05**: UI indicates which Sidekiq is currently active in a conversation
-- [ ] **KIQQ-06**: Sidekiqs show text initial avatars (colored circles with initials)
-- [ ] **KIQQ-07**: User is limited to 100 Sidekiqs per account
-- [ ] **KIQQ-08**: User is limited to 10 Sidekiq creations per hour (anti-spam)
-- [ ] **KIQQ-09**: Instructions are validated (max 4000 characters)
-- [ ] **KIQQ-10**: Empty state shows "Create your first Sidekiq" with CTA
+- [x] **KIQQ-06**: Sidekiqs show text initial avatars (colored circles with initials)
+- [ ] **KIQQ-07**: User is limited to 100 Sidekiqs per account - DEFERRED to subscription system
+- [x] **KIQQ-08**: User is limited to 25 Sidekiq creations per hour (anti-spam)
+- [x] **KIQQ-09**: Instructions are validated (max 8000 characters)
+- [x] **KIQQ-10**: Empty state shows "Create your first Sidekiq" with CTA
 
 ### Team Management (TEAM)
 
@@ -135,16 +135,16 @@
 | SIDE-04 | Phase 5 | Complete |
 | SIDE-05 | Phase 5 | Complete |
 | SIDE-06 | Phase 7 | Pending |
-| KIQQ-01 | Phase 6 | Pending |
-| KIQQ-02 | Phase 6 | Pending |
-| KIQQ-03 | Phase 6 | Pending |
+| KIQQ-01 | Phase 6 | Complete |
+| KIQQ-02 | Phase 6 | Complete |
+| KIQQ-03 | Phase 6 | Complete |
 | KIQQ-04 | Phase 7 | Pending |
 | KIQQ-05 | Phase 7 | Pending |
-| KIQQ-06 | Phase 6 | Pending |
-| KIQQ-07 | Phase 6 | Pending |
-| KIQQ-08 | Phase 6 | Pending |
-| KIQQ-09 | Phase 6 | Pending |
-| KIQQ-10 | Phase 6 | Pending |
+| KIQQ-06 | Phase 6 | Complete |
+| KIQQ-07 | Deferred | Deferred |
+| KIQQ-08 | Phase 6 | Complete |
+| KIQQ-09 | Phase 6 | Complete |
+| KIQQ-10 | Phase 6 | Complete |
 | TEAM-01 | Phase 8 | Pending |
 | TEAM-02 | Phase 8 | Pending |
 | TEAM-03 | Phase 8 | Pending |

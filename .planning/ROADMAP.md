@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Thread Management** - Create, delete, archive, pin, auto-title
 - [x] **Phase 4: Model Selection & Persistence** - Model picker, sticky selection
 - [x] **Phase 5: Sidebar & Navigation** - History, date grouping, search
-- [ ] **Phase 6: Sidekiq CRUD** - Create, edit, delete custom assistants
+- [x] **Phase 6: Sidekiq CRUD** - Create, edit, delete custom assistants
 - [ ] **Phase 7: Sidekiq Chat Integration** - Chat with Sidekiq, system prompt injection
 - [ ] **Phase 8: Team Foundation** - Create teams, member management, invites
 - [ ] **Phase 9: Team Sidekiq Sharing** - Share Sidekiqs with teams, permissions
@@ -133,13 +133,13 @@ Plans:
 **Plans**: 7 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — Schema extensions + tRPC router (CRUD with rate limiting)
-- [ ] 06-02-PLAN.md — Dependencies + utilities (avatar, hooks, view preference)
-- [ ] 06-03-PLAN.md — List page + empty state + sidebar section
-- [ ] 06-04-PLAN.md — Create form with split layout and live preview
-- [ ] 06-05-PLAN.md — Conversation starters (drag-drop) + instructions editor (markdown)
-- [ ] 06-06-PLAN.md — Avatar customization (color picker + emoji picker)
-- [ ] 06-07-PLAN.md — Edit page + templates + final verification
+- [x] 06-01-PLAN.md — Schema extensions + tRPC router (CRUD with rate limiting)
+- [x] 06-02-PLAN.md — Dependencies + utilities (avatar, hooks, view preference)
+- [x] 06-03-PLAN.md — List page + empty state + sidebar section
+- [x] 06-04-PLAN.md — Create form with split layout and live preview
+- [x] 06-05-PLAN.md — Conversation starters (drag-drop) + instructions editor (markdown)
+- [x] 06-06-PLAN.md — Avatar customization (color picker + emoji picker)
+- [x] 06-07-PLAN.md — Edit page + templates + final verification
 
 ### Phase 7: Sidekiq Chat Integration
 **Goal**: User can start a chat with a Sidekiq and see its personality in responses
@@ -255,7 +255,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 3. Thread Management | 5/5 | Complete | 2026-01-23 |
 | 4. Model Selection & Persistence | 4/4 | Complete | 2026-01-23 |
 | 5. Sidebar & Navigation | 5/5 | Complete | 2026-01-24 |
-| 6. Sidekiq CRUD | 0/7 | Planned | - |
+| 6. Sidekiq CRUD | 7/7 | Complete | 2026-01-24 |
 | 7. Sidekiq Chat Integration | 0/1 | Not started | - |
 | 8. Team Foundation | 0/1 | Not started | - |
 | 9. Team Sidekiq Sharing | 0/1 | Not started | - |
