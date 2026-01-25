@@ -272,6 +272,11 @@ export function ChatInterface({
             )}
             conversationStarters={sidekiq?.conversationStarters}
             sidekiqName={sidekiq?.name}
+            sidekiqAvatar={
+              sidekiq
+                ? { name: sidekiq.name, avatar: sidekiq.avatar }
+                : undefined
+            }
           />
 
           {/* Typing indicator */}

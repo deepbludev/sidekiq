@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 
 import { MessageItem } from "./message-item";
 import { EmptyState } from "./empty-state";
+import type { SidekiqAvatar } from "@sidekiq/lib/validations/sidekiq";
 
 export interface ModelSwitch {
   afterMessageIndex: number;
@@ -34,6 +35,11 @@ interface MessageListProps {
   conversationStarters?: string[];
   /** Sidekiq name to display in empty state welcome message */
   sidekiqName?: string;
+  /** Sidekiq avatar to show on AI messages */
+  sidekiqAvatar?: {
+    name: string;
+    avatar: SidekiqAvatar;
+  } | null;
 }
 
 /**
@@ -49,6 +55,7 @@ export function MessageList({
   renderModelSwitchHint,
   conversationStarters,
   sidekiqName,
+  sidekiqAvatar,
 }: MessageListProps) {
   if (messages.length === 0) {
     return onPromptSelect ? (
@@ -95,6 +102,7 @@ export function MessageList({
                   ? () => onRegenerateMessage(message.id)
                   : undefined
               }
+              sidekiqAvatar={sidekiqAvatar}
             />
             {hint &&
               renderModelSwitchHint?.(hint.previousModel, hint.currentModel)}

@@ -61,7 +61,7 @@ export default async function ThreadPage({ params }: ThreadPageProps) {
     redirect("/sign-in");
   }
 
-  // Load thread with ownership check
+  // Load thread with ownership check and sidekiq relation for context restoration
   const thread = await db.query.threads.findFirst({
     where: and(eq(threads.id, threadId), eq(threads.userId, session.user.id)),
     columns: {
@@ -69,6 +69,19 @@ export default async function ThreadPage({ params }: ThreadPageProps) {
       title: true,
       isArchived: true,
       activeModel: true,
+      sidekiqId: true,
+    },
+    with: {
+      sidekiq: {
+        columns: {
+          id: true,
+          name: true,
+          description: true,
+          avatar: true,
+          conversationStarters: true,
+          defaultModel: true,
+        },
+      },
     },
   });
 
@@ -103,6 +116,7 @@ export default async function ThreadPage({ params }: ThreadPageProps) {
       initialMessages={initialMessages}
       initialTitle={thread.title}
       initialModel={thread.activeModel}
+      sidekiq={thread.sidekiq}
     />
   );
 }

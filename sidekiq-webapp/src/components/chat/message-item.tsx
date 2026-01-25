@@ -6,6 +6,8 @@ import { useState } from "react";
 import { cn } from "@sidekiq/lib/utils";
 import { MessageActions } from "./message-actions";
 import { MessageContent } from "./message-content";
+import { SidekiqAvatar } from "@sidekiq/components/sidekiq/sidekiq-avatar";
+import type { SidekiqAvatar as SidekiqAvatarType } from "@sidekiq/lib/validations/sidekiq";
 
 interface MessageItemProps {
   /** The message to render */
@@ -16,6 +18,11 @@ interface MessageItemProps {
   onEdit?: () => void;
   /** Callback when user clicks regenerate */
   onRegenerate?: () => void;
+  /** For AI messages, show Sidekiq avatar instead of generic icon */
+  sidekiqAvatar?: {
+    name: string;
+    avatar: SidekiqAvatarType;
+  } | null;
 }
 
 /**
@@ -106,6 +113,7 @@ export function MessageItem({
   isStreaming = false,
   onEdit,
   onRegenerate,
+  sidekiqAvatar,
 }: MessageItemProps) {
   const [showTimestamp, setShowTimestamp] = useState(false);
   const isUser = message.role === "user";
@@ -123,6 +131,17 @@ export function MessageItem({
     >
       <div className="mx-auto max-w-[700px]">
         <div className="flex items-start justify-between gap-4">
+          {/* Sidekiq avatar for AI messages */}
+          {!isUser && sidekiqAvatar && (
+            <div className="shrink-0">
+              <SidekiqAvatar
+                name={sidekiqAvatar.name}
+                avatar={sidekiqAvatar.avatar}
+                size="sm"
+              />
+            </div>
+          )}
+
           {/* Message content */}
           <div className="min-w-0 flex-1">
             {isUser ? (
