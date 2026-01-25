@@ -177,10 +177,16 @@ Plans:
   5. Team owner can revoke pending invites
   6. Team owner can remove members from the team
   7. Invite recipient clicks link, authenticates if needed, and auto-joins team
-**Plans**: TBD
+**Plans**: 7 plans
 
 Plans:
-- [ ] 08-01: TBD
+- [ ] 08-01-PLAN.md — Schema extension: admin role, team avatar, memberLimit, validation schemas, permission helpers
+- [ ] 08-02-PLAN.md — Team tRPC router: CRUD, member management, invite system, ownership transfer
+- [ ] 08-03-PLAN.md — Team UI components: TeamAvatar, dialogs (delete, remove, invite), member search hook
+- [ ] 08-04-PLAN.md — Team settings UI: member list, invites list, team settings section
+- [ ] 08-05-PLAN.md — Invite acceptance page: public page at /invite/[token] with auth flow
+- [ ] 08-06-PLAN.md — Team creation flow: form, create dialog, empty state, settings page integration
+- [ ] 08-07-PLAN.md — Sidebar integration: team dropdown, teams section, active team persistence
 
 ### Phase 9: Team Sidekiq Sharing
 **Goal**: User can share Sidekiqs with their team and control permissions
@@ -266,7 +272,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 5. Sidebar & Navigation | 5/5 | Complete | 2026-01-24 |
 | 6. Sidekiq CRUD | 7/7 | Complete | 2026-01-24 |
 | 7. Sidekiq Chat Integration | 10/10 | Complete | 2026-01-25 |
-| 8. Team Foundation | 0/1 | Not started | - |
+| 8. Team Foundation | 0/7 | Planned | - |
 | 9. Team Sidekiq Sharing | 0/1 | Not started | - |
 | 10. Error Handling & Edge Cases | 0/1 | Not started | - |
 | 11. UI Polish & Animations | 0/1 | Not started | - |
