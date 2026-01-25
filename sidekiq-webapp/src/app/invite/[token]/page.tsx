@@ -1,0 +1,78 @@
+import { headers } from "next/headers";
+import { auth } from "@sidekiq/server/better-auth";
+import { createCaller } from "@sidekiq/server/api/root";
+import { createTRPCContext } from "@sidekiq/server/api/trpc";
+import { InviteAcceptCard } from "@sidekiq/components/team/invite-accept-card";
+import { env } from "@sidekiq/env";
+
+interface InvitePageProps {
+  params: Promise<{ token: string }>;
+}
+
+/**
+ * Public invite acceptance page.
+ * Fetches invite data and renders appropriate state.
+ *
+ * @param params - Route params containing the invite token
+ */
+export default async function InvitePage({ params }: InvitePageProps) {
+  const { token } = await params;
+
+  // Get session if user is authenticated
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  // Create tRPC caller for server-side query
+  const ctx = await createTRPCContext({
+    headers: await headers(),
+  });
+  const caller = createCaller(ctx);
+
+  // Fetch invite data (public procedure)
+  const invite = await caller.team.getInviteByToken({ token });
+
+  // Build sign-in URL with callback to return here after auth
+  const currentUrl = `${env.BETTER_AUTH_URL}/invite/${token}`;
+  const signInUrl = `/sign-in?callbackUrl=${encodeURIComponent(currentUrl)}`;
+
+  return (
+    <InviteAcceptCard
+      token={token}
+      invite={invite}
+      isAuthenticated={!!session?.user}
+      userEmail={session?.user?.email}
+      signInUrl={signInUrl}
+    />
+  );
+}
+
+/**
+ * Generate dynamic metadata based on the invite.
+ * Shows team name for valid invites.
+ *
+ * @param params - Route params containing the invite token
+ */
+export async function generateMetadata({ params }: InvitePageProps) {
+  const { token } = await params;
+
+  // Create context for server-side query
+  const ctx = await createTRPCContext({
+    headers: await headers(),
+  });
+  const caller = createCaller(ctx);
+
+  const invite = await caller.team.getInviteByToken({ token });
+
+  if (invite && !invite.isExpired) {
+    return {
+      title: `Join ${invite.teamName} - Sidekiq`,
+      description: `You've been invited to join ${invite.teamName} on Sidekiq`,
+    };
+  }
+
+  return {
+    title: "Team Invite - Sidekiq",
+    description: "Accept your team invitation on Sidekiq",
+  };
+}
