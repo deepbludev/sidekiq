@@ -218,10 +218,14 @@ Plans:
   3. Feature switching via primary icons with appropriate secondary panel display
   4. Animations/transitions between feature contexts
   5. Scalable structure that accommodates future feature additions
-**Plans**: TBD
+**Plans:** 5 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 8.2 to break down)
+- [ ] 08.2-01-PLAN.md — Core structure: icon rail, panel container, sidebar layout composition
+- [ ] 08.2-02-PLAN.md — Panel content: chats panel, sidekiqs panel, teams panel migration
+- [ ] 08.2-03-PLAN.md — Layout integration: dashboard-wide sidebar, keyboard shortcuts, panel collapsibility
+- [ ] 08.2-04-PLAN.md — Mobile: bottom tab bar and full-screen overlay panels
+- [ ] 08.2-05-PLAN.md — Cleanup: remove old sidebar files, update exports, visual verification
 
 ## Progress
 
@@ -239,4 +243,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 
 | 7. Sidekiq Chat Integration | 10/10 | Complete | 2026-01-25 |
 | 8. Team Foundation | 8/8 | Complete | 2026-01-25 |
 | 8.1. Rethink Branding/UI (INSERTED) | 8/8 | Complete | 2026-01-26 |
-| 8.2. Two-Tier Sidebar Navigation (INSERTED) | 0/? | Not started | - |
+| 8.2. Two-Tier Sidebar Navigation (INSERTED) | 0/5 | Not started | - |
