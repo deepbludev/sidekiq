@@ -198,6 +198,7 @@ Recent decisions affecting current work:
 | 008 | Fix duplicate threads on Sidekiq chat | 2026-01-25 | f0c634c | [008-fix-duplicate-threads-on-sidekiq-chat](./quick/008-fix-duplicate-threads-on-sidekiq-chat/) |
 | 009 | Update unit tests for Phase 7 | 2026-01-25 | 2c9c413 | [009-update-unit-tests-for-phase-7](./quick/009-update-unit-tests-for-phase-7/) |
 | 011 | Improved database seed process and README | 2026-01-25 | 28a24e8 | [011-improved-database-seed-process-and-readm](./quick/011-improved-database-seed-process-and-readm/) |
+| 012 | Add pirate Sidekiq "Captain Jack" to seed | 2026-01-26 | af23b0c | [012-add-pirate-sidekiq-to-database-seed](./quick/012-add-pirate-sidekiq-to-database-seed/) |
 
 ### Roadmap Evolution
 
