@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 6: Sidekiq CRUD** - Create, edit, delete custom assistants
 - [x] **Phase 7: Sidekiq Chat Integration** - Chat with Sidekiq, system prompt injection
 - [x] **Phase 8: Team Foundation** - Create teams, member management, invites
-- [ ] **Phase 8.1: Rethink Branding and UI to Match Linear Aesthetic** - Design system overhaul (INSERTED)
+- [x] **Phase 8.1: Rethink Branding and UI to Match Linear Aesthetic** - Design system overhaul (INSERTED)
 - [ ] **Phase 8.2: Two-Tier Sidebar Navigation Architecture** - Icon rail + contextual panels (INSERTED)
 - [ ] **Phase 9: Team Sidekiq Sharing** - Share Sidekiqs with teams, permissions
 - [ ] **Phase 10: Error Handling & Edge Cases** - Comprehensive error states, retry logic
@@ -204,14 +204,14 @@ Plans:
 **Plans:** 8 plans
 
 Plans:
-- [ ] 08.1-01-PLAN.md — Design system foundation (globals.css tokens, font swap, glass removal)
-- [ ] 08.1-02-PLAN.md — UI primitives (16 shadcn components: card, dialog, button, input, etc.)
-- [ ] 08.1-03-PLAN.md — Auth components + page layouts (hardcoded zinc removal, brand name)
-- [ ] 08.1-04-PLAN.md — Chat components (editor-like input, header bar, message styling)
-- [ ] 08.1-05-PLAN.md — Sidebar + thread components (active state, brand, section styling)
-- [ ] 08.1-06-PLAN.md — Sidekiq + model picker components (cards, pickers, forms)
-- [ ] 08.1-07-PLAN.md — Team components (settings, dialogs, member rows)
-- [ ] 08.1-08-PLAN.md — Brand icon + final sweep + visual verification checkpoint
+- [x] 08.1-01-PLAN.md — Design system foundation (globals.css tokens, font swap, glass removal)
+- [x] 08.1-02-PLAN.md — UI primitives (16 shadcn components: card, dialog, button, input, etc.)
+- [x] 08.1-03-PLAN.md — Auth components + page layouts (hardcoded zinc removal, brand name)
+- [x] 08.1-04-PLAN.md — Chat components (editor-like input, header bar, message styling)
+- [x] 08.1-05-PLAN.md — Sidebar + thread components (active state, brand, section styling)
+- [x] 08.1-06-PLAN.md — Sidekiq + model picker components (cards, pickers, forms)
+- [x] 08.1-07-PLAN.md — Team components (settings, dialogs, member rows)
+- [x] 08.1-08-PLAN.md — Brand icon + final sweep + visual verification checkpoint
 
 ### Phase 8.2: Two-Tier Sidebar Navigation Architecture (INSERTED)
 **Goal**: Refactor sidebar into a two-tier navigation structure with primary icon rail and contextual secondary panels
@@ -313,7 +313,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 
 | 6. Sidekiq CRUD | 7/7 | Complete | 2026-01-24 |
 | 7. Sidekiq Chat Integration | 10/10 | Complete | 2026-01-25 |
 | 8. Team Foundation | 8/8 | Complete | 2026-01-25 |
-| 8.1. Rethink Branding/UI (INSERTED) | 0/8 | Planned | - |
+| 8.1. Rethink Branding/UI (INSERTED) | 8/8 | Complete | 2026-01-26 |
 | 8.2. Two-Tier Sidebar Navigation (INSERTED) | 0/? | Not started | - |
 | 9. Team Sidekiq Sharing | 0/1 | Not started | - |
 | 10. Error Handling & Edge Cases | 0/1 | Not started | - |
