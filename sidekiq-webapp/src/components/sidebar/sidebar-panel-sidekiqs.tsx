@@ -30,7 +30,7 @@ import { SidekiqAvatar } from "@sidekiq/components/sidekiq/sidekiq-avatar";
  *
  * Displays the full list of user's Sidekiqs with search filtering,
  * create action, and click-to-chat behavior. This is an expanded
- * version of sidebar-sidekiqs.tsx designed to fill an entire panel.
+ * version designed to fill an entire sidebar panel.
  *
  * Structure:
  * - Header with "Sidekiqs" title and create button

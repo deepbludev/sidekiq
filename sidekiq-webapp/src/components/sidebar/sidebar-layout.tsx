@@ -32,7 +32,7 @@ const PANEL_COLLAPSED_KEY = "sidebar-panel-collapsed";
  * - Re-clicking the active icon in the rail
  *
  * Panel collapsed state is persisted in localStorage with SSR-safe
- * lazy initializer (same pattern as use-sidebar-state.ts).
+ * lazy initializer.
  *
  * @example
  * ```tsx

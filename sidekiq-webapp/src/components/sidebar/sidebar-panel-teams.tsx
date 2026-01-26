@@ -16,7 +16,7 @@ import { cn } from "@sidekiq/lib/utils";
  *
  * Displays the full list of user's teams with active team highlighting,
  * create team functionality, and click-to-manage behavior. This is an
- * expanded version of sidebar-teams.tsx designed to fill an entire panel.
+ * expanded version designed to fill an entire sidebar panel.
  *
  * Structure:
  * - Header with "Teams" title and create button
@@ -34,7 +34,7 @@ export function SidebarPanelTeams() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const { teams, activeTeamId, setActiveTeamId, isLoading } = useActiveTeam();
 
-  // Match existing sidebar-teams.tsx behavior: return null during loading
+  // Return null during loading to avoid layout shift
   if (isLoading) {
     return null;
   }
