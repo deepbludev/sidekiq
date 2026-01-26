@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 8.1 of 13 (Rethink Branding & UI)
-Plan: 1 of 8 complete
+Plan: 3 of 8 complete
 Status: In progress
-Last activity: 2026-01-26 - Completed 08.1-01-PLAN.md (design system foundation)
+Last activity: 2026-01-26 - Completed 08.1-03-PLAN.md (auth & layout semantic tokens)
 
-Progress: [████████░░] ~73% (8 phases + 1 plan complete)
+Progress: [████████░░] ~75% (8 phases + 3 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 33
-- Average duration: ~6.1 min
-- Total execution time: ~3 hours 23 min
+- Total plans completed: 35
+- Average duration: ~5.9 min
+- Total execution time: ~3 hours 29 min
 
 **By Phase:**
 
@@ -36,11 +36,11 @@ Progress: [████████░░] ~73% (8 phases + 1 plan complete)
 | 07 | 10 | 37min | ~3.7min |
 | 08 | 8 | 26min | ~3.25min |
 
-| 08.1 | 1/8 | 3min | 3min |
+| 08.1 | 3/8 | 9min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 08-06 (4min), 08-07 (5min), 08-08 (5min), 08.1-01 (3min)
-- Trend: Phase 8.1 started, design system foundation established
+- Last 5 plans: 08-08 (5min), 08.1-01 (3min), 08.1-02 (3min), 08.1-03 (3min)
+- Trend: Phase 8.1 progressing rapidly, semantic token migration across auth and layouts
 
 *Updated after each plan completion*
 
@@ -171,6 +171,9 @@ Recent decisions affecting current work:
 - Inter as primary font replacing Geist, Geist Mono for code (confirmed - 08.1-01)
 - Border radius base 0.375rem (6px) for sharp technical feel (confirmed - 08.1-01)
 - Glassmorphism utility classes removed from CSS (confirmed - 08.1-01)
+- Auth form inputs use bg-muted for subtle elevation against card background (confirmed - 08.1-03)
+- OAuth button divider background uses bg-card to match parent surface (confirmed - 08.1-03)
+- Brand name lowercase "sidekiq" on auth layout, landing page, and mobile header (confirmed - 08.1-03)
 
 ### Pending Todos
 
@@ -216,9 +219,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 08.1-01-PLAN.md (design system foundation)
+Stopped at: Completed 08.1-03-PLAN.md (auth & layout semantic tokens)
 Resume file: None
-Next: 08.1-02-PLAN.md (component updates)
+Next: 08.1-04-PLAN.md
 
 ## Phase 2 Completion Summary
 
