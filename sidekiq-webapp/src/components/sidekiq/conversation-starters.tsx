@@ -186,7 +186,7 @@ function SortableStarterItem({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "bg-background flex items-center gap-2 rounded-md border p-2",
+        "border-border bg-card flex items-center gap-2 rounded-md border p-2",
         isDragging && "opacity-50 shadow-lg",
       )}
     >

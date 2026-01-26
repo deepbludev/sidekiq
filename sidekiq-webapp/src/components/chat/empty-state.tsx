@@ -90,10 +90,9 @@ export function EmptyState({
               key={index}
               onClick={() => onPromptSelect(starter)}
               className={cn(
-                "w-full rounded-lg p-4 text-left text-sm",
-                "glass-subtle",
+                "border-border bg-card w-full rounded-lg border p-4 text-left text-sm",
                 "text-foreground/80 hover:text-foreground",
-                "hover:bg-white/60 dark:hover:bg-zinc-800/60",
+                "hover:bg-accent",
                 "transition-colors duration-200",
                 "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
               )}
@@ -138,10 +137,9 @@ export function EmptyState({
                   key={prompt}
                   onClick={() => onPromptSelect(prompt)}
                   className={cn(
-                    "w-full rounded-lg p-3 text-left text-sm",
-                    "glass-subtle",
+                    "border-border bg-card w-full rounded-lg border p-3 text-left text-sm",
                     "text-foreground/80 hover:text-foreground",
-                    "hover:bg-white/60 dark:hover:bg-zinc-800/60",
+                    "hover:bg-accent",
                     "transition-colors duration-200",
                     "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
                   )}

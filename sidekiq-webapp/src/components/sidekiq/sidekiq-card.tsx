@@ -62,13 +62,13 @@ export function SidekiqCard({
 
   if (viewMode === "list") {
     return (
-      <div className="hover:bg-accent/50 group flex items-center gap-4 rounded-lg border p-3 transition-colors">
+      <div className="border-border bg-card hover:border-primary/30 group flex items-center gap-4 rounded-lg border p-3 shadow-sm transition-colors dark:shadow-none">
         <SidekiqAvatar name={sidekiq.name} avatar={sidekiq.avatar} size="md" />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <Link
               href={`/sidekiqs/${sidekiq.id}/edit`}
-              className="font-medium hover:underline"
+              className="text-foreground font-medium hover:underline"
             >
               {sidekiq.name}
             </Link>
@@ -102,7 +102,7 @@ export function SidekiqCard({
 
   // Grid view
   return (
-    <div className="bg-card hover:bg-accent/30 group relative flex flex-col rounded-xl border p-4 transition-colors">
+    <div className="border-border bg-card hover:border-primary/30 group relative flex flex-col rounded-lg border p-4 shadow-sm transition-colors dark:shadow-none">
       <div className="mb-3 flex items-start justify-between">
         <SidekiqAvatar name={sidekiq.name} avatar={sidekiq.avatar} size="lg" />
         <SidekiqCardActions
@@ -113,7 +113,7 @@ export function SidekiqCard({
         />
       </div>
       <Link href={`/sidekiqs/${sidekiq.id}/edit`} className="group/link">
-        <h3 className="mb-1 flex items-center gap-2 font-semibold group-hover/link:underline">
+        <h3 className="text-foreground mb-1 flex items-center gap-2 font-medium group-hover/link:underline">
           {sidekiq.name}
           {sidekiq.isFavorite && (
             <Star className="size-3.5 fill-amber-400 text-amber-400" />

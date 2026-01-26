@@ -22,7 +22,6 @@ import { ScrollToBottom } from "./scroll-to-bottom";
 import { ModelSwitchHint } from "./model-switch-hint";
 import { ModelPicker } from "@sidekiq/components/model-picker";
 import { useModelSelection } from "@sidekiq/hooks/use-model-selection";
-import { cn } from "@sidekiq/lib/utils";
 import { api } from "@sidekiq/trpc/react";
 import type { SidekiqAvatar } from "@sidekiq/lib/validations/sidekiq";
 
@@ -50,7 +49,7 @@ interface ChatInterfaceProps {
 }
 
 /**
- * Main chat interface component with glassmorphism styling.
+ * Main chat interface component with Linear-inspired aesthetic.
  *
  * Integrates useChat hook with message list, input, typing indicator,
  * and auto-scroll functionality. Includes error handling with toast notifications.
@@ -257,11 +256,7 @@ export function ChatInterface({
       {/* Message area */}
       <div
         ref={scrollContainerRef}
-        className={cn(
-          "flex-1 overflow-y-auto",
-          // Subtle gradient background
-          "from-background to-muted/20 bg-gradient-to-b",
-        )}
+        className="bg-background flex-1 overflow-y-auto"
       >
         <div className="mx-auto max-w-3xl px-4 py-4">
           <MessageList
@@ -306,8 +301,8 @@ export function ChatInterface({
       {/* Scroll to bottom button */}
       <ScrollToBottom scrollContainer={scrollContainerRef} />
 
-      {/* Input area with glass effect */}
-      <div className={cn("border-t px-4 py-4", "glass", "border-border/50")}>
+      {/* Input area */}
+      <div className="border-border bg-background border-t px-4 py-4">
         <div className="mx-auto max-w-3xl">
           {error && (
             <div className="bg-destructive/10 text-destructive mb-2 rounded-md px-3 py-2 text-sm">

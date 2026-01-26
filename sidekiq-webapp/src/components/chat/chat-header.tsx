@@ -33,7 +33,7 @@ export function ChatHeader({ title, sidekiq }: ChatHeaderProps) {
   if (!sidekiq) {
     // Regular chat - just show title
     return (
-      <div className="border-b px-4 py-3">
+      <div className="border-border bg-background border-b px-4 py-3">
         <h1 className="text-foreground truncate text-sm font-medium">
           {title ?? "New Chat"}
         </h1>

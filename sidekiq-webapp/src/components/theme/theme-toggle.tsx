@@ -37,7 +37,7 @@ export function ThemeToggle() {
       onValueChange={(value) => {
         if (value) setTheme(value);
       }}
-      className="glass-subtle rounded-lg p-1"
+      className="border-border bg-card rounded-lg border p-1"
     >
       <ToggleGroupItem
         value="light"

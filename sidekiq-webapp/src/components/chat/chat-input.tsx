@@ -32,10 +32,11 @@ interface ChatInputProps {
 }
 
 /**
- * Chat input component with glassmorphism styling.
+ * Editor-like chat input component with Linear-inspired styling.
  *
  * Features:
- * - Auto-resizing textarea
+ * - Auto-resizing textarea within a bordered card container
+ * - Toolbar area with model picker and Sidekiq badge
  * - Enter to send, Shift+Enter for newline
  * - Send button disabled when empty or streaming
  * - Stop button appears during streaming
@@ -66,61 +67,71 @@ export function ChatInput({
   const canSend = input.trim().length > 0 && !isStreaming;
 
   return (
-    <form onSubmit={onSubmit} className="relative">
-      {sidekiq && (
-        <div className="mb-2 flex items-center gap-1.5">
-          <SidekiqAvatar
-            name={sidekiq.name}
-            avatar={sidekiq.avatar}
-            size="sm"
-            className="size-5"
-          />
-          <span className="text-muted-foreground text-xs">
-            Chatting with{" "}
-            <span className="text-foreground font-medium">{sidekiq.name}</span>
-          </span>
-        </div>
-      )}
-      <Textarea
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder={placeholder}
-        disabled={isStreaming}
-        className={cn(
-          "max-h-[200px] min-h-[52px] resize-none pr-24",
-          // Glassmorphism input styling
-          "glass-input",
-          "focus-visible:ring-primary/20",
-          "placeholder:text-muted-foreground/60",
+    <form onSubmit={onSubmit}>
+      <div className="border-border bg-card rounded-md border">
+        {/* Toolbar area: Sidekiq badge + model picker */}
+        {(sidekiq ?? modelPicker) && (
+          <div className="border-border flex items-center justify-between border-b px-3 py-1.5">
+            {sidekiq ? (
+              <div className="flex items-center gap-1.5">
+                <SidekiqAvatar
+                  name={sidekiq.name}
+                  avatar={sidekiq.avatar}
+                  size="sm"
+                  className="size-5"
+                />
+                <span className="text-muted-foreground text-xs">
+                  Chatting with{" "}
+                  <span className="text-foreground font-medium">
+                    {sidekiq.name}
+                  </span>
+                </span>
+              </div>
+            ) : (
+              <div />
+            )}
+            {modelPicker}
+          </div>
         )}
-        rows={1}
-      />
 
-      <div className="absolute right-2 bottom-2 flex items-center gap-2">
-        {modelPicker}
-        {isStreaming ? (
-          <Button
-            type="button"
-            variant="destructive"
-            size="icon-sm"
-            onClick={onStop}
-            aria-label="Stop generating"
-            className="shadow-sm"
-          >
-            <Square className="h-4 w-4" />
-          </Button>
-        ) : (
-          <Button
-            type="submit"
-            size="icon-sm"
-            disabled={!canSend}
-            aria-label="Send message"
-            className="shadow-sm"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
-        )}
+        {/* Textarea */}
+        <Textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          disabled={isStreaming}
+          className={cn(
+            "max-h-[200px] min-h-[52px] resize-none",
+            "border-0 bg-transparent shadow-none focus-visible:ring-0",
+            "placeholder:text-muted-foreground/60",
+          )}
+          rows={1}
+        />
+
+        {/* Action buttons */}
+        <div className="flex items-center justify-end px-3 py-1.5">
+          {isStreaming ? (
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon-sm"
+              onClick={onStop}
+              aria-label="Stop generating"
+            >
+              <Square className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              size="icon-sm"
+              disabled={!canSend}
+              aria-label="Send message"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
     </form>
   );

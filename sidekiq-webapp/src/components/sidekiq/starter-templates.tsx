@@ -314,7 +314,7 @@ export function StarterTemplates({ onSelectTemplate }: StarterTemplatesProps) {
           return (
             <Card
               key={template.id}
-              className={`group hover:border-primary/50 cursor-pointer transition-all hover:shadow-md ${
+              className={`group hover:border-primary/30 cursor-pointer transition-all hover:shadow-md ${
                 isBlank ? "border-dashed" : ""
               }`}
               onClick={() => handleSelect(template)}
@@ -341,7 +341,7 @@ export function StarterTemplates({ onSelectTemplate }: StarterTemplatesProps) {
         })}
       </div>
 
-      <div className="border-muted flex items-center gap-4 border-t pt-4">
+      <div className="border-border flex items-center gap-4 border-t pt-4">
         <Button
           variant="outline"
           onClick={() =>

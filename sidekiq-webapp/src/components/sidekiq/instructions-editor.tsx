@@ -82,7 +82,10 @@ export function InstructionsEditor({
       </div>
 
       {/* Editor or Preview */}
-      <div className="rounded-md border" data-color-mode="dark">
+      <div
+        className="border-border bg-card rounded-lg border"
+        data-color-mode="dark"
+      >
         {showPreview ? (
           <div className="prose prose-sm prose-invert min-h-[300px] max-w-none p-4">
             <MDPreview source={value || "*No instructions yet*"} />
