@@ -20,6 +20,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 6: Sidekiq CRUD** - Create, edit, delete custom assistants
 - [x] **Phase 7: Sidekiq Chat Integration** - Chat with Sidekiq, system prompt injection
 - [x] **Phase 8: Team Foundation** - Create teams, member management, invites
+- [ ] **Phase 8.1: Rethink Branding and UI to Match Linear Aesthetic** - Design system overhaul (INSERTED)
+- [ ] **Phase 8.2: Two-Tier Sidebar Navigation Architecture** - Icon rail + contextual panels (INSERTED)
 - [ ] **Phase 9: Team Sidekiq Sharing** - Share Sidekiqs with teams, permissions
 - [ ] **Phase 10: Error Handling & Edge Cases** - Comprehensive error states, retry logic
 - [ ] **Phase 11: UI Polish & Animations** - Glassmorphism refinement, micro-animations
@@ -189,6 +191,43 @@ Plans:
 - [x] 08-07-PLAN.md — Sidebar integration: team dropdown, teams section, active team persistence
 - [ ] 08-08-PLAN.md — [gap closure] Database migration sync: add admin role, avatar, memberLimit columns
 
+### Phase 8.1: Rethink Branding and UI to Match Linear Aesthetic (INSERTED)
+**Goal**: Overhaul the design system and UI to match Linear.app's minimalist, professional, polished aesthetic
+**Depends on**: Phase 8
+**Requirements**: None (design/UX improvement)
+**Success Criteria** (what must be TRUE):
+  1. Design system analyzed and documented (Linear's colors, spacing, typography, motion patterns)
+  2. Current glassmorphism approach evaluated against Linear's more solid/subtle style
+  3. Component redesigns applied (sidebar, inputs, buttons, cards, etc.)
+  4. Branding elements updated (accent colors, iconography, overall feel)
+  5. Dark-mode-first aesthetic with premium, clean look across all existing pages
+**Plans:** 8 plans
+
+Plans:
+- [ ] 08.1-01-PLAN.md — Design system foundation (globals.css tokens, font swap, glass removal)
+- [ ] 08.1-02-PLAN.md — UI primitives (16 shadcn components: card, dialog, button, input, etc.)
+- [ ] 08.1-03-PLAN.md — Auth components + page layouts (hardcoded zinc removal, brand name)
+- [ ] 08.1-04-PLAN.md — Chat components (editor-like input, header bar, message styling)
+- [ ] 08.1-05-PLAN.md — Sidebar + thread components (active state, brand, section styling)
+- [ ] 08.1-06-PLAN.md — Sidekiq + model picker components (cards, pickers, forms)
+- [ ] 08.1-07-PLAN.md — Team components (settings, dialogs, member rows)
+- [ ] 08.1-08-PLAN.md — Brand icon + final sweep + visual verification checkpoint
+
+### Phase 8.2: Two-Tier Sidebar Navigation Architecture (INSERTED)
+**Goal**: Refactor sidebar into a two-tier navigation structure with primary icon rail and contextual secondary panels
+**Depends on**: Phase 8.1
+**Requirements**: None (architectural improvement)
+**Success Criteria** (what must be TRUE):
+  1. Primary sidebar with thin icon rail for main features (Chats, Sidekiqs, Teams, Settings)
+  2. Secondary sidebar with contextual content panel (thread list, team members, etc.)
+  3. Feature switching via primary icons with appropriate secondary panel display
+  4. Animations/transitions between feature contexts
+  5. Scalable structure that accommodates future feature additions
+**Plans**: TBD
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 8.2 to break down)
+
 ### Phase 9: Team Sidekiq Sharing
 **Goal**: User can share Sidekiqs with their team and control permissions
 **Depends on**: Phase 8
@@ -262,7 +301,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 8.2 -> 9 -> 10 -> 11 -> 12 -> 13
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -274,6 +313,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 6. Sidekiq CRUD | 7/7 | Complete | 2026-01-24 |
 | 7. Sidekiq Chat Integration | 10/10 | Complete | 2026-01-25 |
 | 8. Team Foundation | 8/8 | Complete | 2026-01-25 |
+| 8.1. Rethink Branding/UI (INSERTED) | 0/8 | Planned | - |
+| 8.2. Two-Tier Sidebar Navigation (INSERTED) | 0/? | Not started | - |
 | 9. Team Sidekiq Sharing | 0/1 | Not started | - |
 | 10. Error Handling & Edge Cases | 0/1 | Not started | - |
 | 11. UI Polish & Animations | 0/1 | Not started | - |
