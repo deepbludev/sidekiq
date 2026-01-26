@@ -3,10 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { User, Users, ArrowLeft } from "lucide-react";
+import { User, Users } from "lucide-react";
 
 import { cn } from "@sidekiq/lib/utils";
-import { Button } from "@sidekiq/components/ui/button";
 
 const settingsNav = [
   { href: "/settings", label: "Profile", icon: User, exact: true },
@@ -16,20 +15,19 @@ const settingsNav = [
 
 /**
  * Settings layout with navigation sidebar.
+ *
+ * The two-tier sidebar is now always visible via the dashboard layout,
+ * so the "Back to chat" button has been removed. The settings content
+ * renders alongside the sidebar in the main content area.
+ *
  * Shared across all settings pages.
  */
 export default function SettingsLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <div className="container max-w-4xl py-8">
-      <div className="mb-6 flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href="/chat">
-            <ArrowLeft className="size-4" />
-            <span className="sr-only">Back to chat</span>
-          </Link>
-        </Button>
+    <div className="mx-auto max-w-4xl overflow-auto px-6 py-8">
+      <div className="mb-6">
         <h1 className="text-2xl font-bold">Settings</h1>
       </div>
 
