@@ -190,4 +190,49 @@ describe("ChatInput", () => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("editor-like card layout (Phase 8.1)", () => {
+    it("should render card container with border and bg-card classes", () => {
+      const { container } = renderChatInput();
+
+      // The outer card container should have border-border bg-card rounded-md border
+      const cardContainer = container.querySelector(".border-border.bg-card");
+      expect(cardContainer).toBeInTheDocument();
+      expect(cardContainer).toHaveClass("rounded-md", "border");
+    });
+
+    it("should render toolbar with Sidekiq badge when sidekiq prop is provided", () => {
+      renderChatInput({
+        sidekiq: {
+          name: "Code Helper",
+          avatar: { type: "initials" as const, color: "#3b82f6" },
+        },
+      });
+
+      // "Chatting with" text and sidekiq name should appear in toolbar
+      expect(screen.getByText(/chatting with/i)).toBeInTheDocument();
+      expect(screen.getByText("Code Helper")).toBeInTheDocument();
+    });
+
+    it("should render toolbar area when modelPicker prop is provided", () => {
+      const { container } = renderChatInput({
+        modelPicker: <div data-testid="model-picker">Model Picker</div>,
+      });
+
+      // Model picker should render
+      expect(screen.getByTestId("model-picker")).toBeInTheDocument();
+
+      // Toolbar should have border-b separator
+      const toolbar = container.querySelector(".border-b.border-border");
+      expect(toolbar).toBeInTheDocument();
+    });
+
+    it("should not render toolbar when neither sidekiq nor modelPicker is provided", () => {
+      const { container } = renderChatInput();
+
+      // No toolbar area (no border-b div inside the card)
+      const toolbar = container.querySelector(".border-b.border-border");
+      expect(toolbar).not.toBeInTheDocument();
+    });
+  });
 });

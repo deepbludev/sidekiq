@@ -127,6 +127,57 @@ describe("ThreadItem", () => {
       const threadDiv = container.querySelector(".bg-sidebar-accent");
       expect(threadDiv).toBeInTheDocument();
     });
+
+    it("should have left accent bar when active (Phase 8.1)", () => {
+      const { container } = renderThreadItem({
+        isActive: true,
+      });
+
+      // Active threads have a left border accent bar (border-l-2 border-sidebar-primary)
+      const threadDiv = container.querySelector(".border-l-2");
+      expect(threadDiv).toBeInTheDocument();
+      expect(threadDiv).toHaveClass("border-sidebar-primary");
+    });
+
+    it("should not have left accent bar when inactive", () => {
+      const { container } = renderThreadItem({
+        isActive: false,
+      });
+
+      const threadDiv = container.querySelector(".border-l-2");
+      expect(threadDiv).not.toBeInTheDocument();
+    });
+
+    it("should render Sidekiq avatar when thread has sidekiq relation", () => {
+      renderThreadItem({
+        thread: createMockThread({
+          sidekiqId: "sidekiq-1",
+          sidekiq: {
+            id: "sidekiq-1",
+            name: "Code Helper",
+            avatar: { type: "initials" as const, color: "#3b82f6" },
+          },
+        }),
+      });
+
+      // Sidekiq subtitle should appear
+      expect(screen.getByText("with Code Helper")).toBeInTheDocument();
+    });
+
+    it("should show deleted sidekiq placeholder when sidekiq was deleted", () => {
+      const { container } = renderThreadItem({
+        thread: createMockThread({
+          sidekiqId: "sidekiq-deleted",
+          deletedSidekiqName: "Old Helper",
+          sidekiq: null,
+        }),
+      });
+
+      // "?" placeholder should render
+      expect(screen.getByText("?")).toBeInTheDocument();
+      // "[Sidekiq deleted]" subtitle should appear
+      expect(screen.getByText("[Sidekiq deleted]")).toBeInTheDocument();
+    });
   });
 
   describe("navigation", () => {
