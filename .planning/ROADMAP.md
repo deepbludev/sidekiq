@@ -24,9 +24,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 8.2: Two-Tier Sidebar Navigation Architecture** - Icon rail + contextual panels (INSERTED)
 - [ ] **Phase 9: Team Sidekiq Sharing** - Share Sidekiqs with teams, permissions
 - [ ] **Phase 10: Error Handling & Edge Cases** - Comprehensive error states, retry logic
-- [ ] **Phase 11: UI Polish & Animations** - Glassmorphism refinement, micro-animations
-- [ ] **Phase 12: Performance & Production** - Loading states, responsive, markdown
-- [ ] **Phase 13: Refactor Architecture to Vertical Slicing by Feature** - Reorganize codebase structure
+- [ ] **Phase 11: Performance & Production** - Loading states, responsive, markdown
+- [ ] **Phase 12: Refactor Architecture to Vertical Slicing by Feature** - Reorganize codebase structure
 
 ## Phase Details
 
@@ -256,23 +255,9 @@ Plans:
 Plans:
 - [ ] 10-01: TBD
 
-### Phase 11: UI Polish & Animations
-**Goal**: User experiences smooth, delightful interactions with polished animations
-**Depends on**: Phase 10
-**Requirements**: UIUX-04, UIUX-05, UIUX-06
-**Success Criteria** (what must be TRUE):
-  1. Messages appear with micro-animations (fade-in/slide-up)
-  2. Page transitions are smooth and responsive
-  3. All interactive elements have hover states
-  4. Glassmorphism aesthetic is refined with subtle gradients throughout interface
-**Plans**: TBD
-
-Plans:
-- [ ] 11-01: TBD
-
-### Phase 12: Performance & Production
+### Phase 11: Performance & Production
 **Goal**: User experiences fast, responsive app with proper loading states on all devices
-**Depends on**: Phase 11
+**Depends on**: Phase 10
 **Requirements**: UIUX-07, UIUX-08, UIUX-10, UIUX-11
 **Success Criteria** (what must be TRUE):
   1. Skeleton loading states appear for sidebar and chat area
@@ -282,11 +267,11 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 12-01: TBD
+- [ ] 11-01: TBD
 
-### Phase 13: Refactor Architecture to Vertical Slicing by Feature
+### Phase 12: Refactor Architecture to Vertical Slicing by Feature
 **Goal**: Reorganize codebase from horizontal layers to vertical feature slices for better maintainability
-**Depends on**: Phase 12
+**Depends on**: Phase 11
 **Requirements**: None (internal refactor)
 **Success Criteria** (what must be TRUE):
   1. Code is organized by feature domain (chat, sidekiq, team, etc.) rather than technical layer
@@ -296,12 +281,12 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 13-01: TBD (run /gsd:plan-phase 13 to break down)
+- [ ] 12-01: TBD (run /gsd:plan-phase 12 to break down)
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 8.2 -> 9 -> 10 -> 11 -> 12 -> 13
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 8.2 -> 9 -> 10 -> 11 -> 12
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -317,6 +302,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 
 | 8.2. Two-Tier Sidebar Navigation (INSERTED) | 0/? | Not started | - |
 | 9. Team Sidekiq Sharing | 0/1 | Not started | - |
 | 10. Error Handling & Edge Cases | 0/1 | Not started | - |
-| 11. UI Polish & Animations | 0/1 | Not started | - |
-| 12. Performance & Production | 0/1 | Not started | - |
-| 13. Refactor Architecture to Vertical Slicing | 0/1 | Not started | - |
+| 11. Performance & Production | 0/1 | Not started | - |
+| 12. Refactor Architecture to Vertical Slicing | 0/1 | Not started | - |

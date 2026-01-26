@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Position
 
-Phase: 8.1 of 13 (Rethink Branding & UI)
+Phase: 8.1 of 12 (Rethink Branding & UI)
 Plan: 8 of 8 complete
 Status: Phase complete
 Last activity: 2026-01-26 - Completed quick task 014: Fix unit tests for Phase 8.1
 
-Progress: [██████████] ~82% (8.1 phases complete)
+Progress: [██████████] ~85% (8.1 phases complete)
 
 ## Performance Metrics
 
@@ -238,9 +238,10 @@ Recent decisions affecting current work:
 
 ### Roadmap Evolution
 
-- Phase 13 added: Refactor architecture to vertical slicing by feature
+- Phase 12 (was 13): Refactor architecture to vertical slicing by feature
 - Phase 8.1 inserted after Phase 8: Rethink branding and UI to match Linear aesthetic (INSERTED)
 - Phase 8.2 inserted after Phase 8.1: Two-tier sidebar navigation architecture (INSERTED)
+- Phase 11 removed: UI Polish & Animations (renumbered 12→11, 13→12)
 
 ## Session Continuity
 
