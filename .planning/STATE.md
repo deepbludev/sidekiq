@@ -199,7 +199,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-15 pending todos in `.planning/todos/pending/`:
+16 pending todos in `.planning/todos/pending/`:
 - **Replace dashboard with /chat as default landing page** (ui) — remove useless dashboard, make /chat the entry point
 - **Implement Projects feature** (ui) — workspace grouping chats, knowledge base, team sharing
 - **Migrate next lint to ESLint CLI** (tooling)
@@ -214,6 +214,7 @@ Recent decisions affecting current work:
 - **Fix chat textarea loses focus after sending message** (ui) — textarea loses focus after send, requires click to resume typing
 - **Fix new thread not appearing in sidebar without refresh** (ui) — new thread missing from sidebar until page refresh
 - **Refactor Architecture to Vertical Slicing by Feature** (architecture) — reorganize from horizontal layers to vertical feature slices
+- **Rethink teams as workspaces** (architecture) — fully isolated environments with chats, sidekiqs, members, billing, usage
 
 ### Blockers/Concerns
 
