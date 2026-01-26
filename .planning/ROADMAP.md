@@ -22,7 +22,6 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 8: Team Foundation** - Create teams, member management, invites
 - [x] **Phase 8.1: Rethink Branding and UI to Match Linear Aesthetic** - Design system overhaul (INSERTED)
 - [ ] **Phase 8.2: Two-Tier Sidebar Navigation Architecture** - Icon rail + contextual panels (INSERTED)
-- [ ] **Phase 9: Team Sidekiq Sharing** - Share Sidekiqs with teams, permissions
 
 ## Phase Details
 
@@ -224,24 +223,10 @@ Plans:
 Plans:
 - [ ] TBD (run /gsd:plan-phase 8.2 to break down)
 
-### Phase 9: Team Sidekiq Sharing
-**Goal**: User can share Sidekiqs with their team and control permissions
-**Depends on**: Phase 8
-**Requirements**: TEAM-07, TEAM-08, TEAM-09, TEAM-10
-**Success Criteria** (what must be TRUE):
-  1. User can share a Sidekiq with their team (teamId assignment)
-  2. Team members can view and use team-shared Sidekiqs
-  3. Sidekiq owner controls edit permissions via canTeamEdit flag
-  4. When team is deleted, team Sidekiqs transfer to owner (with confirmation dialog)
-**Plans**: TBD
-
-Plans:
-- [ ] 09-01: TBD
-
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 8.2 -> 9
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 8.2
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -255,4 +240,3 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 
 | 8. Team Foundation | 8/8 | Complete | 2026-01-25 |
 | 8.1. Rethink Branding/UI (INSERTED) | 8/8 | Complete | 2026-01-26 |
 | 8.2. Two-Tier Sidebar Navigation (INSERTED) | 0/? | Not started | - |
-| 9. Team Sidekiq Sharing | 0/1 | Not started | - |
