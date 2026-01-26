@@ -43,7 +43,7 @@ export function ChatHeader({ title, sidekiq }: ChatHeaderProps) {
 
   // Sidekiq chat - show indicator with popover
   return (
-    <div className="border-b px-4 py-3">
+    <div className="border-b border-border bg-background px-4 py-3">
       <div className="flex items-center gap-2">
         <Popover>
           <PopoverTrigger asChild>

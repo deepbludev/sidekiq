@@ -65,7 +65,7 @@ export function SidebarSidekiqs({ onSidekiqSelect }: SidebarSidekiqsProps) {
   return (
     <Collapsible defaultOpen className="px-2">
       <div className="flex items-center justify-between px-2 py-1">
-        <CollapsibleTrigger className="text-muted-foreground hover:text-foreground group flex items-center gap-1 text-xs font-medium tracking-wider uppercase">
+        <CollapsibleTrigger className="text-muted-foreground hover:text-sidebar-foreground group flex items-center gap-1 text-xs font-medium">
           <ChevronRight className="size-3 transition-transform group-data-[state=open]:rotate-90" />
           Sidekiqs
         </CollapsibleTrigger>
@@ -103,7 +103,7 @@ export function SidebarSidekiqs({ onSidekiqSelect }: SidebarSidekiqsProps) {
               <div key={sidekiq.id} className="group relative">
                 <button
                   onClick={() => handleSidekiqClick(sidekiq.id)}
-                  className="hover:bg-accent/50 flex w-full items-center gap-2 rounded-md px-2 py-1.5 pr-8 text-left text-sm transition-colors"
+                  className="hover:bg-sidebar-accent/50 text-sidebar-foreground flex w-full items-center gap-2 rounded-md px-2 py-1.5 pr-8 text-left text-sm transition-colors"
                 >
                   <SidekiqAvatar
                     name={sidekiq.name}
@@ -142,7 +142,7 @@ export function SidebarSidekiqs({ onSidekiqSelect }: SidebarSidekiqsProps) {
             {sidekiqs && sidekiqs.length > 5 && (
               <Link
                 href="/sidekiqs"
-                className="text-muted-foreground hover:text-foreground block px-2 py-1.5 text-xs hover:underline"
+                className="text-muted-foreground hover:text-sidebar-foreground block px-2 py-1.5 text-xs hover:underline"
               >
                 See all {sidekiqs.length} Sidekiqs
               </Link>

@@ -114,10 +114,10 @@ export function ThreadItem({
           onClick={handleClick}
           onKeyDown={(e) => e.key === "Enter" && handleClick()}
           className={cn(
-            "group flex items-center gap-2 rounded-lg px-3 py-2",
+            "group flex items-center gap-2 rounded-md px-3 py-2",
             "cursor-pointer transition-colors",
-            "hover:bg-accent/50",
-            isActive && "bg-accent",
+            "hover:bg-sidebar-accent/50",
+            isActive && "bg-sidebar-accent border-sidebar-primary border-l-2",
             thread.isArchived && "opacity-60",
           )}
         >
@@ -148,7 +148,7 @@ export function ThreadItem({
               />
             ) : (
               <>
-                <span className="block truncate text-sm">
+                <span className="text-sidebar-foreground block truncate text-sm">
                   {thread.title ?? "New conversation"}
                 </span>
                 {/* Sidekiq subtitle */}

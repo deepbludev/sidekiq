@@ -20,10 +20,8 @@ interface SidebarThreadGroupProps {
  */
 export function SidebarThreadGroup({ group }: SidebarThreadGroupProps) {
   return (
-    <div className="px-3 py-2">
-      <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-        {group}
-      </span>
+    <div className="px-3 py-1.5">
+      <span className="text-muted-foreground text-xs font-medium">{group}</span>
     </div>
   );
 }

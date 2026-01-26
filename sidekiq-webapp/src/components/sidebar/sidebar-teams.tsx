@@ -53,7 +53,11 @@ export function SidebarTeams({ isCollapsed = false }: SidebarTeamsProps) {
     return (
       <div className="px-2 py-1">
         <Link href="/settings/teams">
-          <Button variant="ghost" size="icon" className="h-10 w-full">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-sidebar-foreground/70 hover:text-sidebar-foreground h-10 w-full"
+          >
             <Users className="size-5" />
             <span className="sr-only">Teams</span>
           </Button>
@@ -70,7 +74,7 @@ export function SidebarTeams({ isCollapsed = false }: SidebarTeamsProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="text-muted-foreground hover:text-foreground gap-1 px-2 font-semibold"
+              className="text-muted-foreground hover:text-sidebar-foreground gap-1 px-2 text-xs font-medium"
             >
               <Users className="size-4" />
               Teams
@@ -103,8 +107,8 @@ export function SidebarTeams({ isCollapsed = false }: SidebarTeamsProps) {
                 href={`/settings/teams?team=${team.id}`}
                 onClick={() => setActiveTeamId(team.id)}
                 className={cn(
-                  "hover:bg-muted flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors",
-                  activeTeamId === team.id && "bg-muted",
+                  "hover:bg-sidebar-accent/50 text-sidebar-foreground flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                  activeTeamId === team.id && "bg-sidebar-accent",
                 )}
               >
                 <TeamAvatar
