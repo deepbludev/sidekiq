@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** Phase 8.1 - Rethink Branding & UI (Complete)
+**Current focus:** Phase 8.2 - Two-Tier Sidebar Navigation Architecture (In Progress)
 
 ## Current Position
 
-Phase: 8.1 of 8.2 (Rethink Branding & UI)
-Plan: 8 of 8 complete
-Status: Phase complete
-Last activity: 2026-01-26 - Completed quick task 014: Fix unit tests for Phase 8.1
+Phase: 8.2 of 8.2 (Two-Tier Sidebar Navigation Architecture)
+Plan: 1 of 5 complete
+Status: In progress
+Last activity: 2026-01-26 - Completed 08.2-01-PLAN.md (core sidebar structure)
 
-Progress: [█████████░] ~95% (8.1 of 8.2 phases complete)
+Progress: [█████████░] ~96% (8.2-01 of 8.2 phase plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 37
-- Average duration: ~5.8 min
-- Total execution time: ~3 hours 40 min
+- Total plans completed: 38
+- Average duration: ~5.7 min
+- Total execution time: ~3 hours 42 min
 
 **By Phase:**
 
@@ -37,10 +37,11 @@ Progress: [█████████░] ~95% (8.1 of 8.2 phases complete)
 | 08 | 8 | 26min | ~3.25min |
 
 | 08.1 | 8/8 | 35min | ~4.4min |
+| 08.2 | 1/5 | 2min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 08.1-08 (5min), 08.1-03 (3min), 08.1-07 (3min), 08.1-06 (5min), 08.1-05 (6min)
-- Trend: Phase 8.1 complete -- all components use semantic tokens, brand icon established
+- Last 5 plans: 08.2-01 (2min), 08.1-08 (5min), 08.1-03 (3min), 08.1-07 (3min), 08.1-06 (5min)
+- Trend: Phase 8.2 started -- core two-tier sidebar structure created
 
 *Updated after each plan completion*
 
@@ -196,6 +197,10 @@ Recent decisions affecting current work:
 - Transparent textarea inside card (border-0 bg-transparent) for editor feel (confirmed - 08.1-04)
 - bg-muted for inline code blocks replacing zinc-200/zinc-700 (confirmed - 08.1-04)
 - bg-muted-foreground for typing indicator dots for visibility across themes (confirmed - 08.1-04)
+- getActiveFeature checks /settings/teams before /settings to avoid double-highlighting (confirmed - 08.2-01)
+- Panel uses hidden class (display:none) instead of conditional rendering to preserve scroll position (confirmed - 08.2-01)
+- Two-tier sidebar: 48px icon rail + 288px panel = 336px fixed width (confirmed - 08.2-01)
+- Route-based panel switching via usePathname(), no React state for panel selection (confirmed - 08.2-01)
 
 ### Pending Todos
 
@@ -247,9 +252,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 08.1-08-PLAN.md (brand icon and final sweep) -- Phase 8.1 complete
+Stopped at: Completed 08.2-01-PLAN.md (core sidebar structure)
 Resume file: None
-Next: Phase 8.2 (Two-tier sidebar navigation architecture)
+Next: 08.2-02-PLAN.md (panel content components)
 
 ## Phase 2 Completion Summary
 
