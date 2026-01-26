@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 7: Sidekiq Chat Integration** - Chat with Sidekiq, system prompt injection
 - [x] **Phase 8: Team Foundation** - Create teams, member management, invites
 - [x] **Phase 8.1: Rethink Branding and UI to Match Linear Aesthetic** - Design system overhaul (INSERTED)
-- [ ] **Phase 8.2: Two-Tier Sidebar Navigation Architecture** - Icon rail + contextual panels (INSERTED)
+- [x] **Phase 8.2: Two-Tier Sidebar Navigation Architecture** - Icon rail + contextual panels (INSERTED)
 
 ## Phase Details
 
@@ -184,7 +184,7 @@ Plans:
 - [x] 08-05-PLAN.md — Invite acceptance page: public page at /invite/[token] with auth flow
 - [x] 08-06-PLAN.md — Team creation flow: form, create dialog, empty state, settings page integration
 - [x] 08-07-PLAN.md — Sidebar integration: team dropdown, teams section, active team persistence
-- [ ] 08-08-PLAN.md — [gap closure] Database migration sync: add admin role, avatar, memberLimit columns
+- [x] 08-08-PLAN.md — [gap closure] Database migration sync: add admin role, avatar, memberLimit columns
 
 ### Phase 8.1: Rethink Branding and UI to Match Linear Aesthetic (INSERTED)
 **Goal**: Overhaul the design system and UI to match Linear.app's minimalist, professional, polished aesthetic
@@ -221,11 +221,11 @@ Plans:
 **Plans:** 5 plans
 
 Plans:
-- [ ] 08.2-01-PLAN.md — Core structure: icon rail, panel container, sidebar layout composition
-- [ ] 08.2-02-PLAN.md — Panel content: chats panel, sidekiqs panel, teams panel migration
-- [ ] 08.2-03-PLAN.md — Layout integration: dashboard-wide sidebar, keyboard shortcuts, panel collapsibility
-- [ ] 08.2-04-PLAN.md — Mobile: bottom tab bar and full-screen overlay panels
-- [ ] 08.2-05-PLAN.md — Cleanup: remove old sidebar files, update exports, visual verification
+- [x] 08.2-01-PLAN.md — Core structure: icon rail, panel container, sidebar layout composition
+- [x] 08.2-02-PLAN.md — Panel content: chats panel, sidekiqs panel, teams panel migration
+- [x] 08.2-03-PLAN.md — Layout integration: dashboard-wide sidebar, keyboard shortcuts, panel collapsibility
+- [x] 08.2-04-PLAN.md — Mobile: bottom tab bar and full-screen overlay panels
+- [x] 08.2-05-PLAN.md — Cleanup: remove old sidebar files, update exports, visual verification
 
 ## Progress
 
@@ -243,4 +243,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 
 | 7. Sidekiq Chat Integration | 10/10 | Complete | 2026-01-25 |
 | 8. Team Foundation | 8/8 | Complete | 2026-01-25 |
 | 8.1. Rethink Branding/UI (INSERTED) | 8/8 | Complete | 2026-01-26 |
-| 8.2. Two-Tier Sidebar Navigation (INSERTED) | 0/5 | Not started | - |
+| 8.2. Two-Tier Sidebar Navigation (INSERTED) | 5/5 | Complete | 2026-01-26 |

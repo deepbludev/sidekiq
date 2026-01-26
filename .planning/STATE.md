@@ -534,4 +534,4 @@ All 5 plans executed successfully:
 - Mobile bottom tab bar with full-screen overlay panels
 - 9 old sidebar files deleted (1230 lines of dead code removed)
 - All keyboard shortcuts working: Cmd+B, Cmd+K, Cmd+N, Cmd+Shift+S
-- Human feedback noted: Sidekiqs page content centering (minor, non-blocking)
+- Sidekiqs page centering fixed to match settings/chat (mx-auto max-w-4xl px-6 py-8)
