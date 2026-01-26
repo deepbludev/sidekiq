@@ -119,8 +119,8 @@ export function InviteMemberDialog({
 
         {inviteUrl ? (
           <div className="space-y-4 py-4">
-            <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
-              <Check className="h-4 w-4" />
+            <div className="text-primary flex items-center gap-2 text-sm">
+              <Check className="size-4" />
               <span>Invite created successfully!</span>
             </div>
 
@@ -139,9 +139,9 @@ export function InviteMemberDialog({
                   onClick={handleCopy}
                 >
                   {copied ? (
-                    <Check className="h-4 w-4 text-green-500" />
+                    <Check className="text-primary size-4" />
                   ) : (
-                    <Copy className="h-4 w-4" />
+                    <Copy className="size-4" />
                   )}
                 </Button>
               </div>

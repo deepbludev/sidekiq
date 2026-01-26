@@ -67,8 +67,8 @@ export function InviteAcceptCard({
     return (
       <Card className="mx-auto w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="bg-destructive/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
-            <XCircle className="text-destructive h-6 w-6" />
+          <div className="bg-destructive/10 mx-auto mb-4 flex size-12 items-center justify-center rounded-full">
+            <XCircle className="text-destructive size-6" />
           </div>
           <CardTitle>Invite Not Found</CardTitle>
           <CardDescription>
@@ -89,8 +89,8 @@ export function InviteAcceptCard({
     return (
       <Card className="mx-auto w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10">
-            <Clock className="h-6 w-6 text-amber-500" />
+          <div className="bg-muted mx-auto mb-4 flex size-12 items-center justify-center rounded-full">
+            <Clock className="text-muted-foreground size-6" />
           </div>
           <CardTitle>Invite Expired</CardTitle>
           <CardDescription>
@@ -148,8 +148,8 @@ export function InviteAcceptCard({
     return (
       <Card className="mx-auto w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10">
-            <AlertTriangle className="h-6 w-6 text-amber-500" />
+          <div className="bg-destructive/10 mx-auto mb-4 flex size-12 items-center justify-center rounded-full">
+            <AlertTriangle className="text-destructive size-6" />
           </div>
           <CardTitle>Email Mismatch</CardTitle>
           <CardDescription>

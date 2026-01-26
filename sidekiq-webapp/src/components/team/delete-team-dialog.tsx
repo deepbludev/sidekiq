@@ -64,7 +64,7 @@ export function DeleteTeamDialog({
             This action cannot be undone. All team data including shared
             Sidekiqs will be affected.
             {memberCount > 1 && (
-              <span className="mt-2 block text-amber-500 dark:text-amber-400">
+              <span className="text-destructive mt-2 block">
                 Warning: {memberCount - 1} other member
                 {memberCount > 2 ? "s" : ""} will be removed from this team.
               </span>
