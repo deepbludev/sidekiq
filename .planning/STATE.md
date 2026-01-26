@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 8.1 of 13 (Rethink Branding & UI)
-Plan: 5 of 8 complete
+Plan: 6 of 8 complete
 Status: In progress
-Last activity: 2026-01-26 - Completed 08.1-06-PLAN.md (sidekiq & model picker semantic tokens)
+Last activity: 2026-01-26 - Completed 08.1-05-PLAN.md (sidebar & thread semantic tokens)
 
-Progress: [████████░░] ~77% (8 phases + 5 plans complete)
+Progress: [████████░░] ~78% (8 phases + 6 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 35
+- Total plans completed: 36
 - Average duration: ~5.9 min
-- Total execution time: ~3 hours 29 min
+- Total execution time: ~3 hours 35 min
 
 **By Phase:**
 
@@ -36,11 +36,11 @@ Progress: [████████░░] ~77% (8 phases + 5 plans complete)
 | 07 | 10 | 37min | ~3.7min |
 | 08 | 8 | 26min | ~3.25min |
 
-| 08.1 | 5/8 | 17min | ~3.4min |
+| 08.1 | 6/8 | 23min | ~3.8min |
 
 **Recent Trend:**
-- Last 5 plans: 08.1-01 (3min), 08.1-02 (3min), 08.1-03 (3min), 08.1-07 (3min), 08.1-06 (5min)
-- Trend: Phase 8.1 progressing rapidly, semantic token migration across all component areas
+- Last 5 plans: 08.1-02 (3min), 08.1-03 (3min), 08.1-07 (3min), 08.1-06 (5min), 08.1-05 (6min)
+- Trend: Phase 8.1 progressing steadily, sidebar/thread components now fully migrated to semantic tokens
 
 *Updated after each plan completion*
 
@@ -184,6 +184,11 @@ Recent decisions affecting current work:
 - Owner Crown icon uses text-primary, admin Shield uses text-muted-foreground (confirmed - 08.1-07)
 - Expired invite state uses bg-muted (neutral), email mismatch uses bg-destructive/10 (confirmed - 08.1-07)
 - Success confirmation uses text-primary, delete warning uses text-destructive (confirmed - 08.1-07)
+- Left accent bar (border-l-2 border-sidebar-primary) for active thread items (confirmed - 08.1-05)
+- Lowercase "sidekiq" brand in sidebar header and collapsed "s" mark (confirmed - 08.1-05)
+- Section headers text-xs font-medium without uppercase for subtle hierarchy (confirmed - 08.1-05)
+- New Chat button uses bg-sidebar-primary for primary action emphasis (confirmed - 08.1-05)
+- Sidebar icon pattern: text-sidebar-foreground/70 hover:text-sidebar-foreground (confirmed - 08.1-05)
 
 ### Pending Todos
 
@@ -229,9 +234,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 08.1-06-PLAN.md (sidekiq & model picker semantic tokens)
+Stopped at: Completed 08.1-05-PLAN.md (sidebar & thread semantic tokens)
 Resume file: None
-Next: 08.1-08-PLAN.md
+Next: 08.1-04-PLAN.md or 08.1-08-PLAN.md
 
 ## Phase 2 Completion Summary
 
