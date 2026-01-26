@@ -256,6 +256,7 @@ Recent decisions affecting current work:
 | 012 | Add pirate Sidekiq "Captain Jack" to seed | 2026-01-26 | af23b0c | [012-add-pirate-sidekiq-to-database-seed](./quick/012-add-pirate-sidekiq-to-database-seed/) |
 | 013 | Phase 8 unit tests (permissions, validations, TeamAvatar) | 2026-01-26 | 47a4b68 | [013-update-unit-test-suite-with-phase-8-test](./quick/013-update-unit-test-suite-with-phase-8-test/) |
 | 014 | Fix unit tests for Phase 8.1 (semantic tokens, editor layout) | 2026-01-26 | ec99974 | [014-fix-unit-tests-for-phase-8-1](./quick/014-fix-unit-tests-for-phase-8-1/) |
+| 015 | Phase 8.2 unit tests (sidebar-utils, SidebarPanel, MobileOverlay) | 2026-01-26 | 693c488 | [015-update-unit-test-suite-with-phase-8-2-te](./quick/015-update-unit-test-suite-with-phase-8-2-te/) |
 
 ### Roadmap Evolution
 
