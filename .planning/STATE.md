@@ -199,10 +199,9 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-16 pending todos in `.planning/todos/pending/`:
+15 pending todos in `.planning/todos/pending/`:
 - **Replace dashboard with /chat as default landing page** (ui) — remove useless dashboard, make /chat the entry point
 - **Implement Projects feature** (ui) — workspace grouping chats, knowledge base, team sharing
-- **Rethink branding and UI to match Linear aesthetic** (ui)
 - **Migrate next lint to ESLint CLI** (tooling)
 - **Allow importing/exporting Sidekiq config from/to JSON file** (ui)
 - **Fix Cmd+N shortcut conflicting with browser new window** (ui)
