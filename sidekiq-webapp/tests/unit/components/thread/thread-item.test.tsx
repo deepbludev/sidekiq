@@ -123,8 +123,8 @@ describe("ThreadItem", () => {
         isActive: true,
       });
 
-      // Check for the bg-accent class (active state)
-      const threadDiv = container.querySelector(".bg-accent");
+      // Check for the bg-sidebar-accent class (active state, updated in Phase 8.1)
+      const threadDiv = container.querySelector(".bg-sidebar-accent");
       expect(threadDiv).toBeInTheDocument();
     });
   });
