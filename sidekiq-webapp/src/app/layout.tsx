@@ -10,7 +10,7 @@ import { ThemeProvider } from "@sidekiq/components/theme/theme-provider";
 export const metadata: Metadata = {
   title: "Sidekiq",
   description: "Premium AI chat with custom assistants",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/favicon.svg", type: "image/svg+xml" }],
 };
 
 const inter = Inter({
