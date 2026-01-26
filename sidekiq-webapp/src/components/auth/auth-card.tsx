@@ -30,19 +30,19 @@ export function AuthCard({
   footer,
 }: AuthCardProps) {
   return (
-    <Card className="w-full max-w-md border-zinc-800 bg-zinc-900/50">
+    <Card className="border-border bg-card w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-xl text-white">{title}</CardTitle>
+        <CardTitle className="text-foreground text-xl">{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>{children}</CardContent>
       {footer && (
         <CardFooter className="justify-center">
-          <p className="text-sm text-zinc-400">
+          <p className="text-muted-foreground text-sm">
             {footer.text}{" "}
             <Link
               href={footer.linkHref}
-              className="text-zinc-200 underline-offset-4 hover:underline"
+              className="text-foreground underline-offset-4 hover:underline"
             >
               {footer.linkText}
             </Link>

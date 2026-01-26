@@ -72,12 +72,12 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-200">New Password</FormLabel>
+              <FormLabel className="text-foreground">New Password</FormLabel>
               <FormControl>
                 <Input
                   type="password"
                   placeholder="••••••••"
-                  className="border-zinc-700 bg-zinc-800 text-white placeholder:text-zinc-500"
+                  className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
                   {...field}
                 />
               </FormControl>
@@ -90,12 +90,14 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-200">Confirm Password</FormLabel>
+              <FormLabel className="text-foreground">
+                Confirm Password
+              </FormLabel>
               <FormControl>
                 <Input
                   type="password"
                   placeholder="••••••••"
-                  className="border-zinc-700 bg-zinc-800 text-white placeholder:text-zinc-500"
+                  className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
                   {...field}
                 />
               </FormControl>

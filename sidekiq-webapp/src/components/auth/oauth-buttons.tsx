@@ -36,10 +36,10 @@ export function OAuthButtons({
     <div className="flex flex-col gap-3">
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-zinc-700" />
+          <span className="border-border w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-zinc-900 px-2 text-zinc-400">
+          <span className="bg-card text-muted-foreground px-2">
             Or continue with
           </span>
         </div>
@@ -49,7 +49,7 @@ export function OAuthButtons({
         type="button"
         disabled={isGitHubLoading}
         onClick={handleGitHubSignIn}
-        className="w-full border-zinc-700 bg-zinc-800 hover:bg-zinc-700"
+        className="border-border hover:bg-accent w-full bg-transparent"
       >
         {isGitHubLoading ? <Loader2 className="animate-spin" /> : <Github />}
         GitHub

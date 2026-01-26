@@ -71,12 +71,12 @@ export function SignInForm({ callbackURL = "/dashboard" }: SignInFormProps) {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-200">Email</FormLabel>
+              <FormLabel className="text-foreground">Email</FormLabel>
               <FormControl>
                 <Input
                   type="email"
                   placeholder="you@example.com"
-                  className="border-zinc-700 bg-zinc-800 text-white placeholder:text-zinc-500"
+                  className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
                   {...field}
                 />
               </FormControl>
@@ -90,10 +90,10 @@ export function SignInForm({ callbackURL = "/dashboard" }: SignInFormProps) {
           render={({ field }) => (
             <FormItem>
               <div className="flex items-center justify-between">
-                <FormLabel className="text-zinc-200">Password</FormLabel>
+                <FormLabel className="text-foreground">Password</FormLabel>
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-zinc-400 hover:text-zinc-200"
+                  className="text-muted-foreground hover:text-foreground text-sm"
                 >
                   Forgot password?
                 </Link>
@@ -102,7 +102,7 @@ export function SignInForm({ callbackURL = "/dashboard" }: SignInFormProps) {
                 <Input
                   type="password"
                   placeholder="••••••••"
-                  className="border-zinc-700 bg-zinc-800 text-white placeholder:text-zinc-500"
+                  className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
                   {...field}
                 />
               </FormControl>

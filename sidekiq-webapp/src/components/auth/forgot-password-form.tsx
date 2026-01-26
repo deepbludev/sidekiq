@@ -62,11 +62,11 @@ export function ForgotPasswordForm() {
   if (isSubmitted) {
     return (
       <div className="text-center">
-        <p className="text-zinc-300">
+        <p className="text-muted-foreground">
           If an account exists with that email, we&apos;ve sent you a password
           reset link.
         </p>
-        <p className="mt-2 text-sm text-zinc-400">
+        <p className="text-muted-foreground mt-2 text-sm">
           Please check your email and follow the instructions.
         </p>
       </div>
@@ -81,12 +81,12 @@ export function ForgotPasswordForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-200">Email</FormLabel>
+              <FormLabel className="text-foreground">Email</FormLabel>
               <FormControl>
                 <Input
                   type="email"
                   placeholder="you@example.com"
-                  className="border-zinc-700 bg-zinc-800 text-white placeholder:text-zinc-500"
+                  className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
                   {...field}
                 />
               </FormControl>

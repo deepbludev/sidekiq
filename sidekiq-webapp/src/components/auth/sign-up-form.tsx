@@ -73,11 +73,11 @@ export function SignUpForm({ callbackURL = "/dashboard" }: SignUpFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-200">Name</FormLabel>
+              <FormLabel className="text-foreground">Name</FormLabel>
               <FormControl>
                 <Input
                   placeholder="John Doe"
-                  className="border-zinc-700 bg-zinc-800 text-white placeholder:text-zinc-500"
+                  className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
                   {...field}
                 />
               </FormControl>
@@ -90,12 +90,12 @@ export function SignUpForm({ callbackURL = "/dashboard" }: SignUpFormProps) {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-200">Email</FormLabel>
+              <FormLabel className="text-foreground">Email</FormLabel>
               <FormControl>
                 <Input
                   type="email"
                   placeholder="you@example.com"
-                  className="border-zinc-700 bg-zinc-800 text-white placeholder:text-zinc-500"
+                  className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
                   {...field}
                 />
               </FormControl>
@@ -108,12 +108,12 @@ export function SignUpForm({ callbackURL = "/dashboard" }: SignUpFormProps) {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-200">Password</FormLabel>
+              <FormLabel className="text-foreground">Password</FormLabel>
               <FormControl>
                 <Input
                   type="password"
                   placeholder="••••••••"
-                  className="border-zinc-700 bg-zinc-800 text-white placeholder:text-zinc-500"
+                  className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
                   {...field}
                 />
               </FormControl>
@@ -126,12 +126,14 @@ export function SignUpForm({ callbackURL = "/dashboard" }: SignUpFormProps) {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-200">Confirm Password</FormLabel>
+              <FormLabel className="text-foreground">
+                Confirm Password
+              </FormLabel>
               <FormControl>
                 <Input
                   type="password"
                   placeholder="••••••••"
-                  className="border-zinc-700 bg-zinc-800 text-white placeholder:text-zinc-500"
+                  className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
                   {...field}
                 />
               </FormControl>
