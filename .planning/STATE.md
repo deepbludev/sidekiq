@@ -199,7 +199,8 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-13 pending todos in `.planning/todos/pending/`:
+14 pending todos in `.planning/todos/pending/`:
+- **Replace dashboard with /chat as default landing page** (ui) — remove useless dashboard, make /chat the entry point
 - **Implement Projects feature** (ui) — workspace grouping chats, knowledge base, team sharing
 - **Rethink branding and UI to match Linear aesthetic** (ui)
 - **Migrate next lint to ESLint CLI** (tooling)
