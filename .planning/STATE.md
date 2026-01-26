@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 8.1 of 13 (Rethink Branding & UI)
-Plan: 4 of 8 complete
+Plan: 5 of 8 complete
 Status: In progress
-Last activity: 2026-01-26 - Completed 08.1-07-PLAN.md (team component semantic tokens)
+Last activity: 2026-01-26 - Completed 08.1-06-PLAN.md (sidekiq & model picker semantic tokens)
 
-Progress: [████████░░] ~76% (8 phases + 4 plans complete)
+Progress: [████████░░] ~77% (8 phases + 5 plans complete)
 
 ## Performance Metrics
 
@@ -36,10 +36,10 @@ Progress: [████████░░] ~76% (8 phases + 4 plans complete)
 | 07 | 10 | 37min | ~3.7min |
 | 08 | 8 | 26min | ~3.25min |
 
-| 08.1 | 4/8 | 12min | 3min |
+| 08.1 | 5/8 | 17min | ~3.4min |
 
 **Recent Trend:**
-- Last 5 plans: 08.1-01 (3min), 08.1-02 (3min), 08.1-03 (3min), 08.1-07 (3min)
+- Last 5 plans: 08.1-01 (3min), 08.1-02 (3min), 08.1-03 (3min), 08.1-07 (3min), 08.1-06 (5min)
 - Trend: Phase 8.1 progressing rapidly, semantic token migration across all component areas
 
 *Updated after each plan completion*
@@ -178,6 +178,9 @@ Recent decisions affecting current work:
 - Auth form inputs use bg-muted for subtle elevation against card background (confirmed - 08.1-03)
 - OAuth button divider background uses bg-card to match parent surface (confirmed - 08.1-03)
 - Brand name lowercase "sidekiq" on auth layout, landing page, and mobile header (confirmed - 08.1-03)
+- Sidekiq cards: border-border bg-card shadow-sm dark:shadow-none hover:border-primary/30 (confirmed - 08.1-06)
+- Instructions editor container: border-border bg-card rounded-lg (confirmed - 08.1-06)
+- Model picker trigger: bg-background hover:bg-accent/50 border-border (confirmed - 08.1-06)
 - Owner Crown icon uses text-primary, admin Shield uses text-muted-foreground (confirmed - 08.1-07)
 - Expired invite state uses bg-muted (neutral), email mismatch uses bg-destructive/10 (confirmed - 08.1-07)
 - Success confirmation uses text-primary, delete warning uses text-destructive (confirmed - 08.1-07)
@@ -226,9 +229,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 08.1-07-PLAN.md (team component semantic tokens)
+Stopped at: Completed 08.1-06-PLAN.md (sidekiq & model picker semantic tokens)
 Resume file: None
-Next: 08.1-04-PLAN.md
+Next: 08.1-08-PLAN.md
 
 ## Phase 2 Completion Summary
 
