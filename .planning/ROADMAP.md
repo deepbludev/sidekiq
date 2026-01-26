@@ -24,7 +24,6 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 8.2: Two-Tier Sidebar Navigation Architecture** - Icon rail + contextual panels (INSERTED)
 - [ ] **Phase 9: Team Sidekiq Sharing** - Share Sidekiqs with teams, permissions
 - [ ] **Phase 10: Error Handling & Edge Cases** - Comprehensive error states, retry logic
-- [ ] **Phase 11: Performance & Production** - Loading states, responsive, markdown
 
 ## Phase Details
 
@@ -254,24 +253,10 @@ Plans:
 Plans:
 - [ ] 10-01: TBD
 
-### Phase 11: Performance & Production
-**Goal**: User experiences fast, responsive app with proper loading states on all devices
-**Depends on**: Phase 10
-**Requirements**: UIUX-07, UIUX-08, UIUX-10, UIUX-11
-**Success Criteria** (what must be TRUE):
-  1. Skeleton loading states appear for sidebar and chat area
-  2. Streaming indicator with cursor animation shows during AI response
-  3. Responsive design works with sidebar as drawer on mobile devices
-  4. Markdown rendering works for AI responses (code blocks, tables, lists)
-**Plans**: TBD
-
-Plans:
-- [ ] 11-01: TBD
-
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 8.2 -> 9 -> 10 -> 11
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 8.2 -> 9 -> 10
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -287,4 +272,3 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 
 | 8.2. Two-Tier Sidebar Navigation (INSERTED) | 0/? | Not started | - |
 | 9. Team Sidekiq Sharing | 0/1 | Not started | - |
 | 10. Error Handling & Edge Cases | 0/1 | Not started | - |
-| 11. Performance & Production | 0/1 | Not started | - |
