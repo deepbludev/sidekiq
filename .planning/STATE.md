@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** Phase 8.1 - Rethink Branding & UI (In progress)
+**Current focus:** Phase 8.1 - Rethink Branding & UI (Complete)
 
 ## Current Position
 
 Phase: 8.1 of 13 (Rethink Branding & UI)
-Plan: 7 of 8 complete
-Status: In progress
-Last activity: 2026-01-26 - Completed 08.1-04-PLAN.md (chat component semantic tokens)
+Plan: 8 of 8 complete
+Status: Phase complete
+Last activity: 2026-01-26 - Completed 08.1-08-PLAN.md (brand icon and final sweep)
 
-Progress: [█████████░] ~80% (8 phases + 7 plans complete)
+Progress: [██████████] ~82% (8.1 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 36
-- Average duration: ~5.9 min
-- Total execution time: ~3 hours 35 min
+- Total plans completed: 37
+- Average duration: ~5.8 min
+- Total execution time: ~3 hours 40 min
 
 **By Phase:**
 
@@ -36,11 +36,11 @@ Progress: [█████████░] ~80% (8 phases + 7 plans complete)
 | 07 | 10 | 37min | ~3.7min |
 | 08 | 8 | 26min | ~3.25min |
 
-| 08.1 | 7/8 | 30min | ~4.3min |
+| 08.1 | 8/8 | 35min | ~4.4min |
 
 **Recent Trend:**
-- Last 5 plans: 08.1-03 (3min), 08.1-07 (3min), 08.1-06 (5min), 08.1-05 (6min), 08.1-04 (7min)
-- Trend: Phase 8.1 nearly complete, all chat components now use semantic tokens exclusively
+- Last 5 plans: 08.1-08 (5min), 08.1-03 (3min), 08.1-07 (3min), 08.1-06 (5min), 08.1-05 (6min)
+- Trend: Phase 8.1 complete -- all components use semantic tokens, brand icon established
 
 *Updated after each plan completion*
 
@@ -184,6 +184,8 @@ Recent decisions affecting current work:
 - Owner Crown icon uses text-primary, admin Shield uses text-muted-foreground (confirmed - 08.1-07)
 - Expired invite state uses bg-muted (neutral), email mismatch uses bg-destructive/10 (confirmed - 08.1-07)
 - Success confirmation uses text-primary, delete warning uses text-destructive (confirmed - 08.1-07)
+- Abstract "S" letterform SVG as brand icon favicon (confirmed - 08.1-08)
+- Six intentional text-white instances retained on colored backgrounds (confirmed - 08.1-08)
 - Left accent bar (border-l-2 border-sidebar-primary) for active thread items (confirmed - 08.1-05)
 - Lowercase "sidekiq" brand in sidebar header and collapsed "s" mark (confirmed - 08.1-05)
 - Section headers text-xs font-medium without uppercase for subtle hierarchy (confirmed - 08.1-05)
@@ -239,9 +241,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 08.1-04-PLAN.md (chat component semantic tokens)
+Stopped at: Completed 08.1-08-PLAN.md (brand icon and final sweep) -- Phase 8.1 complete
 Resume file: None
-Next: 08.1-08-PLAN.md (final verification & cleanup)
+Next: Phase 8.2 (Two-tier sidebar navigation architecture)
 
 ## Phase 2 Completion Summary
 
@@ -459,3 +461,29 @@ All 8 plans executed successfully:
 
 **Gap Closure:**
 - 08-08: Schema sync migration - added admin to team_role enum, avatar and member_limit columns to team table (complete)
+
+## Phase 8.1 Completion Summary
+
+All 8 plans executed successfully:
+
+| Plan | Focus | Status |
+|------|-------|--------|
+| 08.1-01 | Design system foundation (oklch palette, Inter font, radius) | Complete |
+| 08.1-02 | UI primitive semantic token migration | Complete |
+| 08.1-03 | Auth and landing page semantic tokens | Complete |
+| 08.1-04 | Chat component semantic tokens | Complete |
+| 08.1-05 | Sidebar and thread semantic tokens | Complete |
+| 08.1-06 | Sidekiq and model picker semantic tokens | Complete |
+| 08.1-07 | Team component semantic tokens | Complete |
+| 08.1-08 | Brand icon and final codebase sweep | Complete |
+
+**Verification:** Human-verified dark and light modes approved
+**Key Outcomes:**
+- Blue-accent oklch color palette (hue 260) across all tokens
+- Inter font replacing Geist
+- 6px base border radius for sharp technical aesthetic
+- Glassmorphism fully removed
+- All ~80+ component files migrated to semantic tokens
+- Abstract geometric "S" brand icon as SVG favicon
+- Zero hardcoded zinc/glass/backdrop-blur references in src/
+- Editor-like chat input, left-accent-bar active states, lowercase "sidekiq" branding
