@@ -1,9 +1,22 @@
 "use client";
 
+import type { RefObject } from "react";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@sidekiq/lib/utils";
 import { getActiveFeature } from "@sidekiq/lib/sidebar-utils";
+
+import { SidebarPanelChats } from "./sidebar-panel-chats";
+import { SidebarPanelSidekiqs } from "./sidebar-panel-sidekiqs";
+import { SidebarPanelTeams } from "./sidebar-panel-teams";
+
+/**
+ * Props for the SidebarPanel component.
+ */
+interface SidebarPanelProps {
+  /** Ref for the search input -- forwarded to SidebarPanelChats for Cmd+K focus */
+  searchInputRef?: RefObject<HTMLInputElement | null>;
+}
 
 /**
  * Secondary panel container for the two-tier sidebar.
@@ -13,20 +26,18 @@ import { getActiveFeature } from "@sidekiq/lib/sidebar-utils";
  * conditional rendering to preserve component state (e.g., TanStack Virtual
  * scroll position) when switching between panels.
  *
- * The actual panel components (SidebarPanelChats, SidebarPanelSidekiqs,
- * SidebarPanelTeams) will be added in Plan 02. For now, placeholder
- * content is rendered so the layout is testable.
+ * @param props.searchInputRef - Ref passed to SidebarPanelChats for Cmd+K shortcut
  *
  * @example
  * ```tsx
  * <div className="flex h-full">
  *   <SidebarIconRail />
  *   <Separator orientation="vertical" />
- *   <SidebarPanel />
+ *   <SidebarPanel searchInputRef={searchInputRef} />
  * </div>
  * ```
  */
-export function SidebarPanel() {
+export function SidebarPanel({ searchInputRef }: SidebarPanelProps) {
   const pathname = usePathname();
   const activeFeature = getActiveFeature(pathname ?? "/chat");
 
@@ -39,10 +50,7 @@ export function SidebarPanel() {
           activeFeature !== "chats" && "hidden",
         )}
       >
-        {/* SidebarPanelChats will be added in Plan 02 */}
-        <div className="text-sidebar-foreground p-4 text-sm">
-          Chats Panel (placeholder)
-        </div>
+        <SidebarPanelChats searchInputRef={searchInputRef} />
       </div>
       <div
         className={cn(
@@ -50,10 +58,7 @@ export function SidebarPanel() {
           activeFeature !== "sidekiqs" && "hidden",
         )}
       >
-        {/* SidebarPanelSidekiqs will be added in Plan 02 */}
-        <div className="text-sidebar-foreground p-4 text-sm">
-          Sidekiqs Panel (placeholder)
-        </div>
+        <SidebarPanelSidekiqs />
       </div>
       <div
         className={cn(
@@ -61,10 +66,7 @@ export function SidebarPanel() {
           activeFeature !== "teams" && "hidden",
         )}
       >
-        {/* SidebarPanelTeams will be added in Plan 02 */}
-        <div className="text-sidebar-foreground p-4 text-sm">
-          Teams Panel (placeholder)
-        </div>
+        <SidebarPanelTeams />
       </div>
     </div>
   );
