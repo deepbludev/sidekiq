@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** Phase 8 - Team Foundation (Complete)
+**Current focus:** Phase 8.1 - Rethink Branding & UI (In progress)
 
 ## Current Position
 
-Phase: 8 of 13 (Team Foundation)
-Plan: 8 of 8 complete (including gap closure)
-Status: Phase complete with schema sync
-Last activity: 2026-01-26 - Completed quick task 013: Phase 8 unit tests
+Phase: 8.1 of 13 (Rethink Branding & UI)
+Plan: 1 of 8 complete
+Status: In progress
+Last activity: 2026-01-26 - Completed 08.1-01-PLAN.md (design system foundation)
 
-Progress: [████████░░] ~72% (8 phases complete)
+Progress: [████████░░] ~73% (8 phases + 1 plan complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 32
-- Average duration: ~6.3 min
-- Total execution time: ~3 hours 20 min
+- Total plans completed: 33
+- Average duration: ~6.1 min
+- Total execution time: ~3 hours 23 min
 
 **By Phase:**
 
@@ -36,9 +36,11 @@ Progress: [████████░░] ~72% (8 phases complete)
 | 07 | 10 | 37min | ~3.7min |
 | 08 | 8 | 26min | ~3.25min |
 
+| 08.1 | 1/8 | 3min | 3min |
+
 **Recent Trend:**
-- Last 5 plans: 08-05 (5min), 08-06 (4min), 08-07 (5min), 08-08 (5min)
-- Trend: Phase 8 complete with gap closure, all 8 plans executed successfully
+- Last 5 plans: 08-06 (4min), 08-07 (5min), 08-08 (5min), 08.1-01 (3min)
+- Trend: Phase 8.1 started, design system foundation established
 
 *Updated after each plan completion*
 
@@ -64,7 +66,7 @@ Recent decisions affecting current work:
 - next-themes with attribute="class" for Tailwind dark mode (confirmed - 02-01)
 - Mounted state pattern for hydration-safe theme components (confirmed - 02-01)
 - Toaster position at bottom-center per design spec (confirmed - 02-01)
-- Glassmorphism with backdrop-blur utilities (confirmed - 02-01)
+- Glassmorphism with backdrop-blur utilities (confirmed - 02-01, REMOVED in 08.1-01)
 - Budget model (gpt-4o-mini) for all title generation (confirmed - 03-02)
 - Fire-and-forget title generation, non-blocking (confirmed - 03-02)
 - X-Thread-Id header for new thread notification (confirmed - 03-02)
@@ -165,6 +167,10 @@ Recent decisions affecting current work:
 - Teams section placed between Sidekiqs and Search in sidebar (confirmed - 08-07)
 - Manual psql for ALTER TYPE ADD VALUE due to Drizzle transaction constraints (confirmed - 08-08)
 - IF NOT EXISTS clauses for idempotent database migrations (confirmed - 08-08)
+- oklch hue 260 (blue-indigo) for all color tokens (confirmed - 08.1-01)
+- Inter as primary font replacing Geist, Geist Mono for code (confirmed - 08.1-01)
+- Border radius base 0.375rem (6px) for sharp technical feel (confirmed - 08.1-01)
+- Glassmorphism utility classes removed from CSS (confirmed - 08.1-01)
 
 ### Pending Todos
 
@@ -204,13 +210,15 @@ Recent decisions affecting current work:
 ### Roadmap Evolution
 
 - Phase 13 added: Refactor architecture to vertical slicing by feature
+- Phase 8.1 inserted after Phase 8: Rethink branding and UI to match Linear aesthetic (INSERTED)
+- Phase 8.2 inserted after Phase 8.1: Two-tier sidebar navigation architecture (INSERTED)
 
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed quick task 013 (Phase 8 unit tests)
+Stopped at: Completed 08.1-01-PLAN.md (design system foundation)
 Resume file: None
-Next: Phase 9 planning
+Next: 08.1-02-PLAN.md (component updates)
 
 ## Phase 2 Completion Summary
 
