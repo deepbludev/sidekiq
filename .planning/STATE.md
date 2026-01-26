@@ -37,11 +37,11 @@ Progress: [█████████░] ~98% (8.2-04 of 8.2 phase plans compl
 | 08 | 8 | 26min | ~3.25min |
 
 | 08.1 | 8/8 | 35min | ~4.4min |
-| 08.2 | 4/5 | 8min | 2min |
+| 08.2 | 4/5 | 12min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 08.2-04 (3min), 08.2-02 (3min), 08.2-01 (2min), 08.1-08 (5min), 08.1-03 (3min)
-- Trend: Phase 8.2 wave 2 complete -- mobile navigation and layout integration done
+- Last 5 plans: 08.2-03 (4min), 08.2-04 (3min), 08.2-02 (3min), 08.2-01 (2min), 08.1-08 (5min)
+- Trend: Phase 8.2 wave 2 complete -- layout integration, collapsibility, and mobile done
 
 *Updated after each plan completion*
 
@@ -211,6 +211,11 @@ Recent decisions affecting current work:
 - New Chat button inside Chats overlay header, not a separate tab (confirmed - 08.2-04)
 - Sidebar moved from chat/layout.tsx to (dashboard)/layout.tsx for cross-route visibility (confirmed - 08.2-04)
 - env(safe-area-inset-bottom) padding for iPhone home indicator (confirmed - 08.2-04)
+- Panel collapsed state uses localStorage key 'sidebar-panel-collapsed' with SSR-safe lazy initializer (confirmed - 08.2-03)
+- Cmd+K auto-expands collapsed panel before focusing search input (confirmed - 08.2-03)
+- SidekiqPicker dialog rendered in SidebarLayout for Cmd+Shift+S shortcut (confirmed - 08.2-03)
+- Settings back-to-chat button removed since sidebar is always visible (confirmed - 08.2-03)
+- Settings uses mx-auto max-w-4xl instead of container class for sidebar-present centering (confirmed - 08.2-03)
 
 ### Pending Todos
 
@@ -262,7 +267,7 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 08.2-04-PLAN.md (mobile navigation)
+Stopped at: Completed 08.2-03-PLAN.md (layout integration and collapsibility)
 Resume file: None
 Next: 08.2-05-PLAN.md (cleanup of old sidebar components)
 
