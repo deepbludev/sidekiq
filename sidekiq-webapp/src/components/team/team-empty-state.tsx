@@ -17,8 +17,8 @@ interface TeamEmptyStateProps {
 export function TeamEmptyState({ onCreateTeam }: TeamEmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
-      <div className="bg-primary/10 mb-6 flex size-16 items-center justify-center rounded-full">
-        <Users className="text-primary size-8" />
+      <div className="bg-muted mb-6 flex size-16 items-center justify-center rounded-full">
+        <Users className="text-muted-foreground size-8" />
       </div>
 
       <h3 className="mb-2 text-xl font-semibold">No teams yet</h3>

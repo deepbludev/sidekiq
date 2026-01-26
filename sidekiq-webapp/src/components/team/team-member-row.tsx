@@ -102,7 +102,7 @@ export function TeamMemberRow({
     member.role === "owner" ? Crown : member.role === "admin" ? Shield : null;
 
   return (
-    <div className="hover:bg-muted/50 flex items-center justify-between gap-4 rounded-lg border p-3 transition-colors">
+    <div className="hover:bg-accent/50 flex items-center justify-between gap-4 rounded-md px-3 py-2 transition-colors">
       <div className="flex min-w-0 items-center gap-3">
         <Avatar className="size-10 shrink-0">
           <AvatarImage
@@ -114,7 +114,7 @@ export function TeamMemberRow({
 
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="truncate font-medium">
+            <span className="text-foreground truncate text-sm font-medium">
               {highlightMatch(member.user.name)}
             </span>
             {isSelf && (
@@ -134,7 +134,9 @@ export function TeamMemberRow({
           {RoleIcon && (
             <RoleIcon
               className={`size-4 ${
-                member.role === "owner" ? "text-amber-500" : "text-blue-500"
+                member.role === "owner"
+                  ? "text-primary"
+                  : "text-muted-foreground"
               }`}
             />
           )}
