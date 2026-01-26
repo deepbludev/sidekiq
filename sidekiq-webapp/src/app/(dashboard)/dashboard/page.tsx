@@ -19,9 +19,9 @@ export default async function DashboardPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-4">
-      <Card className="w-full max-w-md border-zinc-800 bg-zinc-900/50">
+      <Card className="border-border bg-card w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-xl text-white">
+          <CardTitle className="text-foreground text-xl">
             Welcome, {session.user.name}!
           </CardTitle>
           <CardDescription>
@@ -29,7 +29,7 @@ export default async function DashboardPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-4">
-          <p className="text-sm text-zinc-400">
+          <p className="text-muted-foreground text-sm">
             Phase 0.1 Authentication Complete
           </p>
           <SignOutButton />

@@ -29,7 +29,7 @@ export default function ChatLayout({
             <SidebarMobile>
               <Sidebar />
             </SidebarMobile>
-            <span className="text-lg font-semibold">Sidekiq</span>
+            <span className="text-lg font-semibold">sidekiq</span>
           </header>
 
           {/* Main content */}

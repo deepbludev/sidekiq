@@ -18,13 +18,13 @@ export default async function AuthLayout({
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-zinc-900 to-zinc-950 px-4">
+    <main className="bg-background flex min-h-screen flex-col items-center justify-center px-4">
       <div className="mb-8">
         <Link
           href="/"
-          className="text-3xl font-bold tracking-tight text-white hover:text-zinc-200"
+          className="text-foreground hover:text-muted-foreground text-3xl font-bold tracking-tight"
         >
-          Sidekiq
+          sidekiq
         </Link>
       </div>
       {children}

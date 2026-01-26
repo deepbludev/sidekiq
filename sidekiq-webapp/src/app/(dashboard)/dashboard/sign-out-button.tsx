@@ -31,7 +31,7 @@ export function SignOutButton() {
       variant="outline"
       onClick={handleSignOut}
       disabled={isLoading}
-      className="border-zinc-700 bg-zinc-800 hover:bg-zinc-700"
+      className="border-border hover:bg-accent bg-transparent"
     >
       {isLoading ? <Loader2 className="animate-spin" /> : <LogOut />}
       Sign Out
