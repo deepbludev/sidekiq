@@ -23,7 +23,6 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 8.1: Rethink Branding and UI to Match Linear Aesthetic** - Design system overhaul (INSERTED)
 - [ ] **Phase 8.2: Two-Tier Sidebar Navigation Architecture** - Icon rail + contextual panels (INSERTED)
 - [ ] **Phase 9: Team Sidekiq Sharing** - Share Sidekiqs with teams, permissions
-- [ ] **Phase 10: Error Handling & Edge Cases** - Comprehensive error states, retry logic
 
 ## Phase Details
 
@@ -239,24 +238,10 @@ Plans:
 Plans:
 - [ ] 09-01: TBD
 
-### Phase 10: Error Handling & Edge Cases
-**Goal**: User receives clear feedback and recovery options when errors occur
-**Depends on**: Phase 9
-**Requirements**: ERRR-01, ERRR-02, ERRR-03, ERRR-04
-**Success Criteria** (what must be TRUE):
-  1. Failed message sends show error toast and remove the failed message
-  2. Streaming failures are detected and show retry option
-  3. Network errors show user-friendly messages (not raw error codes)
-  4. Rate limit errors show clear feedback with wait time
-**Plans**: TBD
-
-Plans:
-- [ ] 10-01: TBD
-
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 8.2 -> 9 -> 10
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 8.2 -> 9
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -271,4 +256,3 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 
 | 8.1. Rethink Branding/UI (INSERTED) | 8/8 | Complete | 2026-01-26 |
 | 8.2. Two-Tier Sidebar Navigation (INSERTED) | 0/? | Not started | - |
 | 9. Team Sidekiq Sharing | 0/1 | Not started | - |
-| 10. Error Handling & Edge Cases | 0/1 | Not started | - |
