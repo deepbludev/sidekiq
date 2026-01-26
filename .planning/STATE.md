@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 Phase: 8.1 of 13 (Rethink Branding & UI)
 Plan: 8 of 8 complete
 Status: Phase complete
-Last activity: 2026-01-26 - Completed 08.1-08-PLAN.md (brand icon and final sweep)
+Last activity: 2026-01-26 - Completed quick task 014: Fix unit tests for Phase 8.1
 
 Progress: [██████████] ~82% (8.1 phases complete)
 
@@ -234,7 +234,7 @@ Recent decisions affecting current work:
 | 011 | Improved database seed process and README | 2026-01-25 | 28a24e8 | [011-improved-database-seed-process-and-readm](./quick/011-improved-database-seed-process-and-readm/) |
 | 012 | Add pirate Sidekiq "Captain Jack" to seed | 2026-01-26 | af23b0c | [012-add-pirate-sidekiq-to-database-seed](./quick/012-add-pirate-sidekiq-to-database-seed/) |
 | 013 | Phase 8 unit tests (permissions, validations, TeamAvatar) | 2026-01-26 | 47a4b68 | [013-update-unit-test-suite-with-phase-8-test](./quick/013-update-unit-test-suite-with-phase-8-test/) |
-| 014 | Fix unit tests for Phase 8.1 (semantic tokens, editor layout) | 2026-01-26 | 210b559 | [014-fix-unit-tests-for-phase-8-1](./quick/014-fix-unit-tests-for-phase-8-1/) |
+| 014 | Fix unit tests for Phase 8.1 (semantic tokens, editor layout) | 2026-01-26 | ec99974 | [014-fix-unit-tests-for-phase-8-1](./quick/014-fix-unit-tests-for-phase-8-1/) |
 
 ### Roadmap Evolution
 
