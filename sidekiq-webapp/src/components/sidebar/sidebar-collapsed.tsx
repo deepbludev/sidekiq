@@ -39,9 +39,9 @@ interface SidebarCollapsedProps {
 export function SidebarCollapsed({ onNewChat }: SidebarCollapsedProps) {
   return (
     <div className="flex flex-col items-center gap-1 p-3">
-      {/* Logo */}
+      {/* Brand */}
       <div className="mb-2 flex items-center justify-center">
-        <span className="text-lg font-bold">S</span>
+        <span className="text-sidebar-foreground text-sm font-semibold">s</span>
       </div>
 
       {/* New Chat */}
@@ -52,6 +52,7 @@ export function SidebarCollapsed({ onNewChat }: SidebarCollapsedProps) {
             size="icon"
             onClick={onNewChat}
             aria-label="New Chat"
+            className="text-sidebar-foreground/70 hover:text-sidebar-foreground"
           >
             <PenSquare className="size-5" />
           </Button>
@@ -62,7 +63,13 @@ export function SidebarCollapsed({ onNewChat }: SidebarCollapsedProps) {
       {/* Sidekiqs */}
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon" asChild aria-label="Sidekiqs">
+          <Button
+            variant="ghost"
+            size="icon"
+            asChild
+            aria-label="Sidekiqs"
+            className="text-sidebar-foreground/70 hover:text-sidebar-foreground"
+          >
             <Link href="/sidekiqs">
               <Sparkles className="size-5" />
             </Link>
@@ -79,7 +86,7 @@ export function SidebarCollapsed({ onNewChat }: SidebarCollapsedProps) {
             size="icon"
             aria-label="Settings"
             disabled
-            className="opacity-50"
+            className="text-sidebar-foreground/70 opacity-50"
           >
             <Settings className="size-5" />
           </Button>

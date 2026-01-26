@@ -74,7 +74,7 @@ export function Sidebar({ onThreadSelect }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "border-border/50 bg-background relative flex h-full flex-col border-r transition-all duration-200 ease-out",
+        "bg-sidebar text-sidebar-foreground border-sidebar-border relative flex h-full flex-col border-r transition-all duration-200 ease-out",
         isCollapsed ? "w-16" : "w-72",
       )}
     >
@@ -85,12 +85,12 @@ export function Sidebar({ onThreadSelect }: SidebarProps) {
           <SidebarHeader isCollapsed={isCollapsed} />
 
           {/* Sidekiqs section */}
-          <div className="border-border/50 border-b pb-2">
+          <div className="border-sidebar-border border-b pb-2">
             <SidebarSidekiqs onSidekiqSelect={onThreadSelect} />
           </div>
 
           {/* Teams section */}
-          <div className="border-border/50 border-b pb-2">
+          <div className="border-sidebar-border border-b pb-2">
             <SidebarTeams />
           </div>
 
@@ -122,7 +122,7 @@ export function Sidebar({ onThreadSelect }: SidebarProps) {
             size="icon-sm"
             onClick={toggle}
             className={cn(
-              "border-border/50 bg-background hover:bg-accent absolute bottom-4 z-10 rounded-full border shadow-sm",
+              "border-sidebar-border bg-sidebar hover:bg-sidebar-accent absolute bottom-4 z-10 rounded-full border shadow-sm",
               isCollapsed ? "right-[-12px]" : "right-[-12px]",
             )}
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}

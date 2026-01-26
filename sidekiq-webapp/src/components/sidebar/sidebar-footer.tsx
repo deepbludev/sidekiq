@@ -70,7 +70,7 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
   };
 
   return (
-    <div className="border-border/50 border-t p-3">
+    <div className="border-sidebar-border border-t p-3">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -89,7 +89,7 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
             </Avatar>
             {!isCollapsed && (
               <div className="flex flex-col items-start text-left">
-                <span className="max-w-[140px] truncate text-sm font-medium">
+                <span className="text-sidebar-foreground max-w-[140px] truncate text-sm font-medium">
                   {user?.name ?? "User"}
                 </span>
                 <span className="text-muted-foreground max-w-[140px] truncate text-xs">

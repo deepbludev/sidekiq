@@ -134,10 +134,10 @@ export function SidebarHeader({ isCollapsed }: SidebarHeaderProps) {
 
   return (
     <div className="flex flex-col gap-3 p-3">
-      {/* Logo */}
-      <div className="flex items-center justify-center">
-        <span className={`font-bold ${isCollapsed ? "text-lg" : "text-xl"}`}>
-          S
+      {/* Brand */}
+      <div className="flex items-center">
+        <span className="text-sidebar-foreground text-sm font-semibold">
+          sidekiq
         </span>
       </div>
 
@@ -159,9 +159,8 @@ export function SidebarHeader({ isCollapsed }: SidebarHeaderProps) {
         </Tooltip>
       ) : (
         <Button
-          variant="outline"
           onClick={handleNewChat}
-          className="w-full justify-start gap-2"
+          className="bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 w-full justify-start gap-2"
         >
           <PenSquare className="size-4" />
           <span>New Chat</span>

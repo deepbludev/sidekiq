@@ -40,7 +40,7 @@ export function SidebarMobile({ children }: SidebarMobileProps) {
           <span className="sr-only">Toggle sidebar</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-72 p-0">
+      <SheetContent side="left" className="bg-sidebar w-72 p-0">
         {/* Pass onThreadSelect to close drawer when thread is clicked */}
         {cloneElement(children, {
           onThreadSelect: () => setOpen(false),

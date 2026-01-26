@@ -49,7 +49,7 @@ export function SidebarSearch({
         placeholder="Search conversations..."
         value={query}
         onChange={(e) => onQueryChange(e.target.value)}
-        className="bg-muted/50 h-9 border-0 pr-8 pl-8 focus-visible:ring-1"
+        className="border-sidebar-border placeholder:text-muted-foreground focus-visible:ring-sidebar-ring h-9 border bg-transparent pr-8 pl-8 focus-visible:ring-1"
       />
       {query && (
         <button
