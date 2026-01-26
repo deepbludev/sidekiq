@@ -28,8 +28,8 @@ export const ModelPickerTrigger = forwardRef<
       disabled={disabled}
       className={cn(
         "h-8 gap-2 px-3",
-        "bg-background/50 hover:bg-background/80",
-        "border-border/50",
+        "bg-background hover:bg-accent/50",
+        "border-border",
         className,
       )}
       {...props}
