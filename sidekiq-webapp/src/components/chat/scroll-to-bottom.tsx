@@ -62,8 +62,8 @@ export function ScrollToBottom({
       onClick={scrollToBottom}
       className={cn(
         "fixed right-8 bottom-24 z-10",
-        "rounded-full shadow-lg",
-        "border-border/50",
+        "rounded-full shadow-md",
+        "border-border bg-card hover:bg-accent border",
         "transition-transform hover:scale-105",
         className,
       )}

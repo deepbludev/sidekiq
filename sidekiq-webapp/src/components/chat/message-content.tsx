@@ -61,7 +61,7 @@ export function MessageContent({
         "[&_.streamdown-code]:border-border [&_.streamdown-code]:border",
         // Code inline
         "prose-code:before:content-none prose-code:after:content-none",
-        "prose-code:bg-zinc-200/70 dark:prose-code:bg-zinc-700/50",
+        "prose-code:bg-muted",
         "prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded",
         className,
       )}
