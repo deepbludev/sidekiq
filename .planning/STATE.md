@@ -199,7 +199,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-12 pending todos in `.planning/todos/pending/`:
+13 pending todos in `.planning/todos/pending/`:
 - **Implement Projects feature** (ui) — workspace grouping chats, knowledge base, team sharing
 - **Rethink branding and UI to match Linear aesthetic** (ui)
 - **Migrate next lint to ESLint CLI** (tooling)
@@ -211,6 +211,7 @@ Recent decisions affecting current work:
 - **Extend available emoji options for Sidekiq avatar** (ui) — more emoji variety in AvatarPicker
 - **Two-tier sidebar navigation architecture** (ui) — primary icon rail + contextual secondary sidebars
 - **Rich markdown editor for chat input** (ui) — toggleable WYSIWYG editor with formatting toolbar
+- **Fix chat textarea loses focus after sending message** (ui) — textarea loses focus after send, requires click to resume typing
 
 ### Blockers/Concerns
 
