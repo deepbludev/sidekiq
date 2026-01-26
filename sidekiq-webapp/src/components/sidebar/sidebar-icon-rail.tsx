@@ -54,18 +54,49 @@ interface RailIconProps {
   href: string;
   /** Whether this rail icon is currently active */
   isActive: boolean;
+  /** Callback when an already-active icon is clicked (re-click to toggle panel) */
+  onReClick?: () => void;
 }
 
 /**
  * Individual icon button in the rail with tooltip and active state.
  *
- * Uses a Link for navigation, wrapped in a ghost Button with asChild
- * for consistent styling. Active state is indicated by a background
- * highlight and full foreground color.
+ * Uses a Link for navigation when not active. When already active and
+ * `onReClick` is provided, calls `onReClick` instead of navigating
+ * (used for panel collapse toggle on re-click).
  *
  * @param props - Component props
  */
-function RailIcon({ icon: Icon, label, href, isActive }: RailIconProps) {
+function RailIcon({
+  icon: Icon,
+  label,
+  href,
+  isActive,
+  onReClick,
+}: RailIconProps) {
+  // When active and onReClick is provided, render a button instead of a link
+  if (isActive && onReClick) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onReClick}
+            className={cn(
+              "size-9 rounded-md",
+              "text-sidebar-foreground/70 hover:text-sidebar-foreground",
+              "bg-sidebar-accent text-sidebar-foreground",
+            )}
+          >
+            <Icon className="size-5" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="right">{label}</TooltipContent>
+      </Tooltip>
+    );
+  }
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -197,16 +228,23 @@ function UserAvatarButton() {
  * `getActiveFeature()`, ensuring the icon rail and panel
  * stay synchronized without shared React state.
  *
+ * @param props.onIconReClick - Callback when an already-active nav icon is clicked (panel toggle)
+ *
  * @example
  * ```tsx
  * <div className="flex h-full">
- *   <SidebarIconRail />
+ *   <SidebarIconRail onIconReClick={togglePanel} />
  *   <Separator orientation="vertical" />
  *   <SidebarPanel />
  * </div>
  * ```
  */
-export function SidebarIconRail() {
+interface SidebarIconRailProps {
+  /** Callback when an already-active icon is re-clicked (used for panel collapse toggle) */
+  onIconReClick?: () => void;
+}
+
+export function SidebarIconRail({ onIconReClick }: SidebarIconRailProps) {
   const pathname = usePathname();
   const router = useRouter();
   const activeFeature = getActiveFeature(pathname ?? "/chat");
@@ -235,18 +273,21 @@ export function SidebarIconRail() {
           label="Chats"
           href="/chat"
           isActive={activeFeature === "chats"}
+          onReClick={onIconReClick}
         />
         <RailIcon
           icon={Sparkles}
           label="Sidekiqs"
           href="/sidekiqs"
           isActive={activeFeature === "sidekiqs"}
+          onReClick={onIconReClick}
         />
         <RailIcon
           icon={Users}
           label="Teams"
           href="/settings/teams"
           isActive={activeFeature === "teams"}
+          onReClick={onIconReClick}
         />
       </nav>
 
