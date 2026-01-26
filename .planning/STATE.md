@@ -199,7 +199,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-14 pending todos in `.planning/todos/pending/`:
+15 pending todos in `.planning/todos/pending/`:
 - **Replace dashboard with /chat as default landing page** (ui) — remove useless dashboard, make /chat the entry point
 - **Implement Projects feature** (ui) — workspace grouping chats, knowledge base, team sharing
 - **Rethink branding and UI to match Linear aesthetic** (ui)
@@ -213,6 +213,7 @@ Recent decisions affecting current work:
 - **Two-tier sidebar navigation architecture** (ui) — primary icon rail + contextual secondary sidebars
 - **Rich markdown editor for chat input** (ui) — toggleable WYSIWYG editor with formatting toolbar
 - **Fix chat textarea loses focus after sending message** (ui) — textarea loses focus after send, requires click to resume typing
+- **Fix new thread not appearing in sidebar without refresh** (ui) — new thread missing from sidebar until page refresh
 
 ### Blockers/Concerns
 
