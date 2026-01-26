@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 8.1 of 13 (Rethink Branding & UI)
-Plan: 6 of 8 complete
+Plan: 7 of 8 complete
 Status: In progress
-Last activity: 2026-01-26 - Completed 08.1-05-PLAN.md (sidebar & thread semantic tokens)
+Last activity: 2026-01-26 - Completed 08.1-04-PLAN.md (chat component semantic tokens)
 
-Progress: [████████░░] ~78% (8 phases + 6 plans complete)
+Progress: [█████████░] ~80% (8 phases + 7 plans complete)
 
 ## Performance Metrics
 
@@ -36,11 +36,11 @@ Progress: [████████░░] ~78% (8 phases + 6 plans complete)
 | 07 | 10 | 37min | ~3.7min |
 | 08 | 8 | 26min | ~3.25min |
 
-| 08.1 | 6/8 | 23min | ~3.8min |
+| 08.1 | 7/8 | 30min | ~4.3min |
 
 **Recent Trend:**
-- Last 5 plans: 08.1-02 (3min), 08.1-03 (3min), 08.1-07 (3min), 08.1-06 (5min), 08.1-05 (6min)
-- Trend: Phase 8.1 progressing steadily, sidebar/thread components now fully migrated to semantic tokens
+- Last 5 plans: 08.1-03 (3min), 08.1-07 (3min), 08.1-06 (5min), 08.1-05 (6min), 08.1-04 (7min)
+- Trend: Phase 8.1 nearly complete, all chat components now use semantic tokens exclusively
 
 *Updated after each plan completion*
 
@@ -189,6 +189,11 @@ Recent decisions affecting current work:
 - Section headers text-xs font-medium without uppercase for subtle hierarchy (confirmed - 08.1-05)
 - New Chat button uses bg-sidebar-primary for primary action emphasis (confirmed - 08.1-05)
 - Sidebar icon pattern: text-sidebar-foreground/70 hover:text-sidebar-foreground (confirmed - 08.1-05)
+- Editor-like chat input with bordered card container (rounded-md border border-border bg-card) (confirmed - 08.1-04)
+- Toolbar area with border-b separator for model picker and Sidekiq badge (confirmed - 08.1-04)
+- Transparent textarea inside card (border-0 bg-transparent) for editor feel (confirmed - 08.1-04)
+- bg-muted for inline code blocks replacing zinc-200/zinc-700 (confirmed - 08.1-04)
+- bg-muted-foreground for typing indicator dots for visibility across themes (confirmed - 08.1-04)
 
 ### Pending Todos
 
@@ -234,9 +239,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 08.1-05-PLAN.md (sidebar & thread semantic tokens)
+Stopped at: Completed 08.1-04-PLAN.md (chat component semantic tokens)
 Resume file: None
-Next: 08.1-04-PLAN.md or 08.1-08-PLAN.md
+Next: 08.1-08-PLAN.md (final verification & cleanup)
 
 ## Phase 2 Completion Summary
 
