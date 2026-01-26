@@ -42,7 +42,7 @@ export default function EditSidekiqPage() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="container max-w-6xl py-8">
+      <div className="mx-auto max-w-4xl px-6 py-8">
         <div className="flex h-64 items-center justify-center">
           <Loader2 className="text-muted-foreground size-8 animate-spin" />
         </div>
@@ -53,7 +53,7 @@ export default function EditSidekiqPage() {
   // Error state
   if (error || !sidekiq) {
     return (
-      <div className="container max-w-6xl py-8">
+      <div className="mx-auto max-w-4xl px-6 py-8">
         <div className="flex h-64 flex-col items-center justify-center gap-4">
           <p className="text-muted-foreground">
             {error?.message ?? "Sidekiq not found"}
@@ -78,7 +78,7 @@ export default function EditSidekiqPage() {
   };
 
   return (
-    <div className="container max-w-6xl py-8">
+    <div className="mx-auto max-w-4xl px-6 py-8">
       {/* Breadcrumb */}
       <Breadcrumb className="mb-6">
         <BreadcrumbList>

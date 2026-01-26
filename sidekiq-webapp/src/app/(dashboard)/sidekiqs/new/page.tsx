@@ -39,7 +39,7 @@ export default function CreateSidekiqPage() {
   };
 
   return (
-    <div className="container max-w-6xl py-8">
+    <div className="mx-auto max-w-4xl px-6 py-8">
       {/* Breadcrumb */}
       <Breadcrumb className="mb-6">
         <BreadcrumbList>
