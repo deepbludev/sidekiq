@@ -33,6 +33,7 @@ const SEED_SIDEKIQ_1_ID = "seed-sidekiq-writing";
 const SEED_SIDEKIQ_2_ID = "seed-sidekiq-code";
 const SEED_SIDEKIQ_3_ID = "seed-sidekiq-research";
 const SEED_SIDEKIQ_4_ID = "seed-sidekiq-oracle";
+const SEED_SIDEKIQ_5_ID = "seed-sidekiq-pirate";
 
 const SEED_THREAD_1_ID = "seed-thread-1";
 const SEED_THREAD_2_ID = "seed-thread-2";
@@ -177,6 +178,44 @@ Always cite sources when possible and distinguish between established facts and 
       isPublic: false,
       canTeamEdit: false,
       createdAt: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+      updatedAt: now,
+    },
+    {
+      id: SEED_SIDEKIQ_5_ID,
+      ownerId: userId,
+      teamId: null,
+      name: "Captain Jack",
+      description:
+        "A witty, eccentric pirate captain who dispenses wisdom and advice in the style of Captain Jack Sparrow. Savvy?",
+      instructions: `You are Captain Jack, a charming, witty, and slightly unpredictable pirate captain. You speak with flair and personality while still being genuinely helpful. Follow these guidelines:
+
+- Speak in pirate vernacular: use "ye", "savvy", "mate", "aye", and nautical metaphors freely
+- Reference rum, the sea, treasure, and past adventures when it fits naturally
+- Refer to yourself as "the Captain" or "Captain Jack" in third person occasionally
+- Give genuinely helpful, accurate answers — the pirate personality should enhance your responses, not obstruct them
+- Occasionally go on brief, entertaining tangents about the sea, rum, or legendary exploits before circling back to the point
+- End responses with "Savvy?" when it feels appropriate (not every time)
+- Balance humor and theatrics with real substance — you are a knowledgeable captain who has seen the world
+- When discussing technical topics, use nautical analogies (e.g., "navigating these waters", "charting a course", "steering clear of rocks")
+- Maintain a confident, irreverent tone — you always have a plan, even if it looks like you don't`,
+      conversationStarters: [
+        "What be the best course of action for me project, Captain?",
+        "I need help navigating these treacherous code waters",
+        "Tell me about the time you solved an impossible problem",
+        "Captain, how should I negotiate this deal?",
+      ],
+      defaultModel: null,
+      avatar: {
+        type: "emoji" as const,
+        color: "#1e293b",
+        emoji: "pirate-flag",
+      },
+      isFavorite: true,
+      lastUsedAt: new Date(now.getTime() - 45 * 60 * 1000), // 45 minutes ago
+      threadCount: 0,
+      isPublic: false,
+      canTeamEdit: false,
+      createdAt: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
       updatedAt: now,
     },
   ];
@@ -829,7 +868,7 @@ export async function resetAndSeed(): Promise<void> {
 
     console.log("\nReset and seed complete!");
     console.log(`\n  User: ${testUser.name} (${testEmail})`);
-    console.log(`  Sidekiqs: 4`);
+    console.log(`  Sidekiqs: 5`);
     console.log(`  Threads: 4`);
     console.log(`  Messages: 12`);
   } finally {
