@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 8.1 of 13 (Rethink Branding & UI)
-Plan: 3 of 8 complete
+Plan: 4 of 8 complete
 Status: In progress
-Last activity: 2026-01-26 - Completed 08.1-03-PLAN.md (auth & layout semantic tokens)
+Last activity: 2026-01-26 - Completed 08.1-07-PLAN.md (team component semantic tokens)
 
-Progress: [████████░░] ~75% (8 phases + 3 plans complete)
+Progress: [████████░░] ~76% (8 phases + 4 plans complete)
 
 ## Performance Metrics
 
@@ -36,11 +36,11 @@ Progress: [████████░░] ~75% (8 phases + 3 plans complete)
 | 07 | 10 | 37min | ~3.7min |
 | 08 | 8 | 26min | ~3.25min |
 
-| 08.1 | 3/8 | 9min | 3min |
+| 08.1 | 4/8 | 12min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 08-08 (5min), 08.1-01 (3min), 08.1-02 (3min), 08.1-03 (3min)
-- Trend: Phase 8.1 progressing rapidly, semantic token migration across auth and layouts
+- Last 5 plans: 08.1-01 (3min), 08.1-02 (3min), 08.1-03 (3min), 08.1-07 (3min)
+- Trend: Phase 8.1 progressing rapidly, semantic token migration across all component areas
 
 *Updated after each plan completion*
 
@@ -178,6 +178,9 @@ Recent decisions affecting current work:
 - Auth form inputs use bg-muted for subtle elevation against card background (confirmed - 08.1-03)
 - OAuth button divider background uses bg-card to match parent surface (confirmed - 08.1-03)
 - Brand name lowercase "sidekiq" on auth layout, landing page, and mobile header (confirmed - 08.1-03)
+- Owner Crown icon uses text-primary, admin Shield uses text-muted-foreground (confirmed - 08.1-07)
+- Expired invite state uses bg-muted (neutral), email mismatch uses bg-destructive/10 (confirmed - 08.1-07)
+- Success confirmation uses text-primary, delete warning uses text-destructive (confirmed - 08.1-07)
 
 ### Pending Todos
 
@@ -223,7 +226,7 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 08.1-03-PLAN.md (auth & layout semantic tokens)
+Stopped at: Completed 08.1-07-PLAN.md (team component semantic tokens)
 Resume file: None
 Next: 08.1-04-PLAN.md
 
