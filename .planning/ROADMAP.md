@@ -25,7 +25,6 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 9: Team Sidekiq Sharing** - Share Sidekiqs with teams, permissions
 - [ ] **Phase 10: Error Handling & Edge Cases** - Comprehensive error states, retry logic
 - [ ] **Phase 11: Performance & Production** - Loading states, responsive, markdown
-- [ ] **Phase 12: Refactor Architecture to Vertical Slicing by Feature** - Reorganize codebase structure
 
 ## Phase Details
 
@@ -269,24 +268,10 @@ Plans:
 Plans:
 - [ ] 11-01: TBD
 
-### Phase 12: Refactor Architecture to Vertical Slicing by Feature
-**Goal**: Reorganize codebase from horizontal layers to vertical feature slices for better maintainability
-**Depends on**: Phase 11
-**Requirements**: None (internal refactor)
-**Success Criteria** (what must be TRUE):
-  1. Code is organized by feature domain (chat, sidekiq, team, etc.) rather than technical layer
-  2. Each feature slice contains its own components, hooks, API routes, and types
-  3. Cross-cutting concerns (auth, db, ui primitives) remain in shared locations
-  4. All existing functionality continues to work after reorganization
-**Plans**: TBD
-
-Plans:
-- [ ] 12-01: TBD (run /gsd:plan-phase 12 to break down)
-
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 8.2 -> 9 -> 10 -> 11 -> 12
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 8.2 -> 9 -> 10 -> 11
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -303,4 +288,3 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 8.1 -> 
 | 9. Team Sidekiq Sharing | 0/1 | Not started | - |
 | 10. Error Handling & Edge Cases | 0/1 | Not started | - |
 | 11. Performance & Production | 0/1 | Not started | - |
-| 12. Refactor Architecture to Vertical Slicing | 0/1 | Not started | - |
