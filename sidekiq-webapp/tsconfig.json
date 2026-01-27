@@ -27,6 +27,22 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
+      "@sidekiq/chats": ["./src/features/chats/index.ts"],
+      "@sidekiq/chats/*": ["./src/features/chats/*"],
+      "@sidekiq/sidekiqs": ["./src/features/sidekiqs/index.ts"],
+      "@sidekiq/sidekiqs/*": ["./src/features/sidekiqs/*"],
+      "@sidekiq/auth": ["./src/features/auth/index.ts"],
+      "@sidekiq/auth/*": ["./src/features/auth/*"],
+      "@sidekiq/user": ["./src/features/user/index.ts"],
+      "@sidekiq/user/*": ["./src/features/user/*"],
+      "@sidekiq/ai": ["./src/features/ai/index.ts"],
+      "@sidekiq/ai/*": ["./src/features/ai/*"],
+      "@sidekiq/workspace": ["./src/features/workspace/index.ts"],
+      "@sidekiq/workspace/*": ["./src/features/workspace/*"],
+      "@sidekiq/billing": ["./src/features/billing/index.ts"],
+      "@sidekiq/billing/*": ["./src/features/billing/*"],
+      "@sidekiq/shared/*": ["./src/shared/*"],
+      "@sidekiq/ui/*": ["./src/shared/ui/*"],
       "@sidekiq/*": ["./src/*"]
     }
   },

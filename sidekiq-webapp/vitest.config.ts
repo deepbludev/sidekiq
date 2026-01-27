@@ -17,8 +17,53 @@ export default defineConfig({
     },
   },
   resolve: {
-    alias: {
-      "@sidekiq": path.resolve(__dirname, "./src"),
-    },
+    alias: [
+      {
+        find: "@sidekiq/chats",
+        replacement: path.resolve(__dirname, "./src/features/chats/index.ts"),
+      },
+      {
+        find: "@sidekiq/sidekiqs",
+        replacement: path.resolve(
+          __dirname,
+          "./src/features/sidekiqs/index.ts",
+        ),
+      },
+      {
+        find: "@sidekiq/auth",
+        replacement: path.resolve(__dirname, "./src/features/auth/index.ts"),
+      },
+      {
+        find: "@sidekiq/user",
+        replacement: path.resolve(__dirname, "./src/features/user/index.ts"),
+      },
+      {
+        find: "@sidekiq/ai",
+        replacement: path.resolve(__dirname, "./src/features/ai/index.ts"),
+      },
+      {
+        find: "@sidekiq/workspace",
+        replacement: path.resolve(
+          __dirname,
+          "./src/features/workspace/index.ts",
+        ),
+      },
+      {
+        find: "@sidekiq/billing",
+        replacement: path.resolve(__dirname, "./src/features/billing/index.ts"),
+      },
+      {
+        find: /^@sidekiq\/shared\/(.*)/,
+        replacement: path.resolve(__dirname, "./src/shared/$1"),
+      },
+      {
+        find: /^@sidekiq\/ui\/(.*)/,
+        replacement: path.resolve(__dirname, "./src/shared/ui/$1"),
+      },
+      {
+        find: /^@sidekiq\/(.*)/,
+        replacement: path.resolve(__dirname, "./src/$1"),
+      },
+    ],
   },
 });
