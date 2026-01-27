@@ -32,9 +32,6 @@ export { SidebarPanelSidekiqs } from "./components/sidebar-panel-sidekiqs";
 // Hooks
 export { useSidekiqActions } from "./hooks/use-sidekiq-actions";
 
-// Router
-export { sidekiqRouter } from "./api/router";
-
 // Validations
 export {
   sidekiqAvatarSchema,
