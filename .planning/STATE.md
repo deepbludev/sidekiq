@@ -32,7 +32,7 @@ New v0.2 decisions: unified workspace model, vertical slice refactor first.
 
 ### Pending Todos
 
-12 pending todos in `.planning/todos/pending/`:
+13 pending todos in `.planning/todos/pending/`:
 - **Implement Projects feature** (ui)
 - **Migrate next lint to ESLint CLI** (tooling)
 - **Allow importing/exporting Sidekiq config from/to JSON file** (ui)
@@ -45,6 +45,7 @@ New v0.2 decisions: unified workspace model, vertical slice refactor first.
 - **Rethink teams as workspaces** (architecture) — IN v0.2
 - **Regenerate message button** (ui) — IN v0.2
 - **Include all available models in the Vercel AI Gateway** (api) — IN v0.2
+- **Message edit and chat fork options** (ui)
 
 ### Blockers/Concerns
 
