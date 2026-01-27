@@ -9,11 +9,11 @@ Requirements for v0.2 Workspaces milestone. Each maps to roadmap phases.
 
 ### Architecture
 
-- [ ] **ARCH-01**: Codebase reorganized into vertical feature slices under `src/features/` (chat, sidekiq, workspace, auth, settings, sidebar, model-picker)
-- [ ] **ARCH-02**: Shared cross-cutting utilities moved to `src/shared/` (UI primitives, utils, types, constants)
-- [ ] **ARCH-03**: Drizzle schema remains centralized, moved from `src/server/db/schema.ts` to `src/shared/db/schema.ts` with features importing from it
-- [ ] **ARCH-04**: tRPC routers moved to feature directories and merged in root router
-- [ ] **ARCH-05**: All existing tests pass after restructuring with zero behavior changes
+- [x] **ARCH-01**: Codebase reorganized into vertical feature slices under `src/features/` (chat, sidekiq, workspace, auth, settings, sidebar, model-picker)
+- [x] **ARCH-02**: Shared cross-cutting utilities moved to `src/shared/` (UI primitives, utils, types, constants)
+- [x] **ARCH-03**: Drizzle schema remains centralized, moved from `src/server/db/schema.ts` to `src/shared/db/schema.ts` with features importing from it
+- [x] **ARCH-04**: tRPC routers moved to feature directories and merged in root router
+- [x] **ARCH-05**: All existing tests pass after restructuring with zero behavior changes
 
 ### Workspace Model
 
@@ -99,11 +99,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ARCH-01 | Phase 9 | Pending |
-| ARCH-02 | Phase 9 | Pending |
-| ARCH-03 | Phase 9 | Pending |
-| ARCH-04 | Phase 9 | Pending |
-| ARCH-05 | Phase 9 | Pending |
+| ARCH-01 | Phase 9 | Complete |
+| ARCH-02 | Phase 9 | Complete |
+| ARCH-03 | Phase 9 | Complete |
+| ARCH-04 | Phase 9 | Complete |
+| ARCH-05 | Phase 9 | Complete |
 | WKSP-01 | Phase 10 | Pending |
 | WKSP-02 | Phase 10 | Pending |
 | WKSP-03 | Phase 10 | Pending |

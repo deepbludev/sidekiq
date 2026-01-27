@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-27)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** v0.2 Workspaces -- Phase 9 in progress
+**Current focus:** v0.2 Workspaces -- Phase 9 complete, Phase 10 next
 
 ## Current Position
 
-Phase: 9 of 14 (Vertical Slice Architecture)
-Plan: 2 of 6 in current phase
-Status: In progress
-Last activity: 2026-01-27 -- Completed 09-02-PLAN.md (Shared UI Migration)
+Phase: 9 of 14 (Vertical Slice Architecture) -- COMPLETE
+Plan: 6 of 6 in current phase
+Status: Phase complete, verified
+Last activity: 2026-01-27 -- Phase 9 executed (6 plans, 4 waves), verified (7/7 must-haves passed)
 
-Progress: [██░░░░░░░░] v0.2 ~3% (2/6 plans in Phase 9)
+Progress: [██░░░░░░░░] v0.2 ~17% (1/6 phases complete)
 
 ## Milestone History
 
@@ -29,13 +29,19 @@ Progress: [██░░░░░░░░] v0.2 ~3% (2/6 plans in Phase 9)
 Decisions are logged in PROJECT.md Key Decisions table.
 All v0.1 decisions documented with outcomes.
 New v0.2 decisions: unified workspace model, vertical slice refactor first.
-Phase 9 Plan 1 decisions: specific aliases before wildcard fallback, array-form vitest aliases with regex, @sidekiq/shared/* path convention.
-Phase 9 Plan 2 decisions: relative imports between sibling UI components, layout shell references feature panels via alias, sidebar barrel re-exports layout from shared/.
+Phase 9 decisions:
+- Specific path aliases before wildcard fallback in tsconfig
+- Array-form vitest aliases with regex patterns for wildcard matching
+- @sidekiq/shared/* convention for cross-cutting utilities
+- Relative imports between sibling components within features
+- Layout shell in shared/ (cross-cutting), feature panels in feature dirs
+- Sidebar barrel re-exports layout from shared/
+- Server-only code excluded from barrel file exports (client/server boundary)
 
 ### Pending Todos
 
 13 pending todos in `.planning/todos/pending/`:
-- **Refactor Architecture to Vertical Slicing by Feature** (architecture) -- IN v0.2 Phase 9
+- **Refactor Architecture to Vertical Slicing by Feature** (architecture) -- DONE in Phase 9
 - **Rethink teams as workspaces** (architecture) -- IN v0.2 Phases 10-12
 - **Regenerate message button** (ui) -- IN v0.2 Phase 14
 - **Include all available models in the Vercel AI Gateway** (api) -- IN v0.2 Phase 14
@@ -49,7 +55,7 @@ Phase 9 Plan 2 decisions: relative imports between sibling UI components, layout
 
 ## Session Continuity
 
-Last session: 2026-01-27T21:27:50Z
-Stopped at: Completed 09-02-PLAN.md (Shared UI Migration)
+Last session: 2026-01-27
+Stopped at: Phase 9 complete and verified
 Resume file: None
-Next: Execute 09-03-PLAN.md (Chats Feature Slice)
+Next: `/gsd:discuss-phase 10` (Workspace Schema Migration)

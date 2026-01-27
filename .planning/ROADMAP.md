@@ -24,7 +24,7 @@ See: .planning/milestones/v0.1-ROADMAP.md
 - Integer phases (9, 10, 11...): Planned milestone work
 - Decimal phases (9.1, 10.1): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 9: Vertical Slice Architecture** - Reorganize codebase from horizontal layers to feature-driven slices
+- [x] **Phase 9: Vertical Slice Architecture** - Reorganize codebase from horizontal layers to feature-driven slices
 - [ ] **Phase 10: Workspace Schema Migration** - Evolve database from teams to unified workspace model
 - [ ] **Phase 11: Workspace Authorization** - Server-side workspace isolation via middleware and route handler scoping
 - [ ] **Phase 12: Workspace UX & Members** - Client-side workspace switching, context isolation, and member management
@@ -57,10 +57,10 @@ See: .planning/milestones/v0.1-ROADMAP.md
 Plans:
 - [x] 09-01-PLAN.md -- Config foundation + shared server infrastructure (db, trpc, lib, env)
 - [x] 09-02-PLAN.md -- Shared UI, icons, theme, sidebar layout migration
-- [ ] 09-03-PLAN.md -- Chats feature slice (components, hooks, router, validations)
-- [ ] 09-04-PLAN.md -- Sidekiqs + AI feature slices
-- [ ] 09-05-PLAN.md -- Auth + User + Workspace + Billing feature slices
-- [ ] 09-06-PLAN.md -- Barrel files, root router wiring, final build verification
+- [x] 09-03-PLAN.md -- Chats feature slice (components, hooks, router, validations)
+- [x] 09-04-PLAN.md -- Sidekiqs + AI feature slices
+- [x] 09-05-PLAN.md -- Auth + User + Workspace + Billing feature slices
+- [x] 09-06-PLAN.md -- Barrel files, root router wiring, final build verification
 
 **Research flag:** standard -- Well-documented Next.js + FSD pattern. Mechanical file moves with type verification.
 
@@ -218,7 +218,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 9. Vertical Slice Architecture | v0.2 | 2/6 | In progress | - |
+| 9. Vertical Slice Architecture | v0.2 | 6/6 | ✓ Complete | 2026-01-27 |
 | 10. Workspace Schema Migration | v0.2 | 0/TBD | Not started | - |
 | 11. Workspace Authorization | v0.2 | 0/TBD | Not started | - |
 | 12. Workspace UX & Members | v0.2 | 0/TBD | Not started | - |
