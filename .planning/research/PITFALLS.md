@@ -1,955 +1,521 @@
-# Domain Pitfalls: AI Chat Application
+# Pitfalls Research
 
-**Domain:** Premium AI chat application with multi-provider LLM integration
-**Researched:** 2026-01-22
-**Confidence:** HIGH (verified with 2026 sources)
+**Domain:** Workspace model migration and vertical slice refactor for AI chat app
+**Researched:** 2026-01-27
+**Confidence:** HIGH (based on codebase analysis + verified domain research)
 
 ## Executive Summary
 
-AI chat applications have matured significantly, but certain pitfalls remain pervasive across implementations. Research from production systems in 2025-2026 reveals that the most critical failures occur in streaming reliability, token management, multi-provider compatibility, and security. Unlike generic web applications, AI chat systems face unique challenges: ephemeral streaming data that cannot be recovered once lost, token-based pricing that can explode without proper controls, and prompt injection attacks that remain fundamentally unsolvable.
+Migrating Sidekiq from horizontal layers with a loosely-scoped team model to vertical feature slices with a workspace-scoped tenancy model is the highest-risk refactor in the project's history. The codebase currently has 170+ TypeScript files organized by technical layer (`components/`, `hooks/`, `server/`, `lib/`) with data owned by `userId` (threads, sidekiqs) and optional `teamId` (sidekiqs only). The migration requires simultaneously:
 
-**The brutal truth:** Prevention is often impossible. Modern AI chat architecture focuses on containment, graceful degradation, and recovery rather than perfect execution.
+1. Restructuring files from horizontal layers to vertical feature slices
+2. Adding `workspaceId` to every content table and backfilling existing data
+3. Changing authorization from user-ownership to workspace-membership checks
+4. Updating every tRPC query to scope by workspace instead of (or in addition to) user
+5. Redesigning the sidebar and navigation for workspace switching
+
+Each of these is individually risky. Doing them together multiplies the risk. The pitfalls below are ordered by severity and annotated with specific references to the existing Sidekiq codebase.
 
 ---
 
 ## Critical Pitfalls
 
-Mistakes that cause rewrites, security breaches, or catastrophic cost overruns.
+Mistakes that cause data leaks, lost data, broken authorization, or require significant rework.
 
-### Pitfall 1: Streaming Disconnection Without Recovery
+### Pitfall 1: Forgetting `workspaceId` in Even One Query (Data Leak)
 
 **What goes wrong:**
-Connection losses during LLM streaming result in permanently lost message chunks. WebSocket/SSE connections drop mid-stream, but applications fail to detect the loss or provide recovery mechanisms. Users see partial responses with no indication of failure, corrupting conversation state.
+After adding `workspaceId` to tables, one or more queries continue to filter only by `userId` or have no workspace filter at all. Users in Workspace A can see threads or Sidekiqs belonging to Workspace B. This is a **data isolation failure** -- the single most critical security issue in multi-tenant systems.
 
 **Why it happens:**
-- Developers treat streaming as reliable when it's inherently fragile
-- Missing `onAbort` callbacks mean disconnections go unhandled
-- Network issues (mobile, spotty WiFi) are treated as edge cases rather than expected behavior
-- Failed assumption that "if there's no error callback, the stream completed successfully"
+- The current codebase has ~30+ queries across 5 router files that filter by `userId` (e.g., `eq(threads.userId, ctx.session.user.id)`). Every single one needs updating.
+- The `/api/chat/route.ts` endpoint performs 8+ database operations, each needing workspace scoping.
+- The `sidekiq.list` procedure currently filters `eq(sidekiqs.ownerId, ctx.session.user.id)` -- this must change to workspace-scoped, but the developer might only update it to include `workspaceId` without removing the `ownerId` check, breaking shared workspace Sidekiqs.
+- New procedures added during the refactor might default to the old `userId`-only pattern.
 
-**Consequences:**
-- Users lose 20-80% of a response without knowing it
-- UI state diverges from reality (shows "complete" when truncated)
-- Conversation history persists corrupted, incomplete messages
-- Users blame the AI model rather than the implementation
-- No way to recover lost content (it was never persisted)
-
-**Prevention:**
-
-1. **Implement comprehensive abort detection:**
-```typescript
-// BAD: No abort handling
-useChat({ onFinish: (message) => saveMessage(message) });
-
-// GOOD: Handle all completion scenarios
-useChat({
-  onFinish: (message) => {
-    // Normal completion
-    saveMessage(message, { status: 'complete' });
-  },
-  onAbort: (message) => {
-    // Connection lost mid-stream
-    saveMessage(message, { status: 'incomplete', recoverable: true });
-    showRecoveryPrompt();
-  },
-  onError: (error) => {
-    // Request failed
-    logError(error);
-    showRetryOption();
-  }
-});
+**Specific Sidekiq code at risk:**
+```
+src/server/api/routers/thread.ts   -- 7 queries using eq(threads.userId, ...)
+src/server/api/routers/sidekiq.ts  -- 8 queries using eq(sidekiqs.ownerId, ...)
+src/app/api/chat/route.ts          -- 5 queries (thread ownership, sidekiq ownership)
 ```
 
-2. **Server-side consumption for critical flows:**
-Use `consumeStream()` to ensure backend processes the entire stream even if the client disconnects, preventing "lost work" scenarios.
+**How to avoid:**
+1. Create a `workspaceProcedure` tRPC middleware that resolves the active workspace from context and injects `workspaceId` into `ctx`. Every workspace-scoped query uses `ctx.workspaceId` -- never a raw parameter.
+2. Write a lint rule or review checklist: every `db.query` and `db.select` call on a workspace-scoped table MUST include `eq(table.workspaceId, ctx.workspaceId)`.
+3. Add integration tests that create two workspaces and verify data isolation for every endpoint.
+4. After migration, do a full-codebase grep for queries on workspace-scoped tables that lack `workspaceId` in their WHERE clause.
 
-3. **Visual indicators for stream health:**
-Show connection status, not just "thinking" indicators. Use signals like "Receiving response..." that change to "Connection lost - attempting recovery" on abort.
+**Warning signs:**
+- During code review, any query on `threads`, `sidekiqs`, or `messages` that does not reference `workspaceId`.
+- Tests pass with a single workspace but fail when a second workspace is introduced.
+- Users report seeing content they did not create.
 
-4. **Implement exponential backoff with jitter:**
-Retry failed streams with increasing delays to avoid thundering herd problems.
-
-**Detection:**
-- Users report "AI stopped responding mid-sentence"
-- Analytics show high rate of messages with status "streaming" never transitioning to "complete"
-- Monitoring alerts on high `onAbort` callback frequency
-- Message length distribution shows unexpected spike at certain character counts (indicating truncation points)
-
-**Phase mapping:**
-- Phase 1 (Core Chat): Must implement basic abort handling
-- Phase 2 (Production Hardening): Comprehensive recovery, server-side consumption, health monitoring
-
-**Sources:**
-- [AnyCable, Rails, and the pitfalls of LLM-streaming](https://evilmartians.com/chronicles/anycable-rails-and-the-pitfalls-of-llm-streaming)
-- [Serverless strategies for streaming LLM responses](https://aws.amazon.com/blogs/compute/serverless-strategies-for-streaming-llm-responses/)
+**Phase to address:** Must be solved in the workspace schema migration phase, before any workspace features ship. The `workspaceProcedure` middleware should be the FIRST thing built.
 
 ---
 
-### Pitfall 2: Token Counting Inconsistency Across Providers
+### Pitfall 2: Botched Data Migration (NOT NULL on Existing Rows)
 
 **What goes wrong:**
-Applications calculate token usage using OpenAI's tiktoken for all providers, resulting in 20-40% billing discrepancies. Cost estimation shows "$50/month" but actual spend hits "$500/month" because Claude, Gemini, and other providers tokenize differently. Hidden tokens from reasoning traces (GPT-o1, Claude Thinking) aren't accounted for.
+The schema adds `workspaceId TEXT NOT NULL REFERENCES workspace(id)` to the `thread`, `sidekiq`, and `message` tables. PostgreSQL rejects the migration because existing rows have no `workspaceId` value. The developer either:
+- Makes the column nullable (losing the NOT NULL guarantee forever)
+- Tries to set a default that references a workspace that doesn't exist yet
+- Runs the migration on production without testing, causing downtime
 
 **Why it happens:**
-- Assumption that tokenization is standardized (it's not)
-- Using a single tokenizer library for multi-provider apps
-- Documentation claims "approximately 750 words per 1000 tokens" but actual ratios vary by provider
-- Providers don't expose reasoning token counts in standard API responses
-- Tool use and function calling add hidden system tokens
+- Drizzle Kit's `generate` command produces a single `ALTER TABLE ADD COLUMN ... NOT NULL` statement that fails on tables with existing data.
+- Drizzle Kit does not generate backfill SQL or multi-step migrations automatically.
+- The existing database has threads, messages, and sidekiqs that must be assigned to workspaces.
 
-**Consequences:**
-- Budget planning is fiction (off by 2-5x in production)
-- Cannot accurately show users their usage
-- Cost alerts fire only after overages occur
-- Comparative model selection is based on wrong data
-- Executive leadership loses trust in AI cost projections
-- In one case study: teams discovered inference bills were 5x the allocated cloud budget
+**Specific Sidekiq impact:**
+- The `thread` table has rows with `userId` but no workspace concept.
+- The `sidekiq` table has rows with `ownerId` and optional `teamId`.
+- The `message` table has rows linked to threads only.
+- Each existing user needs a personal workspace created, and their content assigned to it.
+- Sidekiqs with `teamId` need to be assigned to the corresponding workspace (if team becomes workspace).
 
-**Prevention:**
+**How to avoid:**
+Follow the expand-and-contract migration pattern with 5+ migration steps:
 
-1. **Use provider-specific tokenizers:**
-```typescript
-// BAD: Universal tokenizer
-import { encode } from 'tiktoken';
-const tokens = encode(text).length; // Wrong for Claude/Gemini
+1. **Migration 1:** Create the `workspace` and `workspace_member` tables. Insert a personal workspace for every existing user. Insert team-based workspaces for every existing team.
+2. **Migration 2:** Add `workspace_id` as a NULLABLE column (no NOT NULL yet) to `thread`, `sidekiq`.
+3. **Migration 3 (custom SQL):** Backfill `workspace_id` for all existing rows:
+   - Threads: set `workspace_id` to the personal workspace of `thread.userId`.
+   - Sidekiqs without `teamId`: set to personal workspace of `sidekiq.ownerId`.
+   - Sidekiqs with `teamId`: set to the workspace that replaced that team.
+4. **Migration 4 (custom SQL):** Add the foreign key constraint with `NOT VALID`, then `VALIDATE CONSTRAINT` separately. This avoids locking both tables during validation.
+5. **Migration 5 (custom SQL):** `ALTER COLUMN workspace_id SET NOT NULL`.
+6. **Update Drizzle schema:** Change the column definition to `.notNull()`.
 
-// GOOD: Provider-aware counting
-const tokenizers = {
-  openai: () => import('tiktoken'),
-  anthropic: () => import('@anthropic-ai/tokenizer'),
-  google: () => import('@google/generative-ai/tokenizer'),
-};
+Use `drizzle-kit generate --custom` to create blank migration files for steps 3-5.
 
-async function countTokens(text: string, provider: string) {
-  const tokenizer = await tokenizers[provider]();
-  return tokenizer.encode(text).length;
-}
-```
+**Warning signs:**
+- Migration fails in CI/CD or staging with "column cannot be null" errors.
+- Developer skips NOT NULL and ships nullable `workspaceId` -- this guarantees future data isolation bugs.
+- Backfill script doesn't handle edge cases (users with no threads, deleted teams, orphaned sidekiqs).
 
-2. **Track actual vs. estimated:**
-Log provider-reported token usage from API responses and compare against your estimates. Alert when variance exceeds 15%.
-
-3. **Account for hidden tokens:**
-- System prompts are tokens (often 500-2000)
-- Tool definitions are tokens (100-300 per tool)
-- Reasoning traces can 10x the expected count
-- Response format instructions add tokens
-
-4. **Implement token-aware rate limiting:**
-Don't just limit requests per minute; limit tokens per minute per user/team.
-
-**Detection:**
-- Monthly invoice doesn't match usage dashboard
-- Users report "still had quota" but received rate limit errors
-- Comparison tests show Provider A costs 2x Provider B despite similar token estimates
-- Finance team asks "why are we spending so much on AI?"
-
-**Phase mapping:**
-- Phase 1 (Core Chat): Basic token estimation (can be OpenAI-centric initially)
-- Phase 2 (Multi-provider): Provider-specific tokenizers mandatory
-- Phase 3 (Production): Actual vs. estimated tracking, alerting, cost attribution
-
-**Sources:**
-- [Tracking LLM token usage across providers, teams and workloads](https://portkey.ai/blog/tracking-llm-token-usage-across-providers-teams-and-workloads/)
-- [Understanding LLM Billing: From Characters to Tokens](https://www.edenai.co/post/understanding-llm-billing-from-characters-to-tokens)
+**Phase to address:** Workspace schema migration phase. This must be the most carefully planned and tested part of the entire milestone.
 
 ---
 
-### Pitfall 3: Prompt Injection Is Unfixable (So Design for Containment)
+### Pitfall 3: Breaking tRPC Type Inference During Vertical Slice Move
 
 **What goes wrong:**
-Teams build elaborate input filtering to "prevent prompt injection," investing weeks in keyword blocklists, content filters, and prompt guards. Then a researcher bypasses it in 42 seconds using ASCII art or Base64 encoding. The UK National Cyber Security Centre and OpenAI both publicly acknowledge: **prompt injection may never be fully mitigated**.
+Moving files from `src/server/api/routers/thread.ts` to `src/features/thread/server/router.ts` (or similar) breaks TypeScript path resolution and tRPC's automatic type inference. The `AppRouter` type exported from `root.ts` no longer matches the actual router structure. Frontend `api.thread.list.useQuery()` calls show type errors or, worse, silently break at runtime. The entire type-safe chain from Drizzle schema to tRPC router to React Query hook is severed.
 
 **Why it happens:**
-- Belief that input validation can solve the problem
-- Security mindset from SQL injection (which IS solvable) applied to LLMs (which aren't)
-- Underestimating attacker creativity (obfuscation, indirect injection, social engineering)
-- Treating AI as a trusted component rather than a potentially compromised one
+- tRPC's type inference depends on the precise export chain: `root.ts` imports routers, the `AppRouter` type is inferred from `createTRPCRouter()`, and the frontend client consumes `AppRouter`.
+- Moving router files changes import paths. If the re-export in `root.ts` is incorrect, the type chain breaks silently in some configurations.
+- Path aliases (`@sidekiq/server/api/routers/thread`) may or may not update automatically depending on IDE and build tooling.
+- Barrel files (`index.ts`) introduced during refactoring can create circular dependency issues that break tRPC's type inference.
 
-**Consequences:**
-- In 2025 assessments: 20% of jailbreaks succeed in 42 seconds average
-- 90% of successful attacks leak sensitive data
-- Researcher Johann Rehberger's "Month of AI Bugs" demonstrated virtually every production AI system is vulnerable
-- False sense of security leads to inadequate containment measures
-- One bypass method (ArtPrompt using ASCII art) achieved 76.2% success across GPT-4, Gemini, Claude, and Llama2
+**Specific Sidekiq risk:**
+- `src/server/api/root.ts` imports from `./routers/thread`, `./routers/sidekiq`, `./routers/team`, `./routers/user`, `./routers/health`. All five must be moved consistently.
+- The `@sidekiq/` path alias in `tsconfig.json` is configured for `src/*`. Feature-based paths need new aliases or barrel re-exports.
+- `src/trpc/react.tsx` creates the client typed against `AppRouter`. Any break in the type chain cascades here.
 
-**Prevention (Reality: Containment, not Prevention):**
+**How to avoid:**
+1. **Move files ONE router at a time**, not all at once. Move `thread` router to new location, update `root.ts` import, verify types compile, verify frontend queries work, then proceed to the next router.
+2. **Keep `root.ts` as the single composition point.** The router composition file should not move -- only the files it imports from change location.
+3. **Add a CI type-check step** that runs `tsc --noEmit` and catches broken inference before merge.
+4. **Do NOT use barrel files for routers.** Import each router directly to avoid circular dependency issues.
+5. **Test the full chain** after each move: write a quick test that calls `api.thread.list.useQuery` and verifies the return type matches expectations.
 
-1. **Assume breach architecture:**
-Design as if the AI is actively malicious. Limit what damage it can do.
+**Warning signs:**
+- TypeScript errors mentioning "Property 'thread' does not exist on type 'AppRouter'".
+- Runtime errors like "Cannot read properties of undefined (reading 'list')".
+- Frontend compiles but all tRPC queries return `undefined` or throw at runtime.
+- Build succeeds locally but fails in CI (different TypeScript resolution settings).
 
-2. **Input validation is layer 1 of 5, not a solution:**
-```typescript
-// Necessary but insufficient
-function sanitizeInput(userInput: string) {
-  // Block obvious attacks
-  if (containsSuspiciousPatterns(userInput)) {
-    return { allowed: false, reason: 'suspicious_content' };
-  }
-  return { allowed: true };
-}
-
-// Critical: Limit AI privileges regardless of input
-const aiContext = {
-  canAccessDatabase: false,  // Never give direct DB access
-  canExecuteCode: false,      // No arbitrary code execution
-  canAccessSecrets: false,    // No env vars, API keys
-  outputMustBeFiltered: true, // Check outputs, not just inputs
-};
-```
-
-3. **Output filtering > Input detection:**
-Research strongly supports transitioning from malicious input detection to malicious output prevention. Check what the AI generates before showing users or executing actions.
-
-4. **Human-in-the-loop for privileged operations:**
-Any action that modifies data, sends emails, makes purchases, etc. requires human approval.
-
-5. **Implement guardrails at the orchestration layer:**
-```typescript
-// BAD: Trust AI to follow instructions
-const result = await llm.generate(userPrompt);
-await database.execute(result); // AI can inject SQL
-
-// GOOD: Validate AI outputs before execution
-const result = await llm.generate(userPrompt);
-const validated = validateStructure(result);
-if (validated.isQuerySafe && validated.meetsConstraints) {
-  await database.execute(validated.query);
-}
-```
-
-6. **Continuous adversarial testing:**
-OpenAI trains a bot using reinforcement learning to probe AI agents for weaknesses. You should too (or use third-party services).
-
-7. **Monitor for anomalous behavior:**
-- Unusually long outputs (data exfiltration)
-- Requests to unusual endpoints
-- Attempts to access system information
-- Pattern breaks in user conversation flow
-
-**Detection:**
-- Penetration testing reveals exploits you thought were fixed
-- Security research papers demonstrate new bypass techniques
-- User complaints about "AI behaving strangely"
-- Logs show AI generating content that violates policies
-- Audit trails reveal unauthorized actions
-
-**Phase mapping:**
-- Phase 1 (Core Chat): Basic input sanitization (naive but necessary)
-- Phase 2 (Custom Assistants/Sidekiqs): Output filtering, privilege boundaries
-- Phase 3 (Teams/Multi-tenant): Isolation guarantees, human-in-the-loop for shared resources
-- Ongoing: Continuous adversarial testing, monitoring
-
-**Sources:**
-- [OWASP LLM01:2025 Prompt Injection](https://genai.owasp.org/llmrisk/llm01-prompt-injection/)
-- [LLM Security Risks in 2026: Prompt Injection, RAG, and Shadow AI](https://sombrainc.com/blog/llm-security-risks-2026)
-- [The 11 runtime attacks breaking AI security](https://venturebeat.com/security/ciso-inference-security-platforms-11-runtime-attacks-2026)
-- [Jailbreaking Every LLM With One Simple Click](https://www.cyberark.com/resources/threat-research-blog/jailbreaking-every-llm-with-one-simple-click)
+**Phase to address:** Vertical slice restructuring phase, BEFORE the workspace migration. Restructure first while behavior is stable, then change behavior.
 
 ---
 
-### Pitfall 4: Optimistic UI Without Robust Rollback
+### Pitfall 4: Personal Workspace Identity Crisis
 
 **What goes wrong:**
-Chat apps show user messages and AI responses instantly (optimistic updates) for snappy UX. Then the request fails—network error, rate limit, model timeout. The UI shows a complete conversation, but the backend has no record. User refreshes the page and their last 3 messages vanish. Rollback logic is absent or buggy, leaving ghost messages in state.
+The system creates a "personal workspace" for each user, but it behaves inconsistently with team workspaces. Personal workspaces might:
+- Allow inviting members (they shouldn't, or should they?)
+- Have a different permission model than team workspaces
+- Show settings that don't apply (member management, workspace name editing)
+- Not appear in the workspace switcher (making it confusing which workspace is active)
+- Have a "null workspace" state that code has to handle everywhere
 
 **Why it happens:**
-- Focus on happy-path UX (instant feedback)
-- Assumption that requests "usually succeed" so edge cases are deferred
-- React's `useOptimistic` hook makes it easy to add optimistic updates but doesn't enforce rollback discipline
-- Persisting messages "on response" instead of transactionally with request status
+- The team decides personal workspaces are "just like team workspaces but with one member" but doesn't enforce this consistently.
+- Some code paths treat "no workspace selected" as "personal workspace," creating null-check ambiguity.
+- The personal workspace has special behavior (auto-created, can't be deleted, always exists) that breaks assumptions made for regular workspaces.
+- UI design treats personal vs. team contexts differently but the data model doesn't reflect this.
 
-**Consequences:**
-- User loses messages they thought were sent
-- Conversation history corruption (UI shows messages that never reached the server)
-- Duplicate messages on retry (message exists in UI state, retry adds it again)
-- Loss of user trust ("my conversations keep disappearing")
-- Support tickets: "I had a great response from the AI but it's gone now"
+**Specific Sidekiq risk:**
+- The current `useActiveTeam` hook returns `null` for "no team selected" (personal context). If this pattern continues, every component must handle `workspaceId: string | null`, which means every query needs two code paths.
+- The existing `sidekiq.list` queries filter by `ownerId`. In a personal workspace, ownership and workspace membership are the same thing. In a team workspace, they diverge. This semantic difference is easy to get wrong.
+- Current code in `use-active-team.ts` stores `activeTeamId` in localStorage. If migrated to `activeWorkspaceId`, the null state needs explicit handling for personal workspace.
 
-**Prevention:**
+**How to avoid:**
+1. **Make personal workspace a REAL workspace entity in the database.** It has an ID, a row in the `workspace` table, and a single member (the owner). No null states.
+2. **Use a `type` column on the workspace table:** `'personal' | 'team'`. Conditional logic uses `workspace.type`, not "is workspaceId null?"
+3. **Auto-create on user signup.** The personal workspace is created in the same transaction as the user account. It always exists.
+4. **Auto-select on login.** If no workspace is stored in localStorage, default to the personal workspace (not null).
+5. **Restrict operations by type:** Personal workspaces cannot have members invited. Team workspaces can. Use the `type` field to gate UI and API.
 
-1. **Rollback is mandatory, not optional:**
-```typescript
-// BAD: Optimistic update without rollback
-function sendMessage(message: string) {
-  const optimisticMessage = { id: tempId(), text: message, status: 'sending' };
-  setMessages(prev => [...prev, optimisticMessage]);
+**Warning signs:**
+- Components have `if (!workspaceId) { /* personal mode */ }` branches that diverge significantly from the workspace path.
+- Tests frequently need to handle "null workspace" as a special case.
+- Users confused about which workspace they're in.
+- Data created in "personal mode" doesn't show up when switching to personal workspace.
 
-  api.sendMessage(message); // What if this fails?
-}
-
-// GOOD: Explicit rollback on failure
-function sendMessage(message: string) {
-  const optimisticMessage = { id: tempId(), text: message, status: 'sending' };
-  setMessages(prev => [...prev, optimisticMessage]);
-
-  api.sendMessage(message)
-    .then(response => {
-      // Replace temp ID with real ID
-      setMessages(prev => prev.map(m =>
-        m.id === optimisticMessage.id
-          ? { ...m, id: response.id, status: 'sent' }
-          : m
-      ));
-    })
-    .catch(error => {
-      // ROLLBACK: Remove optimistic message
-      setMessages(prev => prev.filter(m => m.id !== optimisticMessage.id));
-      showError('Failed to send message. Please retry.');
-    });
-}
-```
-
-2. **React 19's useOptimistic hook automates rollback:**
-Use it if on React 19+. The hook automatically reverts state on failure.
-
-3. **Persist messages with status, not completion:**
-```typescript
-// BAD: Save on completion only
-onFinish: (message) => saveMessage(message);
-
-// GOOD: Save on send with status tracking
-onStart: (messageId) => saveMessage({ id: messageId, status: 'streaming' });
-onFinish: (message) => updateMessage(message.id, { status: 'complete' });
-onError: (messageId) => updateMessage(messageId, { status: 'failed' });
-```
-
-4. **Idempotency keys prevent duplicates:**
-On retry, use the same idempotency key so the backend recognizes it's the same message.
-
-**Detection:**
-- User reports: "My messages disappear when I refresh"
-- Database shows fewer messages than UI displays
-- Duplicate message IDs in error logs (retries creating new entries)
-- State management logs show messages added but never removed on failure
-
-**Phase mapping:**
-- Phase 1 (Core Chat): Optimistic UI with rollback mandatory from day one
-- Phase 2 (Production Hardening): Idempotency keys, status-based persistence
-
-**Sources:**
-- [React 19 useOptimistic Deep Dive](https://dev.to/a1guy/react-19-useoptimistic-deep-dive-building-instant-resilient-and-user-friendly-uis-49fp)
-- [Guidance on persisting messages - Vercel AI Discussion](https://github.com/vercel/ai/discussions/4845)
-- [How to Use the Optimistic UI Pattern](https://www.freecodecamp.org/news/how-to-use-the-optimistic-ui-pattern-with-the-useoptimistic-hook-in-react/)
+**Phase to address:** Workspace schema design phase. The personal workspace entity must be defined before any migration code is written.
 
 ---
 
-### Pitfall 5: Cost Explosion Without Real-Time Monitoring
+### Pitfall 5: Authorization Model Not Updated for Workspace Ownership
 
 **What goes wrong:**
-AI spend jumps from $5k/month to $50k/month overnight. Finance discovers it 28 days later when the invoice arrives. No alerts, no attribution, no idea which users, models, or features drove the spike. In documented cases, inference bills were 5x the allocated budget. Teams retrospectively realize a single user's agent loop consumed $10k in one weekend.
+The current authorization model is simple: you own your data (threads, sidekiqs), verified by `userId` checks. In a workspace model, authorization becomes: you can access data that belongs to workspaces you're a member of. But the code only adds `workspaceId` to queries without updating the permission model. Results:
+- User creates a Sidekiq in Team Workspace, then leaves the team -- Sidekiq is orphaned or still accessible.
+- User in Workspace A crafts a request with Workspace B's ID and gets access (no membership check).
+- Ownership checks (`eq(sidekiqs.ownerId, ctx.session.user.id)`) remain, preventing workspace members from seeing shared Sidekiqs.
 
 **Why it happens:**
-- Traditional cloud budgeting tools don't handle token-based pricing
-- Assumption that "normal usage" remains constant (AI usage is spiky and unpredictable)
-- Missing per-user, per-model, per-team cost attribution
-- Alerts configured for monthly spend, not daily rate changes
-- Agent loops and retry logic can 10x costs without human intervention
+- The existing `team-permissions.ts` has role-based checks but they're team-specific, not workspace-generic.
+- Adding `workspaceId` to queries feels like "adding tenancy" but without membership verification it's just a filter parameter that can be spoofed.
+- The `protectedProcedure` middleware only checks authentication, not workspace authorization.
+- The chat route (`/api/chat/route.ts`) does manual ownership checks that need to become workspace membership checks.
 
-**Consequences:**
-- Leadership loses confidence in AI ROI projections
-- Emergency cost-cutting measures kill legitimate use cases
-- Inability to identify wasteful patterns (which features, users, or models are expensive)
-- Competitive analysis is impossible (can't tell if Provider A is actually cheaper than Provider B)
-- Engineering argues with finance over "unpredictable" costs
-
-**Prevention:**
-
-1. **Real-time cost tracking, not monthly summaries:**
+**Specific Sidekiq code at risk:**
 ```typescript
-// Track every request
-async function callLLM(prompt: string, model: string, userId: string) {
-  const startTime = Date.now();
-  const response = await provider.generate(prompt, model);
+// Current: simple ownership
+eq(sidekiqs.ownerId, ctx.session.user.id)
 
-  const cost = calculateCost({
-    inputTokens: response.usage.inputTokens,
-    outputTokens: response.usage.outputTokens,
-    model: model,
-    duration: Date.now() - startTime,
-  });
+// WRONG migration: adds workspaceId but trusts client-provided value
+eq(sidekiqs.workspaceId, input.workspaceId) // Client can send any workspaceId!
 
-  await analytics.trackCost({
-    userId,
-    teamId: user.teamId,
-    model,
-    cost,
-    timestamp: new Date(),
-  });
-
-  return response;
-}
+// CORRECT: verify membership, then scope by workspace
+const membership = await verifyWorkspaceMembership(ctx.session.user.id, input.workspaceId);
+if (!membership) throw new TRPCError({ code: 'FORBIDDEN' });
+// Now scope queries by the verified workspaceId
 ```
 
-2. **Predictive alerting, not reactive:**
-- Alert when daily spend exceeds 3x the 7-day moving average
-- Alert when a single user's cost exceeds their tier limit
-- Alert when token usage suggests a runaway loop (>100k tokens in <1 minute)
+**How to avoid:**
+1. **Create a `workspaceProcedure` middleware** that:
+   - Reads `workspaceId` from request input or session context
+   - Verifies the user is an active member of that workspace
+   - Injects the verified `workspaceId` into context
+   - Throws FORBIDDEN if membership check fails
+2. **Replace `protectedProcedure` with `workspaceProcedure`** for all workspace-scoped routes. Keep `protectedProcedure` only for user-level operations (profile, preferences).
+3. **Migrate `team-permissions.ts` to `workspace-permissions.ts`** with workspace-aware role checks.
+4. **The chat route needs special attention:** It's a raw Next.js route handler, not a tRPC procedure. It must perform workspace membership verification manually.
 
-3. **Multi-dimensional cost attribution:**
-Track spending by:
-- User (who is expensive?)
-- Model (which model is costly?)
-- Feature (chat vs. Sidekiqs vs. image generation)
-- Team (in multi-tenant setups)
-- Time (when do spikes occur?)
+**Warning signs:**
+- Any tRPC procedure that takes `workspaceId` as input without verifying membership.
+- The chat route at `/api/chat/route.ts` still only checks `userId` ownership.
+- Tests pass because they only test the happy path (user accesses their own workspace).
 
-4. **Granular rate limiting:**
-```typescript
-// BAD: Global rate limit only
-if (requestsPerMinute > 100) throw new RateLimitError();
-
-// GOOD: Multi-dimensional limits
-const limits = {
-  requestsPerMinute: 60,
-  tokensPerMinute: 100_000,
-  costPerHour: 5.00, // dollars
-  costPerDay: 50.00,
-};
-
-if (user.tokensThisMinute > limits.tokensPerMinute) {
-  throw new TokenQuotaExceeded();
-}
-if (user.costToday > limits.costPerDay) {
-  throw new DailyCostLimitReached();
-}
-```
-
-5. **Gateway/orchestration layer for unified tracking:**
-Use tools like Portkey, LiteLLM Gateway, or build custom middleware to track all provider calls in one place.
-
-**Detection:**
-- Sudden invoice spike with no explanation
-- Users complain about rate limits despite "not using it much"
-- Analytics show a single model accounts for 80% of spend but 20% of requests
-- Weekend/overnight spending anomalies (agent loops, testing gone wrong)
-
-**Phase mapping:**
-- Phase 1 (Core Chat): Basic per-request cost logging
-- Phase 2 (Multi-provider): Provider-normalized cost tracking, predictive alerts
-- Phase 3 (Teams/Production): Per-team attribution, budget allocation, real-time dashboards
-
-**Sources:**
-- [AI Cost Crisis: AI Cost Sprawl Is Crashing Your Innovation](https://www.cloudzero.com/blog/ai-cost-crisis/)
-- [AI Cost Control: Your Ultimate 2026 Guide](https://www.cake.ai/blog/ai-cost-management)
-- [How are engineering leaders approaching 2026 AI tooling budgets?](https://getdx.com/blog/how-are-engineering-leaders-approaching-2026-ai-tooling-budget/)
+**Phase to address:** Must be implemented alongside the workspace schema. The `workspaceProcedure` middleware is a prerequisite for all workspace-scoped routes.
 
 ---
 
-## Moderate Pitfalls
+## Technical Debt Patterns
 
-Mistakes that cause delays, technical debt, or suboptimal UX but are fixable without rewrites.
+### Pattern 1: Half-Migrated Authorization (userId AND workspaceId)
 
-### Pitfall 6: Using WebSockets for Unidirectional Streaming
+**What goes wrong:** During incremental migration, some queries check both `userId` and `workspaceId` while others check only one. The codebase has inconsistent authorization semantics.
 
-**What goes wrong:**
-Teams implement WebSockets for AI chat streaming because "real-time communication = WebSockets." They discover memory consumption scales linearly with concurrent users (70 KiB per connection), hitting 6.68 GiB at 100k users. WebSocket connections sit idle 99% of the time (waiting for user input), yet consume resources continuously. Debugging is harder, caching doesn't work, and infrastructure costs balloon.
+**How this manifests in Sidekiq:**
+The thread router currently has 7 queries all checking `eq(threads.userId, ctx.session.user.id)`. During migration, some get updated to check `workspaceId` while others still check `userId`. Result: some features work in personal workspace only, others work in team workspace only.
 
-**Why it happens:**
-- WebSockets are the "default" for real-time features in many developers' mental models
-- Assumption that bidirectional is always better than unidirectional
-- Lack of awareness that AI streaming (server-to-client) is fundamentally unidirectional
-- Framework/library defaults (e.g., Socket.io examples) bias toward WebSockets
+**Prevention:** Define a clear migration plan: ALL workspace-scoped routes migrate together in one phase. No "partial migration" where threads use workspaceId but sidekiqs still use userId.
 
-**Prevention:**
+### Pattern 2: Duplicated Feature Logic Across Slices
 
-1. **Use Server-Sent Events (SSE) for AI streaming:**
-- Unidirectional (server-to-client) matches AI chat pattern perfectly
-- Built on HTTP (easier to cache, debug, secure, scale)
-- Automatic reconnection
-- Lower memory footprint (stateless HTTP connections)
-- HTTP/2 multiplexing allows many SSE streams over one connection
+**What goes wrong:** During vertical slice restructuring, shared logic (e.g., date grouping for sidebar threads, avatar rendering) gets copied into each feature slice instead of being properly shared.
 
-2. **Reserve WebSockets for truly bidirectional cases:**
-Use WebSockets only if:
-- You need client-to-server push beyond initial request (e.g., interrupting mid-response, live cursor tracking)
-- Binary data transfer is critical
-- Sub-10ms latency requirements
+**How this manifests in Sidekiq:**
+- `src/lib/date-grouping.ts` is used by both thread list and sidekiq list components.
+- `src/lib/sidebar-utils.ts` has shared sidebar logic.
+- `SidekiqAvatar` interface is used by both sidekiqs and teams.
+- If each feature slice copies these, updates need to happen in multiple places.
 
-3. **Implementation comparison:**
-```typescript
-// SSE: Simple and efficient for AI streaming
-const eventSource = new EventSource('/api/chat/stream');
-eventSource.onmessage = (event) => {
-  appendChunk(JSON.parse(event.data));
-};
+**Prevention:** Create a `src/shared/` or `src/lib/` directory for genuinely cross-cutting utilities. The rule: if 3+ feature slices need it, it goes in shared. If only 1-2 slices use it, it stays in the slice.
 
-// WebSocket: Unnecessary complexity for unidirectional
-const socket = new WebSocket('wss://api.example.com/chat');
-socket.onmessage = (event) => {
-  appendChunk(JSON.parse(event.data));
-};
-// Now you need heartbeat pings, manual reconnection, etc.
-```
+### Pattern 3: Circular Import Between Feature Slices
 
-**Detection:**
-- High memory usage correlating with concurrent user count
-- Infrastructure costs scale unexpectedly with user growth
-- Difficulty adding caching layers (WebSockets bypass HTTP caches)
-- Debugging requires specialized tools (Wireshark) vs. browser DevTools
+**What goes wrong:** The thread feature slice imports from the sidekiq feature slice (to show sidekiq avatars on threads), and the sidekiq feature slice imports from the thread slice (to show thread count). Circular dependency.
 
-**Phase mapping:**
-- Phase 1 (Core Chat): Choose SSE from the start
-- Phase 2 (Production Hardening): If WebSockets already implemented, evaluate migration cost vs. scaling cost
+**How this manifests in Sidekiq:**
+- `threadRelations` references `sidekiqs` table.
+- `sidekiqRelations` references `threads` table (via thread count).
+- Thread sidebar items show sidekiq avatars (imports sidekiq component).
+- Sidekiq detail page shows related threads (imports thread component).
 
-**Sources:**
-- [Go with SSE for Your AI Chat App](https://www.sniki.dev/posts/sse-vs-websockets-for-ai-chat/)
-- [WebSockets vs Server-Sent Events](https://ably.com/blog/websockets-vs-sse)
+**Prevention:** Keep the Drizzle schema in a single shared file (do not split schema per feature). For UI components, use a shared `AvatarDisplay` component in `src/shared/ui/` rather than importing across slices. For data, use tRPC's `with` relation queries rather than cross-slice imports.
 
 ---
 
-### Pitfall 7: Naive Context Window Management
+## Integration Gotchas
 
-**What goes wrong:**
-Applications send the entire conversation history on every request. At 20 messages (10 turns), context exceeds 100k tokens. Model latency degrades from 2s to 15s. Costs balloon (paying for the same message 50 times as it's included in every subsequent request). Eventually, conversations hit context limits and crash with "maximum context length exceeded" errors.
+### Gotcha 1: localStorage `activeTeamId` Breaks After Migration
 
-**Why it happens:**
-- Assumption that "more context = better responses"
-- Lack of awareness that providers charge for all input tokens, including repeated history
-- Not monitoring cumulative token usage per conversation
-- Treating context windows as infinite (Gemini 2.5M tokens!) without considering cost/latency tradeoffs
+**What goes wrong:** Users have `sidekiq-active-team-id` stored in localStorage from the current team system. After migrating to workspaces, the stored team ID no longer matches any workspace ID (if IDs change) or the key name changes. Users get stuck with no active workspace, seeing empty states or errors.
 
-**Prevention:**
+**Specific code:** `src/hooks/use-active-team.ts` line 7: `const ACTIVE_TEAM_KEY = "sidekiq-active-team-id";`
 
-1. **Implement conversation summarization:**
-```typescript
-async function prepareContext(messages: Message[]) {
-  const recentMessages = messages.slice(-10); // Last 5 turns
-  const olderMessages = messages.slice(0, -10);
+**How to avoid:**
+- If reusing team IDs as workspace IDs, keep reading the old key as a fallback.
+- Add migration logic in the hook: if old key exists and new key doesn't, convert and store the new key.
+- Always fall back to the personal workspace if the stored ID is invalid.
 
-  let context = [];
+### Gotcha 2: The Chat Route Is Not a tRPC Procedure
 
-  if (olderMessages.length > 5) {
-    // Summarize older messages
-    const summary = await summarizeConversation(olderMessages);
-    context.push({ role: 'system', content: `Previous conversation summary: ${summary}` });
-  } else {
-    context.push(...olderMessages);
-  }
+**What goes wrong:** All other data operations go through tRPC routers, which will get workspace middleware. But `/api/chat/route.ts` is a raw Next.js API route. It does NOT get workspace middleware automatically. If the developer focuses on migrating tRPC routers and forgets this route, the most critical endpoint (chat) has no workspace scoping.
 
-  context.push(...recentMessages);
+**Specific code:** `src/app/api/chat/route.ts` performs 8+ database operations:
+- Thread creation (line 149)
+- Thread ownership check (line 118-129)
+- Sidekiq ownership check (line 91-109)
+- Message insertion (line 193)
+- Thread update (line 276-283)
+- Sidekiq stats update (line 172-179)
+- Thread title generation (line 286-301)
 
-  return context;
-}
-```
+Each of these needs workspace scoping.
 
-2. **Sliding window with semantic importance:**
-Keep full recent history (last 5-10 turns) + summaries of older content + high-importance messages (user-pinned, contains key decisions).
+**How to avoid:**
+- Extract a `resolveWorkspaceContext()` utility that both tRPC middleware and the chat route can use.
+- Add workspace membership verification at the top of the chat route POST handler.
+- Consider migrating the chat endpoint to use a tRPC mutation for the non-streaming parts (thread creation, message persistence) while keeping streaming as a raw route.
 
-3. **Monitor token usage per conversation:**
-Alert when a conversation exceeds 80% of model's context window.
+### Gotcha 3: Sidebar Component Explosion
 
-4. **Provide "Start new conversation" prompts:**
-When conversations grow long, suggest starting fresh with context from the old thread.
+**What goes wrong:** The sidebar has 12 files totaling 1,587 lines. Adding workspace switching means adding a workspace switcher component, modifying the icon rail, updating panel content for workspace context, and potentially adding workspace-specific panels. Without careful refactoring, the sidebar becomes a 2,500+ line mess.
 
-**Detection:**
-- Latency increases proportionally to conversation length
-- Cost per message grows over time within a single conversation
-- "Context length exceeded" errors in production
-- Users complain "AI responses get slower over time"
+**Specific files at risk:**
+- `sidebar-icon-rail.tsx` -- needs workspace switcher in the icon rail
+- `sidebar-panel-teams.tsx` -- may become `sidebar-panel-workspaces.tsx`
+- `sidebar-panel-chats.tsx` -- needs to filter by active workspace
+- `sidebar-panel-sidekiqs.tsx` -- needs to show workspace's sidekiqs
 
-**Phase mapping:**
-- Phase 1 (Core Chat): Simple message limits (e.g., last 20 messages only)
-- Phase 2 (Production): Summarization, sliding window
-- Phase 3 (Advanced): Semantic importance ranking, vector-based memory
+**How to avoid:**
+- Refactor the sidebar AFTER vertical slice restructuring (so it's already better organized).
+- Keep the workspace switcher as an isolated component that emits a `workspaceId` change event.
+- Use React Context for the active workspace rather than prop-drilling through 12 sidebar components.
 
-**Sources:**
-- [Context Window Management: Strategies for Long-Context AI Agents and Chatbots](https://www.getmaxim.ai/articles/context-window-management-strategies-for-long-context-ai-agents-and-chatbots/)
-- [Best LLMs for Extended Context Windows in 2026](https://research.aimultiple.com/ai-context-window/)
+### Gotcha 4: Drizzle Relations Don't Auto-Update
 
----
+**What goes wrong:** The Drizzle ORM `relations()` definitions in `schema.ts` need updating for the new workspace model. The existing `teamRelations`, `sidekiqRelations`, and `threadRelations` reference `teams`. These must be updated to reference `workspace`. But Drizzle doesn't warn you if relations are stale -- queries using `.with()` silently return wrong data or empty arrays.
 
-### Pitfall 8: Inconsistent Multi-Provider Prompt Compatibility
+**Specific code:** Lines 330-372 of `src/server/db/schema.ts` define all relations. These must all be audited.
 
-**What goes wrong:**
-Prompts optimized for GPT-4 perform poorly on Claude or Gemini. System prompts that work beautifully in one model fail in another. Applications hard-code prompt formats, then adding a new provider requires rewriting prompts. Users complain "Model X gives terrible responses" when the real issue is prompt incompatibility.
-
-**Why it happens:**
-- Models interpret instructions differently (OpenAI likes explicit, Claude prefers context, Gemini needs structured formats)
-- Assuming prompts are model-agnostic
-- Not testing prompts across all supported providers
-- Hard-coding provider-specific quirks into application logic
-
-**Prevention:**
-
-1. **Provider-specific prompt templates:**
-```typescript
-const promptTemplates = {
-  openai: {
-    system: 'You are a helpful assistant. {instructions}',
-    format: 'explicit',
-  },
-  anthropic: {
-    system: '{instructions}\n\nProvide thoughtful, detailed responses.',
-    format: 'conversational',
-  },
-  google: {
-    system: 'Instructions: {instructions}\nOutput format: {format}',
-    format: 'structured',
-  },
-};
-
-function buildPrompt(provider: string, instructions: string) {
-  const template = promptTemplates[provider];
-  return template.system.replace('{instructions}', instructions);
-}
-```
-
-2. **Test prompts across providers during development:**
-Use tools like Latitude or prompt management platforms to compare outputs.
-
-3. **Standardize on common capabilities:**
-Avoid using provider-specific features (e.g., OpenAI's function calling syntax) directly. Use abstraction layers (LangChain, LiteLLM).
-
-4. **Allow per-provider tuning in custom assistants:**
-For "Sidekiqs," let power users specify provider-specific instructions if needed.
-
-**Detection:**
-- User feedback: "Model A is way better than Model B" (may be prompt issue, not model quality)
-- Inconsistent response quality across providers
-- High "regenerate" usage on specific providers
-- A/B testing shows provider performance differs more than benchmarks suggest
-
-**Phase mapping:**
-- Phase 1 (Core Chat): Single provider, no compatibility concerns
-- Phase 2 (Multi-provider): Provider-specific templates, testing across providers
-- Phase 3 (Custom Assistants): Per-provider tuning options
-
-**Sources:**
-- [Guide to Multi-Model Prompt Design Best Practices](https://latitude-blog.ghost.io/blog/guide-to-multi-model-prompt-design-best-practices/)
-- [Why 2026 Is the Year of Multi-Model Routing](https://medium.com/@MateCloud/why-2026-is-the-year-of-multi-model-routing-technical-challenges-and-system-design-2457dcdd2209)
+**How to avoid:**
+- Update relations in the same commit as the schema changes.
+- Write integration tests that query using `.with()` and verify the expected join results.
+- Review every `db.query.*.findMany({ with: { ... } })` call in the codebase.
 
 ---
 
-### Pitfall 9: Missing or Inadequate Abort/Cancellation Handling
+## Performance Traps
 
-**What goes wrong:**
-Users click "Stop generating" mid-response. The UI button disables and shows "Stopping..." but the backend continues processing for 30 more seconds, consuming tokens and API quota. The stream isn't properly closed, leading to memory leaks. Orphaned requests pile up, degrading server performance.
+### Trap 1: N+1 Queries from Workspace Membership Checks
 
-**Why it happens:**
-- AbortController API is added to UI but not wired to backend
-- Backend doesn't check for abort signals during processing
-- Lack of cleanup logic for cancelled streams
-- Assumption that "client disconnect = automatic cleanup" (not always true)
+**What goes wrong:** The new `workspaceProcedure` middleware runs a database query to verify membership on EVERY tRPC call. For a page that makes 5 tRPC calls (thread list, sidekiq list, workspace info, user profile, team members), that's 5 extra membership queries.
 
-**Prevention:**
+**How to avoid:**
+- Cache workspace membership in the tRPC context (created once per request in `createTRPCContext`).
+- If the session already contains workspace info, avoid a separate query.
+- Use `IN (SELECT workspace_id FROM workspace_member WHERE user_id = ?)` subqueries instead of separate membership lookups.
+- Consider adding `activeWorkspaceId` to the session token itself (if using Better Auth, check if custom session fields are supported).
 
-1. **Wire AbortController through the stack:**
-```typescript
-// Frontend
-const abortController = new AbortController();
+### Trap 2: Missing Indexes on workspaceId Columns
 
-function stopGeneration() {
-  abortController.abort();
-}
+**What goes wrong:** After adding `workspace_id` to `thread`, `sidekiq`, and `message` tables, every query now filters by `workspace_id`. Without indexes, these queries do sequential scans. With 10k+ threads across all workspaces, this causes noticeable latency.
 
-fetch('/api/chat', {
-  signal: abortController.signal,
-  // ...
-});
+**How to avoid:**
+- Add `index("thread_workspace_idx").on(t.workspaceId)` to every workspace-scoped table.
+- Add composite indexes for common query patterns: `index("thread_workspace_activity_idx").on(t.workspaceId, t.lastActivityAt)`.
+- The existing `thread_user_idx` on `userId` may become redundant if queries always filter by `workspaceId` first. Review and potentially drop.
 
-// Backend (Node.js example)
-app.post('/api/chat', async (req, res) => {
-  req.on('close', () => {
-    // Client disconnected, stop processing
-    abortController.abort();
-  });
+### Trap 3: Backfill Migration Locks Table for Duration
 
-  const stream = await llm.generateStream(prompt, {
-    signal: abortController.signal,
-  });
+**What goes wrong:** A single `UPDATE thread SET workspace_id = (subquery) WHERE workspace_id IS NULL` on a table with 100k+ rows acquires a lock for the entire duration. During this time, the app cannot write to the thread table. Users experience errors or timeouts.
 
-  // Stream with abort checks
-  for await (const chunk of stream) {
-    if (abortController.signal.aborted) {
-      stream.close();
-      break;
-    }
-    res.write(chunk);
-  }
-});
-```
-
-2. **Implement cleanup in onAbort:**
-```typescript
-useChat({
-  onAbort: async (message) => {
-    await consumeStream(message.streamId); // Ensure stream is fully consumed
-    cleanupResources(message.id);
-  }
-});
-```
-
-3. **Backend timeout policies:**
-Even if the client doesn't abort, implement server-side timeouts (e.g., 60s max per request).
-
-**Detection:**
-- Memory leaks correlating with "Stop generating" usage
-- High orphaned process count in server metrics
-- Users report "Stop doesn't work" or "still charged for stopped messages"
-- API provider shows higher request volume than app metrics indicate (orphaned requests)
-
-**Phase mapping:**
-- Phase 1 (Core Chat): Basic abort support
-- Phase 2 (Production Hardening): Comprehensive cleanup, server-side consumption
-
-**Sources:**
-- [Advanced: Stopping Streams - AI SDK](https://ai-sdk.dev/docs/advanced/stopping-streams)
-- [How to abort create chat completion streaming - OpenAI Community](https://community.openai.com/t/how-to-abort-create-chat-completion-streaming-i-use-nodejs-typescript/377319)
+**How to avoid:**
+- Batch the backfill: update 1000 rows at a time with a `LIMIT` and loop until done.
+- Run the backfill OUTSIDE the migration transaction (use `drizzle-kit generate --custom`).
+- Schedule the migration during a maintenance window if the table is large.
+- For Sidekiq's current scale (likely <100k rows), a single UPDATE is probably fine, but build the batch pattern anyway for good habits.
 
 ---
 
-### Pitfall 10: Multi-Tenant Data Isolation Failures
+## Security Mistakes
 
-**What goes wrong:**
-Custom assistants (Sidekiqs) created by Team A appear in Team B's assistant list. Shared conversation threads leak between tenants. Fine-tuned models trained on Tenant A's data are accessible to Tenant B. Authorization checks are added at the API layer but not in the database queries, allowing SQL injection or query manipulation to bypass them.
+### Mistake 1: Workspace ID in URL Without Server Verification
 
-**Why it happens:**
-- Insufficient tenant ID propagation through the stack
-- Trusting AI to maintain tenant boundaries (it won't)
-- Shared Azure OpenAI resources without deployment-level isolation
-- Missing row-level security (RLS) in database
-- Assumption that application-layer auth is sufficient
+**What goes wrong:** The frontend sends `workspaceId` as a query parameter or in the request body. The backend trusts it without checking membership. Attacker changes the workspace ID in the browser's network tab and accesses another workspace's data.
 
-**Prevention:**
+**How to avoid:** NEVER trust client-provided `workspaceId` without server-side membership verification. The `workspaceProcedure` middleware must verify on every request.
 
-1. **Tenant ID in every query:**
-```typescript
-// BAD: Global query
-const assistants = await db.assistant.findMany({
-  where: { isPublic: false }
-});
+### Mistake 2: Leaving Old userId-Only Routes Active
 
-// GOOD: Tenant-scoped query
-const assistants = await db.assistant.findMany({
-  where: {
-    OR: [
-      { teamId: user.teamId },
-      { isPublic: true }
-    ]
-  }
-});
-```
+**What goes wrong:** After adding workspace-scoped routes, the old routes that filter by `userId` only are not removed. An attacker discovers the old route still works and bypasses workspace isolation entirely.
 
-2. **Row-level security in PostgreSQL:**
-```sql
--- Enable RLS
-ALTER TABLE assistants ENABLE ROW LEVEL SECURITY;
+**How to avoid:** When migrating a route to workspace scoping, remove or deprecate the old version. Do not keep both active.
 
--- Policy: Users can only see their team's assistants
-CREATE POLICY tenant_isolation ON assistants
-  USING (team_id = current_setting('app.current_team_id')::uuid);
-```
+### Mistake 3: Workspace Enumeration via Invite System
 
-3. **Separate Azure OpenAI deployments per tenant for fine-tuned models:**
-Sharing a deployment doesn't provide security segmentation. Tenant A could access Tenant B's fine-tuned model.
+**What goes wrong:** The existing team invite system at `src/app/invite/[token]/` reveals team names and avatars to anyone with the invite URL. In a workspace model, this could leak workspace existence and membership information.
 
-4. **Make function calls tenant-aware:**
-```typescript
-// BAD: AI generates query, system executes blindly
-const query = aiGeneratedSQL;
-await db.execute(query); // Can access any tenant's data
-
-// GOOD: Validate tenant ID in AI-generated queries
-const query = aiGeneratedSQL;
-if (!query.includes(`team_id = '${user.teamId}'`)) {
-  throw new SecurityError('Query must be tenant-scoped');
-}
-await db.execute(query);
-```
-
-5. **Audit logging:**
-Log all cross-tenant access attempts (even blocked ones) for security review.
-
-**Detection:**
-- Security audit reveals cross-tenant data access
-- Users report seeing data they shouldn't have access to
-- Penetration testing reveals tenant boundary bypass
-- Logs show queries without tenant ID filters
-
-**Phase mapping:**
-- Phase 2 (Custom Assistants): Tenant isolation critical from first implementation
-- Phase 3 (Teams): Row-level security, audit logging, separate model deployments
-
-**Sources:**
-- [Multi-tenant Architecture | AI in Production Guide](https://azure.github.io/AI-in-Production-Guide/chapters/chapter_13_building_for_everyone_multitenant_architecture)
-- [Multitenancy and Azure OpenAI](https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/service/openai)
-- [Build a multi-tenant generative AI environment](https://aws.amazon.com/blogs/machine-learning/build-a-multi-tenant-generative-ai-environment-for-your-enterprise-on-aws/)
+**How to avoid:** Rate-limit invite token lookups. Only reveal workspace name after email verification matches.
 
 ---
 
-## Minor Pitfalls
+## UX Pitfalls
 
-Mistakes that cause annoyance or suboptimal UX but are quickly fixable.
+### UX Pitfall 1: Workspace Context Confusion ("Where Is My Stuff?")
 
-### Pitfall 11: Poor Loading State Communication
+**What goes wrong:** User creates a thread in their personal workspace, then switches to a team workspace and can't find it. They think the thread was deleted. They switch back to personal workspace and find it. Repeat frustration 10x. Users don't understand that content is scoped to workspaces.
 
-**What goes wrong:**
-Users see generic spinners or "Loading..." text for 10-60 seconds. They don't know if the AI is thinking, the request failed, or the app froze. Users refresh the page, cancelling their request. Support tickets: "Is the app broken?"
+**How to avoid:**
+- Show a clear workspace indicator in the header/sidebar at all times (e.g., "Personal" or team name + avatar).
+- When switching workspaces, show a brief transition indicator: "Switching to [Workspace Name]..."
+- If a user searches for content, search across ALL their workspaces and show which workspace each result belongs to.
+- On first use after migration, show an onboarding tooltip explaining workspace scoping.
 
-**Prevention:**
-- Use progressive loading states: "Sending request..." → "Thinking..." → "Generating response..." → "Streaming response..."
-- Show connection status indicators
-- For long operations, add informative hints: "Planning steps...", "Analyzing context...", "Generating response (this may take a minute)..."
-- Provide "Stop generating" button so users feel in control
+### UX Pitfall 2: Workspace Switching Loses Draft State
 
-**Sources:**
-- [AI Loading States Pattern | UX Patterns for Developers](https://uxpatterns.dev/patterns/ai-intelligence/ai-loading-states)
-- [UX for AI Chatbots: Complete Guide (2025)](https://www.parallelhq.com/blog/ux-ai-chatbots)
+**What goes wrong:** User is composing a message in Workspace A, then accidentally (or intentionally) switches to Workspace B. Their draft message is lost. The chat input had text, model selection, and possibly a Sidekiq selected -- all gone.
 
----
+**How to avoid:**
+- Persist draft state per workspace (e.g., in localStorage keyed by `workspace_id`).
+- Warn users before switching if there's an active draft: "You have an unsent message. Switch anyway?"
+- On switch back, restore the draft state.
 
-### Pitfall 12: No Partial Response Handling
+### UX Pitfall 3: Empty State Overload After Migration
 
-**What goes wrong:**
-AI response is truncated due to token limit (`finish_reason: "length"`) but the UI shows it as complete. Users don't know they're missing content. No "Continue" or "Regenerate with more tokens" option.
+**What goes wrong:** After migration, users open the app and see their personal workspace with all their existing threads. But when they click on a team workspace, it's empty (no threads yet). Every panel shows empty states. The app feels broken or like data was lost.
 
-**Prevention:**
-- Check `finish_reason` in API responses
-- When `finish_reason === "length"`, show "Response truncated. [Continue generating]" button
-- Implement automatic continuation for long responses
+**How to avoid:**
+- For team workspaces migrated from existing teams: migrate shared Sidekiqs into the workspace so it's not completely empty.
+- Show encouraging empty states: "This workspace is ready for your team's conversations. Start a new chat or share a Sidekiq."
+- Consider pre-populating with a welcome thread or onboarding Sidekiq.
 
-```typescript
-const response = await provider.generate(prompt);
+### UX Pitfall 4: Two-Tier Sidebar Becomes Three-Tier
 
-if (response.finish_reason === 'length') {
-  // Response was cut off
-  showContinueButton();
-}
-```
+**What goes wrong:** The current sidebar has an icon rail + content panels. Adding workspace switching could create: workspace switcher > icon rail > content panels. Three levels of navigation in a sidebar is cognitively overwhelming and physically cramped on smaller screens.
 
-**Sources:**
-- [How to continue the incomplete response of OpenAI API](https://www.educative.io/answers/how-to-continue-the-incomplete-response-of-openai-api)
-- [Azure Open AI Chat Completion — Data Truncate/Incomplete Response](https://medium.com/@arpit1345/azure-open-ai-chat-completion-data-truncate-incomplete-partial-response-due-to-output-max-token-04813de3e796)
+**How to avoid:**
+- Integrate the workspace switcher INTO the icon rail (e.g., top of icon rail shows current workspace avatar, clicking opens a switcher dropdown).
+- Do NOT add a third sidebar panel level.
+- Use a popover/dropdown for workspace switching, not a new panel.
+- Look at how Slack, Discord, and Linear handle workspace/team switching: they all use a compact switcher at the top, not a separate panel.
 
 ---
 
-### Pitfall 13: Inefficient Message Persistence Timing
+## "Looks Done But Isn't" Checklist
 
-**What goes wrong:**
-Every streaming chunk triggers a database write, causing 100-500 writes per message. Database gets hammered, latency increases, costs spike. Alternatively, messages are only persisted after completion, so browser refresh loses the entire conversation.
+These are things that appear complete but have hidden unfinished work:
 
-**Prevention:**
-- Persist message on stream start with status "streaming"
-- Update status to "complete" on finish (single write)
-- For very long messages, batch intermediate updates (every 5 seconds or 1000 characters)
-- Use optimistic local state with eventual consistency
-
-```typescript
-onStart: (messageId) => {
-  saveMessage({ id: messageId, content: '', status: 'streaming' });
-},
-onChunk: (chunk) => {
-  // Update local state only, no DB write
-  appendToLocalState(chunk);
-},
-onFinish: (message) => {
-  // Single DB write with full content
-  updateMessage(message.id, { content: message.content, status: 'complete' });
-}
-```
-
-**Sources:**
-- [Chatbot Message Persistence](https://ai-sdk.dev/docs/ai-sdk-ui/chatbot-message-persistence)
-- [Guidance on persisting messages - Vercel AI](https://github.com/vercel/ai/discussions/4845)
+- [ ] **Workspace middleware exists** -- but has it been applied to ALL workspace-scoped procedures? Check thread, sidekiq, team, and user routers.
+- [ ] **workspaceId column added** -- but is it NOT NULL? Is the backfill complete? Are there any rows with NULL workspace_id?
+- [ ] **Sidebar shows workspace context** -- but does the thread list filter by workspace? Does creating a new thread assign it to the active workspace?
+- [ ] **Chat route updated** -- but does thread creation set `workspaceId`? Does Sidekiq ownership check also verify workspace membership?
+- [ ] **Workspace switching works** -- but does it update the tRPC query cache? Or does switching show stale data from the previous workspace?
+- [ ] **Feature slices restructured** -- but does the tRPC AppRouter type still infer correctly? Does `tsc --noEmit` pass?
+- [ ] **Personal workspace auto-creates** -- but what about existing users who log in after the migration? Is the personal workspace created on-demand if missing?
+- [ ] **Team invites migrated** -- but do invite links still work? Does the accept flow create workspace membership?
+- [ ] **Tests pass** -- but do they test cross-workspace isolation? Or only single-workspace happy paths?
+- [ ] **Drizzle relations updated** -- but do `.with()` queries return correct workspace-scoped data?
 
 ---
 
-### Pitfall 14: No Message Editing/Regeneration UX
+## Recovery Strategies
 
-**What goes wrong:**
-Users can't edit their prompts after sending. Can't regenerate AI responses they dislike. Dead-end conversations require starting over. UX feels rigid compared to ChatGPT/Claude.
+### If Vertical Slice Restructuring Breaks Builds
 
-**Prevention:**
-- Add "Edit message" button to user messages
-- Add "Regenerate" button to AI messages
-- When editing, truncate conversation at that point and resend
-- Show edited message indicator for transparency
+**Symptoms:** TypeScript compilation fails, tRPC types break, imports unresolved.
+**Recovery:**
+1. Revert to the last working commit.
+2. Move ONE file at a time, running `tsc --noEmit` after each move.
+3. Use git's `--follow` flag to maintain file history during moves.
+4. Update `tsconfig.json` path aliases if needed.
 
-```typescript
-function editMessage(messageId: string, newContent: string) {
-  const messageIndex = messages.findIndex(m => m.id === messageId);
+### If Migration Corrupts Data
 
-  // Truncate conversation at edited message
-  const truncatedMessages = messages.slice(0, messageIndex + 1);
+**Symptoms:** Rows have wrong `workspaceId`, users see others' data, queries return empty results.
+**Recovery:**
+1. Keep the old `userId` / `ownerId` columns intact (do NOT drop them during migration).
+2. If `workspaceId` values are wrong, rebuild from `userId` → personal workspace mapping.
+3. Have a rollback migration ready that sets `workspaceId` back to NULL and removes the NOT NULL constraint.
+4. Test the migration on a snapshot of production data BEFORE running on production.
 
-  // Update message content
-  truncatedMessages[messageIndex].content = newContent;
+### If Workspace Switching UX Is Confusing
 
-  // Regenerate response
-  sendMessage(truncatedMessages);
-}
-```
-
-**Sources:**
-- [Editing a chat message | Cassidy AI](https://docs.cassidyai.com/en/articles/9171570-editing-a-chat-message)
-
----
-
-## Phase-Specific Warnings
-
-| Phase Topic | Likely Pitfall | Mitigation |
-|-------------|---------------|------------|
-| Phase 1: Core Chat | Streaming disconnection without recovery | Implement `onAbort` from day one; test on mobile networks |
-| Phase 1: Core Chat | Missing rollback in optimistic UI | Use React 19's `useOptimistic` or manual rollback logic |
-| Phase 2: Multi-Provider | Token counting inconsistencies | Provider-specific tokenizers; track actual vs. estimated |
-| Phase 2: Multi-Provider | Prompt incompatibility across models | Provider-specific templates; test all providers |
-| Phase 2: Custom Assistants | Prompt injection (unfixable) | Design for containment; output filtering > input detection |
-| Phase 3: Teams/Multi-Tenant | Data isolation failures | Row-level security; tenant ID in every query |
-| Phase 3: Teams/Multi-Tenant | Cost explosion without attribution | Per-team cost tracking; real-time alerts |
-| Ongoing: Production | Rate limit 429 errors | Multi-dimensional rate limiting (requests, tokens, cost) |
-| Ongoing: Production | Context window exhaustion | Conversation summarization; sliding window |
-| Ongoing: Security | New jailbreak techniques | Continuous adversarial testing; "assume breach" architecture |
+**Symptoms:** Users can't find their content, support tickets spike, "where did my threads go?"
+**Recovery:**
+1. Add a global search that searches across all workspaces.
+2. Add a "Recent across all workspaces" section to the sidebar.
+3. Show workspace badges on all content (subtle color or icon indicating which workspace owns it).
+4. Temporarily allow users to see a flat list of all their content regardless of workspace.
 
 ---
 
-## Validation Checklist
+## Pitfall-to-Phase Mapping
 
-Before moving to production, validate:
-
-- [ ] **Streaming reliability:** Tested streaming on poor network conditions (throttled connection, packet loss)
-- [ ] **Abort handling:** "Stop generating" button actually stops processing and cleans up resources
-- [ ] **Optimistic UI:** Network failures correctly rollback UI state and show errors
-- [ ] **Token tracking:** Actual provider-reported tokens match your estimates within 15%
-- [ ] **Cost monitoring:** Real-time alerts configured; daily spend tracked per user/team/model
-- [ ] **Prompt injection:** Output filtering implemented; privileged operations require human approval
-- [ ] **Multi-tenant isolation:** Penetration test confirmed tenant boundaries are enforced
-- [ ] **Context window:** Conversations exceeding 80% of context limit trigger summarization
-- [ ] **Rate limiting:** Token-based limits (not just request-based) implemented
-- [ ] **Partial responses:** `finish_reason === "length"` detected and handled
-
----
-
-## Research Methodology & Confidence
-
-**Sources used:**
-- 40+ articles from 2025-2026 (production systems, research papers, vendor documentation)
-- Official documentation (OpenAI, Anthropic, AWS, Microsoft, Vercel AI SDK)
-- Security research (OWASP, CyberArk, VentureBeat)
-- Post-mortems and practitioner blogs (Evil Martians, Simon Willison)
-
-**Confidence levels:**
-- **Streaming pitfalls:** HIGH (widespread documented failures in production)
-- **Token management:** HIGH (billing data and orchestration platform reports)
-- **Security (prompt injection):** HIGH (OWASP guidelines, OpenAI/NCSC acknowledgments)
-- **Multi-tenant:** MEDIUM-HIGH (Azure/AWS best practices, less public post-mortem data)
-- **UX patterns:** MEDIUM (evolving best practices, some sources are recent)
-
-**Known gaps:**
-- Limited public data on custom assistant (GPTs/Gems/Sidekiqs) specific failures
-- Stripe payment integration pitfalls not researched (out of scope for this doc)
-- Team-specific pitfalls assumed from multi-tenant patterns (may need validation)
+| Phase | Pitfall | Priority |
+|-------|---------|----------|
+| **Vertical Slice Restructuring** | Pitfall 3: Breaking tRPC type inference | CRITICAL |
+| **Vertical Slice Restructuring** | Pattern 2: Duplicated feature logic | MODERATE |
+| **Vertical Slice Restructuring** | Pattern 3: Circular imports | MODERATE |
+| **Workspace Schema Design** | Pitfall 4: Personal workspace identity crisis | CRITICAL |
+| **Workspace Schema Design** | Pitfall 2: Botched data migration | CRITICAL |
+| **Workspace Schema Design** | Trap 2: Missing indexes | HIGH |
+| **Workspace Schema Design** | Trap 3: Backfill locks | MODERATE |
+| **Workspace Authorization** | Pitfall 1: Missing workspaceId in queries | CRITICAL |
+| **Workspace Authorization** | Pitfall 5: Authorization model not updated | CRITICAL |
+| **Workspace Authorization** | Mistake 1: Unverified workspace ID | CRITICAL |
+| **Workspace Authorization** | Gotcha 2: Chat route not covered | HIGH |
+| **Workspace UX** | UX Pitfall 1: Context confusion | HIGH |
+| **Workspace UX** | UX Pitfall 2: Draft state lost | MODERATE |
+| **Workspace UX** | UX Pitfall 4: Three-tier sidebar | HIGH |
+| **Integration** | Gotcha 1: localStorage key migration | MODERATE |
+| **Integration** | Gotcha 3: Sidebar complexity | MODERATE |
+| **Integration** | Gotcha 4: Drizzle relations stale | HIGH |
+| **Post-Migration** | Trap 1: N+1 membership queries | MODERATE |
+| **Post-Migration** | Mistake 2: Old routes still active | HIGH |
 
 ---
 
-## Conclusion: The Containment Mindset
+## Sources
 
-The most important meta-lesson from 2026 AI chat research: **Perfect prevention is impossible. Design for graceful failure.**
+### Multi-Tenant Architecture
+- [Crunchy Data: Designing Postgres for Multi-Tenancy](https://www.crunchydata.com/blog/designing-your-postgres-database-for-multi-tenancy)
+- [Bytebase: Multi-Tenant Database Patterns Explained](https://www.bytebase.com/blog/multi-tenant-database-architecture-patterns-explained/)
+- [FlightControl: Ultimate Guide to Multi-Tenant SaaS Data Modeling](https://www.flightcontrol.dev/blog/ultimate-guide-to-multi-tenant-saas-data-modeling)
+- [Clerk: How to Design Multi-Tenant SaaS Architecture](https://clerk.com/blog/how-to-design-multitenant-saas-architecture)
+- [WorkOS: Developer's Guide to SaaS Multi-Tenant Architecture](https://workos.com/blog/developers-guide-saas-multi-tenant-architecture)
 
-- Streams will disconnect → Implement recovery, not just happy-path handling
-- Prompts will be injected → Limit damage, don't trust input filters alone
-- Costs will spike → Alert in real-time, not monthly
-- State will diverge → Rollback must be as robust as optimistic updates
-- Context will overflow → Summarize proactively, don't wait for errors
+### Drizzle ORM Migrations
+- [Drizzle ORM: Migrations](https://orm.drizzle.team/docs/migrations)
+- [Drizzle ORM: Custom Migrations](https://orm.drizzle.team/docs/kit-custom-migrations)
+- [Drizzle Issue #1865: Non-Idempotent ADD COLUMN](https://github.com/drizzle-team/drizzle-orm/issues/1865)
+- [Frontend Masters: Drizzle Database Migrations](https://frontendmasters.com/blog/drizzle-database-migrations/)
 
-Teams that succeed treat AI chat as a hostile, unreliable, expensive component that needs constant supervision—and design accordingly.
+### PostgreSQL Migration Safety
+- [Postgres: Adding Foreign Keys with Zero Downtime](https://travisofthenorth.com/blog/2017/2/2/postgres-adding-foreign-keys-with-zero-downtime)
+- [Thomas Skowron: Migrating Foreign Keys in PostgreSQL](https://thomas.skowron.eu/blog/migrating-foreign-keys-in-postgresql/)
+
+### Vertical Slice Architecture
+- [Milan Jovanovic: Vertical Slice Architecture](https://www.milanjovanovic.tech/blog/vertical-slice-architecture)
+- [Milan Jovanovic: Where Does Shared Logic Live?](https://www.milanjovanovic.tech/blog/vertical-slice-architecture-where-does-the-shared-logic-live)
+- [DEV: You're Slicing Your Architecture Wrong](https://dev.to/somedood/youre-slicing-your-architecture-wrong-4ob9)
+- [t3-oss Issue #958: Cal.com-Style Router Structure](https://github.com/t3-oss/create-t3-turbo/issues/958)
+
+### tRPC Authorization
+- [tRPC: Authorization](https://trpc.io/docs/server/authorization)
+- [tRPC: Middlewares](https://trpc.io/docs/server/middlewares)
+- [DepthFirst: CVE-2025-59305 AuthN vs AuthZ Case Study](https://depthfirst.com/post/how-an-authorization-flaw-reveals-a-common-security-blind-spot-cve-2025-59305-case-study)
+
+### UX Patterns
+- [UX Planet: Best Practices for Sidebar Design](https://uxplanet.org/best-ux-practices-for-designing-a-sidebar-9174ee0ecaa2)
+- [LinkedIn: 8 Essential Elements of Sidebar Design](https://www.linkedin.com/pulse/saas-ux-series-8-essential-elements-sidebar-design-srikanth-kalakonda)

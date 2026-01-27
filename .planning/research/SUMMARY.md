@@ -1,413 +1,300 @@
 # Project Research Summary
 
-**Project:** Sidekiq - Premium AI Chat Application
-**Domain:** Multi-provider AI chat with custom assistants and team collaboration
-**Researched:** 2026-01-22
+**Project:** Sidekiq v0.2 Workspaces
+**Domain:** Workspace model, multi-tenant isolation, vertical slice architecture for AI chat app
+**Researched:** 2026-01-27
 **Confidence:** HIGH
 
 ## Executive Summary
 
-Sidekiq is a premium AI chat application that combines model-agnostic LLM access (similar to T3.chat) with custom assistants called "Sidekiqs" (similar to ChatGPT's GPTs or Google's Gems) and team collaboration features. Research reveals that in 2026, the technology stack for such applications has converged around Vercel AI SDK 6.x for streaming, Server-Sent Events for transport, and a critical architectural split: streaming endpoints in Next.js Route Handlers and CRUD operations in tRPC. The existing foundation (Next.js 15, tRPC 11, PostgreSQL, Drizzle ORM, Better Auth) is already well-aligned with industry best practices.
+v0.2 represents a foundational architectural evolution for Sidekiq: migrating from a horizontal layer structure with loose content scoping to a unified workspace model with vertical feature slices. The research reveals a critical insight: **this refactor requires zero new npm dependencies**. Every feature (workspace isolation, vertical slices, Sidekiq sharing, message regeneration, expanded model list) can be implemented entirely with the existing Next.js 15 + tRPC 11 + Drizzle ORM + Vercel AI SDK stack. The work is primarily schema evolution, file reorganization, and authorization pattern changes.
 
-The competitive landscape shows that table stakes features are well-established (streaming responses, markdown rendering, conversation management, multi-provider support), while differentiation comes from execution quality, team collaboration, and model-switching flexibility. The product positioning as a cost-effective alternative ($8/month like T3.chat vs $20+ incumbents) with both multi-provider access AND custom assistants AND team features represents a unique value proposition.
+The recommended approach is to treat personal accounts as single-user workspaces rather than maintaining a parallel "personal vs team" system. This unified model—standard across ChatGPT, Claude, Slack, Notion, and Linear—eliminates special-casing, simplifies queries, and provides a natural upgrade path. The existing "team" infrastructure already captures most of what workspaces need: the migration is conceptually a rename (teams → workspaces) plus adding workspace scoping to threads and expanding sharing for Sidekiqs.
 
-Critical risks center on three areas: (1) streaming reliability with disconnection recovery, (2) token counting inconsistencies across providers leading to cost explosions, and (3) prompt injection vulnerabilities that are fundamentally unsolvable and require containment rather than prevention. The architectural decision to keep tRPC for CRUD operations while using Route Handlers for AI streaming is not a compromise—it's the industry standard pattern in 2026.
+The key risk is data isolation failures. Multi-tenant systems fail catastrophically when even one query lacks proper workspace scoping. With 30+ queries across 5 routers and a critical streaming chat route outside the tRPC middleware system, the attack surface is significant. The mitigation is surgical: create a `workspaceProcedure` middleware as the single source of truth for workspace validation, apply it universally to all workspace-scoped operations (including the chat route), and test cross-workspace isolation exhaustively. The vertical slice restructuring must happen first—while behavior is stable—before changing the data model.
 
 ## Key Findings
 
 ### Recommended Stack
 
-The 2025-2026 stack for AI chat applications centers on **Vercel AI SDK 6.x** as the industry standard (20+ million monthly downloads) with unified provider APIs, native React hooks, and production-ready state management. Research confirms the existing stack requires minimal additions: just `ai`, `@ai-sdk/openai`, and `@ai-sdk/anthropic` packages.
+**Summary:** v0.2 requires zero new npm dependencies. This is a strong validation signal that the v0.1 stack was well-chosen. The features are architecture and data model problems, not technology gaps.
 
-**Core technologies:**
-- **Vercel AI SDK 6.x** (`ai@6.0.48+`) — Unified streaming API, React hooks, message persistence patterns. Industry standard with native Next.js 15 integration
-- **Server-Sent Events (SSE)** — Streaming transport, not WebSockets. Purpose-built for server-to-client streaming, simpler infrastructure, Vercel AI SDK native support
-- **Next.js Route Handlers** — For AI streaming endpoints (not tRPC). Required because Vercel AI SDK's `useChat` hook expects standard fetch-compatible endpoints
-- **Vercel AI Gateway** (MVP) → **Portkey AI Gateway** (production) — Multi-provider routing. Start with Vercel's built-in gateway, migrate to Portkey when needing observability, guardrails, and compliance features
-- **PostgreSQL with prefix-based message schema** — Not JSONB for tool calls. Avoids data integrity issues, better type safety, easier indexing
-- **Redis (Phase 2+)** — Defer until 50-100+ concurrent users. Use for session caching, rate limiting, semantic caching for cost reduction
+**Core patterns to implement:**
 
-**Critical constraint discovered:** tRPC cannot be used with Vercel AI SDK's streaming hooks due to fundamental incompatibility. Community consensus (GitHub issues #3236, #6103) confirms this is expected behavior. The hybrid approach (Route Handlers for streaming, tRPC for CRUD) is standard practice.
+- **Drizzle ORM migrations**: Rename `team` → `workspace`, add `workspaceId` to threads/sidekiqs, create personal workspaces for existing users. Use expand-and-contract pattern (nullable → backfill → NOT NULL) to avoid data loss.
+- **tRPC middleware**: New `workspaceProcedure` that reads workspace ID from request headers, validates membership, injects verified `workspaceId` into context. This replaces raw `userId` scoping with workspace-level authorization.
+- **Vertical slice architecture**: Move from horizontal layers (`components/`, `hooks/`, `server/`) to feature-driven slices (`features/workspace/`, `features/chat/`, `features/sidekiq/`). The `app/` directory stays thin (routing only). Schema stays centralized (Drizzle requirement).
+- **AI SDK regeneration**: `useChat().regenerate()` already exists in AI SDK. No custom endpoint needed—button calls the function, SDK handles re-submission.
+- **Gateway model discovery**: `@ai-sdk/gateway` package (already at `^3.0.22`) provides `getAvailableModels()` for dynamic model list expansion. No hardcoded array needed.
 
-**Installation needed:** `pnpm add ai @ai-sdk/openai @ai-sdk/anthropic`
+**Critical constraint:** The `/api/chat` route handler is NOT a tRPC procedure, so it must independently perform workspace validation. This is the highest-risk integration point.
 
 ### Expected Features
 
-Research of ChatGPT, Claude, T3.chat, and Gemini (2025-2026 capabilities) reveals clear feature tiers.
+**Summary:** Workspace features follow a clear dependency order: foundation → isolation → switching → sharing. Message regeneration and expanded model list are independent and can run in parallel.
 
 **Must have (table stakes):**
-- Streaming responses with markdown rendering — Non-streaming feels broken in 2026
-- Code blocks with copy button and syntax highlighting — Developers are primary users
-- Conversation history with search — Both ChatGPT and Claude added full-text search in 2025
-- Model selection dropdown — Users expect control over which LLM they use
-- Message editing and regeneration — Dead-end conversations without this feel rigid
-- Authentication with OAuth — Social login is expected (Google, GitHub)
-- Dark mode — Universally expected, system preference detection required
 
-**Should have (competitive advantages):**
-- Multi-provider model switching — T3.chat's killer feature, 2x faster than ChatGPT
-- Custom assistants (Sidekiqs) with system prompts — Core differentiator vs T3.chat (which lacks this)
-- Team sharing of assistants — Enterprise/team positioning requires this
-- Shared conversation history within teams — ChatGPT and Claude both have "Projects" for this
-- Role-based permissions — "Can use" vs "Can edit" (Claude's pattern is clear and simple)
+- Personal workspace auto-created on signup (every user needs a workspace from day one)
+- Workspace switcher in sidebar (universal SaaS pattern: top-left, always visible)
+- Full content isolation per workspace (threads and sidekiqs scoped by `workspaceId`)
+- Instant context switch (no page reload, just data refetch)
+- Sidekiq sharing within workspace (core collaboration value)
+- Regenerate message button (table stakes for AI chat since 2023)
 
-**Defer to v2+ (avoid premature complexity):**
-- Knowledge base upload for assistants — Complex RAG pipeline (embeddings, vector search, chunking)
-- Tool/action configuration — Very high complexity, function calling, OAuth integrations
-- Assistant marketplace — Requires scale first, discovery layer, moderation
-- Group chats — ChatGPT just launched Nov 2025, requires complex real-time sync
-- Document upload (PDF, DOCX) — High complexity OCR, RAG pipeline
-- Voice input/output — High complexity, <200ms latency requirements
-- Web search integration — Complex API integration, citation management
-- Image generation — Only ChatGPT has this, high cost, niche for chat product
+**Should have (differentiators):**
 
-**Anti-features (deliberately avoid):**
-- Chat-only interface for structured tasks — Research shows 18 of 20 users prefer GUI for transactions
-- Infinite message limits — Leads to abuse, unsustainable costs (ChatGPT: 80/3hrs, Claude: 216/day limits)
-- Auto-title every conversation — Wastes tokens, often generates bad titles
-- Custom fine-tuned models (MVP) — Use system prompts and few-shot examples first
-- Agent orchestration initially — Complex, brittle, only 5% of pilots reach production
-- Native mobile apps (MVP) — Progressive Web App first, native later if traction
+- Workspace-scoped Sidekiq library in sidebar (unlike ChatGPT where GPTs are buried)
+- Seamless team-to-workspace migration (existing users get zero-downtime upgrade)
+- Expanded model list (150+ models via AI Gateway reinforces "model agnostic" positioning)
+
+**Defer (v0.3+):**
+
+- Cross-workspace Sidekiq sharing (breaks isolation model, Slack-scale re-architecture)
+- Workspace-level billing (premature, no payment system exists yet)
+- Workspace admin panel (large UX surface, reuse team settings for v0.2)
+- Nested workspaces (extreme complexity for no v0.2 benefit)
 
 ### Architecture Approach
 
-Modern AI chat systems follow a split-responsibility architecture where streaming happens in Route Handlers, client state is managed via Vercel AI SDK hooks, and database persistence occurs server-side after streaming completes. The Vercel AI SDK provides the de facto standard for React-based interfaces.
+**Summary:** Workspace isolation propagates via HTTP headers: client-side React Context sets `X-Workspace-Id` on every request, server-side tRPC middleware validates membership and injects workspace context. All queries filter by `workspaceId`. Personal workspaces are real database entities (not null states), eliminating special-case logic.
 
 **Major components:**
-1. **Chat UI (Client)** — Uses `useChat` hook from Vercel AI SDK, manages streaming state and optimistic updates, renders messages with markdown
-2. **Route Handler (/api/chat)** — Orchestrates AI streaming via `streamText()`, handles tool execution, persists messages after stream completion using `consumeStream()`, injects Sidekiq system prompts
-3. **tRPC Router** — Handles all non-streaming CRUD: threads (list, create, delete, archive, pin), messages (load history), Sidekiqs (create, update, share), teams (all operations)
-4. **Database (PostgreSQL + Drizzle)** — Persistent storage with adjacency list pattern for message tree (already supports branching via `parentMessageId` for v2), denormalized thread metadata for performance
-5. **LLM Provider (via Vercel AI Gateway)** — Multi-provider access (OpenAI, Anthropic, etc.) with unified interface, start with Vercel's built-in gateway, migrate to Portkey for production observability
 
-**Key patterns to follow:**
-- **Server-side ID generation** — Message IDs created on server, not client, for consistency
-- **Background stream consumption** — Use `consumeStream()` to ensure persistence even if client disconnects
-- **Optimistic updates with rollback** — Show messages instantly, roll back on error (React 19's `useOptimistic` automates this)
-- **Prefetch on server, hydrate on client** — Load messages via tRPC in Server Component, pass to `useChat` as `initialMessages`
-- **Sidekiq instruction injection** — Prepend system message at request time, never store in message history
+1. **WorkspaceProvider (Client)**: React Context managing active workspace state, persisting to localStorage, injecting `X-Workspace-Id` header on all tRPC and fetch requests. Auto-selects personal workspace if no valid workspace is stored.
+2. **workspaceProcedure (Server)**: tRPC middleware that reads workspace ID from headers, queries workspace membership, validates user is a member, injects `ctx.workspaceId` and `ctx.workspaceRole` for all downstream procedures.
+3. **Vertical Feature Slices**: `src/features/` directory containing self-contained modules (workspace, chat, sidekiq, auth, model-picker, sidebar). Each owns components, hooks, server logic, validations, and types. The `app/` directory becomes thin routing wrappers.
+4. **Database Migration**: Multi-step migration: (1) create workspaces and members tables, (2) add nullable `workspaceId` columns, (3) backfill personal workspaces and assign existing content, (4) add NOT NULL constraint, (5) add indexes. Custom SQL required (cannot rely on `drizzle-kit generate` alone).
+5. **Route Handler Integration**: `/api/chat/route.ts` must independently read `X-Workspace-Id`, validate membership (shared helper function), and scope all thread/message operations to the verified workspace.
 
-**Data flow (message sending):**
-1. User sends message → `useChat` adds optimistically
-2. POST /api/chat with message payload
-3. Route Handler loads Sidekiq instructions (if applicable), calls `streamText()`
-4. Stream chunks forwarded to client via ReadableStream
-5. `consumeStream()` persists both user + assistant messages after completion
-6. Update thread metadata (lastActivityAt, messageCount)
-7. Client receives completion, tRPC cache invalidates for sidebar update
-
-**Database schema notes:**
-- Adjacency list pattern (`parentMessageId`) already supports conversation branching for v2
-- Linear conversation for v1: always set `parentMessageId` (message N's parent is N-1)
-- Denormalized thread fields (`messageCount`, `lastActivityAt`, `isPinned`) for sidebar performance
-- Prefix-based message schema for tool calls (not JSONB) for type safety
+**Data flow:** User switches workspace → React state updates → localStorage persists → all TanStack Query caches invalidate → next tRPC request includes new header → middleware validates → queries refetch with new workspace scope → UI updates.
 
 ### Critical Pitfalls
 
-Research from production systems (2025-2026) reveals specific failure modes unique to AI chat applications.
+1. **Forgetting `workspaceId` in even one query (data leak)**: With 30+ queries across 5 routers plus 8+ operations in the chat route, missing even one workspace filter causes cross-tenant data leaks. **Prevention:** Create `workspaceProcedure` first, use it universally, add lint rule to verify workspace filtering on all queries, write cross-workspace isolation tests.
 
-1. **Streaming disconnection without recovery** — Connections drop mid-stream, users lose 20-80% of responses without knowing it. Prevention: Implement `onAbort` callback in `useChat`, use `consumeStream()` on server, show connection health indicators. Phase 1 must-have.
+2. **Botched data migration (NOT NULL on existing rows)**: Adding `workspaceId NOT NULL` fails on tables with existing data. Developer makes column nullable forever (losing guarantee) or causes production downtime. **Prevention:** Use expand-and-contract pattern: add nullable column, backfill personal workspaces, assign content, then add NOT NULL. Write custom migration SQL, test on production snapshot.
 
-2. **Token counting inconsistency across providers** — Using OpenAI's tiktoken for all providers causes 20-40% billing discrepancies. Claude, Gemini tokenize differently. Hidden reasoning tokens (GPT-o1) not counted. Prevention: Provider-specific tokenizers (`@anthropic-ai/tokenizer`, `@google/generative-ai/tokenizer`), track actual vs estimated. Phase 2 critical when adding multi-provider.
+3. **Breaking tRPC type inference during vertical slice move**: Moving router files from `server/api/routers/` to `features/*/server/router.ts` breaks TypeScript path resolution. The `AppRouter` type no longer infers correctly, frontend queries break. **Prevention:** Move one router at a time, verify types compile after each move, add CI type-check, do NOT use barrel files for routers.
 
-3. **Prompt injection is unfixable (design for containment)** — UK NCSC and OpenAI acknowledge prompt injection may never be fully mitigated. 20% of jailbreaks succeed in 42 seconds. Prevention is impossible—design for containment: assume breach architecture, output filtering over input detection, human-in-the-loop for privileged operations, limit AI privileges. Phase 2+ for custom assistants.
+4. **Personal workspace identity crisis**: Personal workspace behaves inconsistently with team workspaces (different UI, different permissions, null state handling everywhere). **Prevention:** Make personal workspace a real database entity with `type: 'personal'` column. Auto-create on signup, auto-select on login, restrict operations by type (not by null checks).
 
-4. **Optimistic UI without robust rollback** — Messages shown instantly but backend failures leave ghost messages in UI. User refreshes, their last 3 messages vanish. Prevention: Mandatory rollback logic (React 19's `useOptimistic` automates), persist messages with status ("streaming", "complete", "failed"), idempotency keys prevent duplicates. Phase 1 must-have.
-
-5. **Cost explosion without real-time monitoring** — AI spend jumps 5-10x overnight, discovered 28 days later on invoice. No attribution to user/model/feature. Prevention: Real-time cost tracking per request, predictive alerting (daily spend >3x moving average), multi-dimensional rate limiting (tokens/minute, cost/hour, cost/day), gateway layer for unified tracking. Phase 2-3 critical for production.
-
-**Additional moderate pitfalls:**
-- **Using WebSockets for unidirectional streaming** — Memory scales linearly with users (70 KiB per connection), SSE is simpler and cheaper
-- **Naive context window management** — Sending entire conversation history on every request, costs balloon, latency degrades
-- **Inconsistent multi-provider prompt compatibility** — Prompts optimized for GPT-4 perform poorly on Claude/Gemini
-- **Missing abort/cancellation handling** — "Stop generating" doesn't actually stop processing, orphaned requests pile up
-- **Multi-tenant data isolation failures** — Team A's assistants appear in Team B's list, SQL injection bypasses app-layer auth
+5. **Authorization model not updated for workspace ownership**: Queries add `workspaceId` filtering but keep old `userId` ownership checks, breaking shared workspace content. Or worse: trust client-provided `workspaceId` without server verification. **Prevention:** `workspaceProcedure` validates membership before injecting context. Replace `userId` filtering with `workspaceId` filtering. Never trust client workspace ID.
 
 ## Implications for Roadmap
 
-Based on research findings, the recommended phase structure follows dependency chains and risk mitigation patterns identified in architecture and pitfall analysis.
+Based on research, the migration has two independent dimensions: structural (vertical slices) and data model (workspace). These must be phased separately to reduce risk.
 
-### Phase 1: Core Chat Foundation (Weeks 1-3)
-**Rationale:** Can't build custom assistants without working chat. Streaming reliability must be solved before adding complexity. This phase establishes the foundational split between Route Handlers (streaming) and tRPC (CRUD) that all subsequent features depend on.
+### Phase 1: Vertical Slice Restructuring
 
-**Delivers:**
-- Working AI chat with streaming responses and markdown rendering
-- Conversation history (list, create, rename, delete)
-- Model selection (OpenAI and Anthropic providers)
-- Message editing and regeneration
-- Authentication via Better Auth (already exists)
-- Basic settings panel (theme, usage display)
-
-**Addresses features:**
-- All "table stakes" from FEATURES.md (streaming, markdown, history, model selection)
-- Optimistic UI with rollback (PITFALLS.md #4)
-- Streaming disconnection recovery (PITFALLS.md #1)
-
-**Avoids pitfalls:**
-- Phase 1 must implement `onAbort` handling from day one
-- Optimistic updates with rollback mandatory
-- Server-side message persistence using `consumeStream()`
-
-**Tech stack elements:**
-- Vercel AI SDK 6.x (`ai`, `@ai-sdk/openai`, `@ai-sdk/anthropic`)
-- Next.js Route Handler for /api/chat
-- Server-Sent Events for streaming
-- PostgreSQL + Drizzle for message persistence
-- tRPC for thread CRUD operations
-
-**Research flag:** Standard patterns, skip `/gsd:research-phase` (well-documented in Vercel AI SDK docs)
-
-### Phase 2: Custom Assistants - Sidekiqs (Weeks 4-6)
-**Rationale:** Core differentiator vs T3.chat, but requires working chat foundation first. Start simple (system prompts only) to deliver 80% of value with 20% of complexity. Knowledge base upload (RAG) deferred to v2 due to high complexity.
+**Rationale:** Get folder structure right first while behavior is stable. This is a low-risk, high-volume change (170+ files) that does not alter any runtime behavior. Every test should pass identically before and after.
 
 **Delivers:**
-- Create custom Sidekiq with name, description, system prompt
-- Model selection per Sidekiq (optimal model for each use case)
-- Personal Sidekiq library (list, search, edit, delete)
-- Chat with Sidekiq (system prompt injection)
-- Share Sidekiq via public URL
+- `src/features/` directory with self-contained modules (auth, chat, sidekiq, workspace, sidebar, model-picker)
+- `src/shared/` for cross-cutting utilities (replaces `lib/`)
+- Thin `app/` page files that import from features
+- Updated `root.ts` importing routers from feature directories
+- Barrel exports (`index.ts`) defining each feature's public API
 
-**Addresses features:**
-- Custom assistants from FEATURES.md (core differentiator)
-- Defers knowledge base upload and tool configuration (v2 features)
+**Addresses:**
+- Architecture pattern from ARCHITECTURE.md (vertical slices in Next.js App Router)
+- Foundation for workspace features (workspace becomes its own feature slice)
 
-**Implements architecture:**
-- Sidekiq instruction injection pattern (prepend system message at request time)
-- Thread ↔ Sidekiq association in database
-- Validation of Sidekiq access before injecting instructions
+**Avoids:**
+- Pitfall 3 (breaking tRPC type inference) by moving incrementally and verifying types after each move
+- Pattern 2 (duplicated feature logic) by creating `shared/` for genuinely cross-cutting code
+- Pattern 3 (circular imports) by keeping schema centralized and using shared types
 
-**Avoids pitfalls:**
-- Prompt injection containment (PITFALLS.md #3) — Output filtering, limit AI privileges
-- Don't store instructions in message history (causes issues when Sidekiq edited)
-- Provider-specific prompt templates for multi-provider compatibility
+**Research flag:** Standard patterns (Next.js + FSD guides). No additional research needed.
 
-**Tech stack elements:**
-- tRPC router for Sidekiq CRUD
-- PostgreSQL sidekiqs table (already exists in schema)
-- Route Handler modification for system prompt injection
+### Phase 2: Workspace Schema Migration
 
-**Research flag:** May need `/gsd:research-phase` for prompt injection mitigation strategies and output filtering patterns
-
-### Phase 3: Team Collaboration (Weeks 7-9)
-**Rationale:** Enterprise positioning requires team features. Shared assistants provide viral growth mechanism. Must come after Sidekiqs exist. Start simple (shared library) before complex features (group chats).
+**Rationale:** Schema must change before server logic can use workspace scoping. This is the highest-risk change—data must be migrated without loss, backfilled correctly, and validated exhaustively.
 
 **Delivers:**
-- Team creation and member management
-- Shared Sidekiq library (team members can access)
-- Shared conversation history (team can view)
-- Role-based permissions ("Can use" vs "Can edit")
-- Team-scoped billing and usage tracking
+- `workspace` and `workspace_member` tables (renamed from team tables)
+- `workspace_type` enum (`personal` | `team`)
+- Personal workspace auto-created for all existing users
+- `workspaceId` column added to threads and sidekiqs (NOT NULL with backfill)
+- Indexes on workspace-scoped queries
+- Drizzle relations updated for new schema
 
-**Addresses features:**
-- Team sharing from FEATURES.md (competitive advantage)
-- Defers group chats and shared projects with files (v2)
+**Addresses:**
+- Foundation for all workspace features from FEATURES.md
+- Database patterns from ARCHITECTURE.md (personal workspace as real entity)
+- Stack approach from STACK.md (expand-and-contract migration)
 
-**Implements architecture:**
-- Multi-tenant data isolation with tenant ID in every query
-- Row-level security in PostgreSQL (optional but recommended)
-- Team-scoped cost attribution
+**Avoids:**
+- Pitfall 2 (botched migration) by using multi-step nullable → backfill → NOT NULL pattern
+- Pitfall 4 (personal workspace crisis) by creating real workspace entities with type column
+- Trap 2 (missing indexes) by adding indexes in migration
+- Trap 3 (backfill locks) by batching updates if needed
 
-**Avoids pitfalls:**
-- Multi-tenant data isolation failures (PITFALLS.md #10) — Tenant ID mandatory in all queries
-- Cost explosion without attribution (PITFALLS.md #5) — Per-team cost tracking
-- Prompt injection in shared context — Team boundaries must be enforced
+**Research flag:** Needs validation during planning. Migration SQL is complex (7+ steps), requires testing on production data snapshot.
 
-**Tech stack elements:**
-- tRPC router for team operations
-- PostgreSQL teams table with member associations
-- Middleware for team context injection
+### Phase 3: Workspace Authorization & Context
 
-**Research flag:** Standard multi-tenant patterns, but may need `/gsd:research-phase` for team-specific rate limiting and cost allocation strategies
-
-### Phase 4: Multi-Provider Enhancement (Weeks 10-12)
-**Rationale:** Competitive differentiation (T3.chat positioning), but requires stable foundation. Token counting and cost tracking become critical with multiple providers.
+**Rationale:** With schema in place, implement the authorization middleware and update all queries. This touches every router and the critical chat route. Must be comprehensive—missing one query causes data leaks.
 
 **Delivers:**
-- Expanded provider support (Google Gemini, additional OpenAI models)
-- Provider-specific token counting
-- Actual vs estimated token tracking
-- Multi-dimensional rate limiting (requests, tokens, cost)
-- Real-time cost monitoring dashboard
+- `workspaceProcedure` tRPC middleware with membership validation
+- All thread queries scoped by `workspaceId` (replace `userId` filtering)
+- All sidekiq queries scoped by `workspaceId` (replace `ownerId` filtering)
+- `/api/chat/route.ts` updated with workspace validation and scoping
+- Personal workspace creation in auth signup flow
+- Shared `validateWorkspaceMembership()` helper for Route Handler
 
-**Addresses features:**
-- Multi-provider model switching from FEATURES.md (killer feature)
-- Cost transparency (usage tracking, limits display)
+**Addresses:**
+- Core workspace isolation from FEATURES.md
+- Authorization patterns from ARCHITECTURE.md (header-based propagation)
+- Security model from STACK.md (application-level isolation)
 
-**Avoids pitfalls:**
-- Token counting inconsistency (PITFALLS.md #2) — Provider-specific tokenizers mandatory
-- Cost explosion (PITFALLS.md #5) — Real-time tracking, predictive alerts
-- Context window management (PITFALLS.md #7) — Conversation summarization
+**Avoids:**
+- Pitfall 1 (data leak) by creating middleware first, applying universally, testing isolation
+- Pitfall 5 (authorization not updated) by replacing ownership checks with membership checks
+- Gotcha 2 (chat route forgotten) by explicitly including it in scope
+- Mistake 1 (unverified workspace ID) by validating membership in middleware
 
-**Tech stack elements:**
-- Additional AI SDK providers (`@ai-sdk/google`)
-- Provider-specific tokenizers
-- Redis for rate limiting (optional, can use PostgreSQL initially)
-- Portkey AI Gateway migration (when needing observability)
+**Research flag:** Needs review during planning. Authorization changes are security-critical. Every query must be audited.
 
-**Research flag:** Definitely needs `/gsd:research-phase` for provider-specific tokenization and cost modeling
+### Phase 4: Client-Side Workspace Context & Switching
 
-### Phase 5: Production Hardening (Weeks 13-15)
-**Rationale:** UX polish and reliability features that require all core functionality to exist first.
+**Rationale:** Server is ready, now wire up the client. This enables the workspace switching UX and connects frontend state to backend scoping.
 
 **Delivers:**
-- Conversation search (full-text across titles and content)
-- Thread organization (pin, archive, folders/tags)
-- Auto-title generation for conversations
-- Loading state improvements (progressive indicators, connection status)
-- Error recovery (retry logic, exponential backoff)
-- Comprehensive monitoring and alerting
+- WorkspaceProvider React Context with localStorage persistence
+- tRPC client configured to inject `X-Workspace-Id` header
+- Workspace switcher component in sidebar icon rail
+- `useWorkspace` hook (replaces `useActiveTeam`)
+- Query invalidation on workspace switch
+- Workspace-aware navigation (redirect to /chat on switch if needed)
 
-**Addresses features:**
-- Search chat history from FEATURES.md (table stakes added in 2025)
-- Pin/favorite, folder organization (reduces "find time" by 30%)
-- Advanced UX patterns (keyboard shortcuts, mobile optimization)
+**Addresses:**
+- Workspace switcher from FEATURES.md (table stakes)
+- Client-side patterns from ARCHITECTURE.md (header injection, React Context)
 
-**Avoids pitfalls:**
-- Poor loading state communication (PITFALLS.md #11)
-- Partial response handling (PITFALLS.md #12)
-- Inefficient message persistence timing (PITFALLS.md #13)
+**Avoids:**
+- UX Pitfall 1 (context confusion) by showing clear workspace indicator
+- UX Pitfall 4 (three-tier sidebar) by integrating switcher into icon rail
+- Gotcha 1 (localStorage migration) by handling old `activeTeamId` fallback
+- Trap 1 (N+1 queries) by caching membership in context
 
-**Research flag:** Standard patterns, skip `/gsd:research-phase`
+**Research flag:** Standard patterns (React Context, tRPC headers). No additional research needed.
+
+### Phase 5: Feature Integration & Polish
+
+**Rationale:** Core workspace model works. Now update all features to use workspace scoping and add feature-level enhancements (Sidekiq sharing, regeneration, model list).
+
+**Delivers:**
+- Sidekiq sharing within workspace (permission model: can use / can edit)
+- Sidebar panels filtered by active workspace
+- Settings pages updated (Teams → Workspaces)
+- Personal workspace UI constraints (hide invite, member limit = 1)
+- Message regeneration button (calls `useChat().regenerate()`)
+- Expanded model list (150+ models via AI Gateway)
+- Empty states for new workspaces
+
+**Addresses:**
+- Sidekiq sharing from FEATURES.md (core collaboration)
+- Regenerate message from FEATURES.md (table stakes)
+- Expanded model list from FEATURES.md (differentiator)
+- UI patterns from PITFALLS.md (empty states, workspace indicators)
+
+**Avoids:**
+- UX Pitfall 2 (draft state lost) by persisting drafts per workspace
+- UX Pitfall 3 (empty state overload) by showing encouraging messages
+- Gotcha 3 (sidebar explosion) by refactoring incrementally
+- Gotcha 4 (stale Drizzle relations) by updating relations alongside schema
+
+**Research flag:** Feature-level details may need validation (Sidekiq permission UX, model picker integration).
 
 ### Phase Ordering Rationale
 
-**Dependency chain:**
-- Phase 1 → Phase 2: Can't have custom assistants without working chat
-- Phase 2 → Phase 3: Can't share assistants that don't exist yet
-- Phase 3 → Phase 4: Multi-provider cost tracking needs team attribution
-- Phase 4 → Phase 5: Production hardening requires all features to exist
+1. **Vertical slices first (Phase 1)** because it's a pure file move with zero behavior changes. Establishes structure before touching data model. Reduces cognitive load during later phases.
 
-**Risk mitigation sequence:**
-- Phase 1 addresses streaming reliability (critical, can't be deferred)
-- Phase 2 introduces prompt injection risk (containment patterns required)
-- Phase 3 introduces multi-tenant isolation risk (tenant ID from day one)
-- Phase 4 addresses cost explosion risk (real-time monitoring)
+2. **Schema migration next (Phase 2)** because authorization and client features depend on the workspace schema existing. Cannot add workspace scoping to queries until `workspaceId` column exists.
 
-**Architecture pattern alignment:**
-- Early phases establish Route Handler + tRPC split (Phase 1)
-- Middle phases build on CRUD patterns (Phase 2-3)
-- Later phases add observability layer (Phase 4-5)
+3. **Authorization before client (Phase 3 → 4)** because the server must enforce isolation before the client can switch workspaces. Building client features first would create a false sense of completion without actual data protection.
 
-**Avoid premature complexity:**
-- No RAG pipeline until v2 (knowledge base upload deferred)
-- No tool calling until v2 (function calling complexity deferred)
-- No group chats until v2 (real-time sync complexity deferred)
-- Redis deferred until Phase 4+ (PostgreSQL sufficient for MVP)
+4. **Feature integration last (Phase 5)** because it depends on all prior phases. Sidekiq sharing needs workspace context. Regeneration needs workspace-scoped threads. Model picker needs stable workspace state.
+
+5. **Independent features (regeneration, model list) can run in parallel** during Phase 5 because they have no workspace dependencies. Regeneration is purely client-side (`useChat` hook). Model list is configuration-only.
 
 ### Research Flags
 
-**Phases needing `/gsd:research-phase` during planning:**
-- **Phase 2 (Custom Assistants):** Prompt injection mitigation, output filtering patterns, provider-specific prompt templates
-- **Phase 3 (Teams):** Team-specific rate limiting strategies, cost allocation patterns for multi-tenant
-- **Phase 4 (Multi-Provider):** Provider-specific tokenization libraries, cost modeling across providers, semantic caching patterns
+**Phases needing deeper research during planning:**
 
-**Phases with standard patterns (skip research):**
-- **Phase 1 (Core Chat):** Vercel AI SDK is extensively documented with examples
-- **Phase 5 (Production Hardening):** Standard UX patterns, well-documented
+- **Phase 2 (Schema Migration):** Custom SQL migration with backfill is complex. Needs validation with production data snapshot. Edge cases: users with no threads, deleted teams, orphaned sidekiqs.
+- **Phase 3 (Authorization):** Every query must be audited for workspace filtering. Consider automated testing or lint rules. Chat route integration is non-standard (not tRPC).
+- **Phase 5 (Feature Integration):** Sidekiq permission model UX needs design validation. Which actions require "can edit" vs "can use"? How to display permission state in UI?
 
-**When to trigger research during implementation:**
-- Encountering provider-specific API quirks not documented
-- Implementing advanced cost tracking (time-series database options)
-- Migrating to Portkey AI Gateway (integration patterns)
-- Adding Redis caching layer (semantic caching strategies)
+**Phases with standard patterns (skip research-phase):**
+
+- **Phase 1 (Vertical Slices):** Well-documented Next.js + FSD pattern. Mechanical file moves.
+- **Phase 4 (Client Context):** Standard React Context + tRPC header injection pattern. Many examples in tRPC docs and Discord.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | Vercel AI SDK is industry standard, 20M+ downloads/month, official docs verified, community consensus on Route Handler + tRPC split |
-| Features | HIGH | Competitive analysis based on current ChatGPT, Claude, T3.chat, Gemini capabilities (2025-2026), table stakes well-established |
-| Architecture | HIGH | Split-responsibility pattern verified across multiple 2026 sources, Vercel Labs examples, production systems |
-| Pitfalls | HIGH | Based on 40+ production post-mortems, OWASP guidelines, official security advisories from OpenAI/UK NCSC |
+| Stack | HIGH | All features implementable with existing dependencies. Patterns verified against official docs (Drizzle, tRPC, AI SDK). No version bumps needed. |
+| Features | HIGH | Verified against ChatGPT, Claude, Slack, Notion, Linear workspace implementations. Table stakes vs differentiators clearly defined. Dependency tree validated. |
+| Architecture | HIGH | Patterns adapted from real-world Next.js + tRPC apps. Header-based workspace propagation is standard multi-tenant pattern. Personal workspace as real entity is industry consensus. |
+| Pitfalls | HIGH | Based on direct codebase analysis (30+ queries identified, 170+ files counted). Multi-tenant failure modes well-documented in sources. Migration risks validated against Drizzle community issues. |
 
 **Overall confidence:** HIGH
 
-All recommendations verified with official documentation (Vercel AI SDK, Next.js 15, provider docs) and 2025-2026 sources. Stack decisions are based on current ecosystem state, not speculation.
-
 ### Gaps to Address
 
-**Technology:**
-- **Redis caching patterns** — Research shows semantic caching can reduce costs 90%, but implementation patterns need deeper research when implementing Phase 4+
-- **Portkey AI Gateway migration** — Migration path from Vercel AI Gateway to Portkey needs hands-on testing, not just documentation review
-- **Provider-specific tokenizers** — Each provider (Anthropic, Google) has different tokenization libraries with different APIs, need integration testing
+**Migration edge cases:** The backfill logic for assigning existing content to workspaces assumes all users have threads/sidekiqs. Edge cases need handling: users with no content, deleted teams with orphaned sidekiqs, invalid foreign keys. Solution: Test migration on production snapshot, handle null cases in backfill SQL.
 
-**Features:**
-- **Custom assistant discovery** — Research focused on creation/sharing, not marketplace/discovery patterns. If building assistant marketplace in v2, needs separate research
-- **Group chats** — ChatGPT just launched Nov 2025, limited production experience data. If adding in v2, needs real-time sync architecture research
-- **Voice I/O** — Research mentions <200ms latency requirements, but implementation patterns for WebRTC + AI SDK integration need separate research
+**Chat route workspace validation:** The `/api/chat/route.ts` performs 8+ database operations outside tRPC. Each needs workspace scoping. Gap: Need to audit every DB call in the route and extract shared validation logic. Solution: Create `validateWorkspaceContext()` helper used by both tRPC middleware and chat route.
 
-**Security:**
-- **Output filtering specifics** — Research confirms output filtering > input detection, but specific filtering rules for Sidekiq responses need testing
-- **Tool calling security** — If adding function calling in v2, needs separate security research for API permission boundaries
-- **Team-level RBAC** — Basic "Can use" vs "Can edit" is clear, but granular permissions (admin, member, viewer) need policy modeling
+**Performance at scale:** Research assumes <1000 users, <100 workspaces. If scale is higher, the N+1 workspace membership queries and backfill table locks become real issues. Solution: Profile during Phase 3, add caching/batching if needed.
 
-**Business/Operations:**
-- **Stripe payment integration** — Out of scope for this research, needs separate payment flow research
-- **Cost modeling for pricing tiers** — Research provides token costs, but mapping to user tiers ($8/month positioning) needs financial modeling
-- **SLA/reliability targets** — No research on uptime targets, error budgets, or incident response patterns
+**Vertical slice boundaries:** Some components are genuinely shared (date grouping, avatar rendering, model selection) but their boundaries are fuzzy. Solution: Use the "3+ slices need it → shared" rule. Can refactor later if boundaries clarify.
 
-**How to handle during planning:**
-- For technology gaps: Trigger `/gsd:research-phase` when reaching that phase
-- For security gaps: Include security review sprint before production launch
-- For business gaps: Separate business/pricing research outside technical planning
+**localStorage migration:** Users with old `sidekiq-active-team-id` key need seamless upgrade. Gap: Need to map old team IDs to new workspace IDs. Solution: Migration code reads old key, looks up corresponding workspace, updates to new key. Fallback to personal workspace if mapping fails.
 
 ## Sources
 
 ### Primary (HIGH confidence)
 
-**Official Documentation:**
-- [Vercel AI SDK Introduction](https://ai-sdk.dev/docs/introduction)
-- [AI SDK GitHub Releases](https://github.com/vercel/ai/releases)
-- [Vercel AI SDK Persistence DB](https://github.com/vercel-labs/ai-sdk-persistence-db)
-- [Next.js App Router Guide](https://ai-sdk.dev/docs/getting-started/nextjs-app-router)
-- [Portkey AI Gateway Documentation](https://portkey.ai/features/ai-gateway)
-- [Portkey Vercel AI SDK Provider](https://ai-sdk.dev/providers/community-providers/portkey)
+**Stack Research:**
+- [Drizzle ORM Migrations](https://orm.drizzle.team/docs/migrations) — schema evolution, rename detection
+- [tRPC Middlewares](https://trpc.io/docs/server/middlewares) — context extension, authorization patterns
+- [AI SDK useChat Reference](https://ai-sdk.dev/docs/reference/ai-sdk-ui/use-chat) — regenerate() function
+- [Vercel AI Gateway Models](https://vercel.com/docs/ai-gateway/models-and-providers) — getAvailableModels() API
+- [Next.js Project Structure](https://nextjs.org/docs/app/getting-started/project-structure) — App Router routing
 
-**Platform Capabilities:**
-- [Zapier: Claude vs. ChatGPT (2025)](https://zapier.com/blog/claude-vs-chatgpt/)
-- [OpenAI: Introducing GPTs](https://openai.com/index/introducing-gpts/)
-- [OpenAI: Group Chats in ChatGPT](https://openai.com/index/group-chats-in-chatgpt/)
-- [Anthropic: Collaborate with Claude on Projects](https://www.anthropic.com/news/projects)
+**Features Research:**
+- [ChatGPT Enterprise Workspace Management](https://help.openai.com/en/articles/8265430-what-is-a-chatgpt-enterprise-workspace-how-can-i-switch-workspaces) — workspace switching, content isolation
+- [Claude Project Visibility](https://support.claude.com/en/articles/9519189-project-visibility-and-sharing) — permission models
+- [Slack Unified Grid Architecture](https://slack.engineering/unified-grid-how-we-re-architected-slack-for-our-largest-customers/) — cross-workspace lessons
 
-**Security Research:**
-- [OWASP LLM01:2025 Prompt Injection](https://genai.owasp.org/llmrisk/llm01-prompt-injection/)
-- [LLM Security Risks in 2026](https://sombrainc.com/blog/llm-security-risks-2026)
-- [The 11 runtime attacks breaking AI security](https://venturebeat.com/security/ciso-inference-security-platforms-11-runtime-attacks-2026)
+**Architecture Research:**
+- [Feature-Sliced Design with Next.js](https://feature-sliced.design/docs/guides/tech/with-nextjs) — App Router integration
+- [AWS PostgreSQL Data Access Patterns for SaaS](https://aws.amazon.com/blogs/database/choose-the-right-postgresql-data-access-pattern-for-your-saas-application/) — pool model multi-tenancy
+- [tRPC Multi-Tenant Context](https://discord-questions.trpc.io/m/1191810200659837038) — workspace slug in context
+
+**Pitfalls Research:**
+- [FlightControl Multi-Tenant SaaS Data Modeling](https://www.flightcontrol.dev/blog/ultimate-guide-to-multi-tenant-saas-data-modeling) — common isolation failures
+- [Drizzle ORM Custom Migrations](https://orm.drizzle.team/docs/kit-custom-migrations) — expand-and-contract pattern
+- [Postgres Adding Foreign Keys with Zero Downtime](https://travisofthenorth.com/blog/2017/2/2/postgres-adding-foreign-keys-with-zero-downtime) — NOT VALID constraint pattern
 
 ### Secondary (MEDIUM confidence)
 
-**Technical Implementation:**
-- [Streaming in Next.js 15: WebSockets vs Server-Sent Events | HackerNoon](https://hackernoon.com/streaming-in-nextjs-15-websockets-vs-server-sent-events)
-- [Go with SSE for Your AI Chat App • sniki.dev](https://www.sniki.dev/posts/sse-vs-websockets-for-ai-chat/)
-- [Next.js Backend for Conversational AI in 2026](https://www.sashido.io/en/blog/nextjs-backend-conversational-ai-2026)
+- [WorkOS Multi-Tenant Architecture Guide](https://workos.com/blog/developers-guide-saas-multi-tenant-architecture) — architectural patterns
+- [Feature Driven Architecture in Next.js](https://medium.com/@JMauclair/feature-driven-architecture-fda-a-scalable-way-to-structure-your-next-js-applications-b8c1703a29c0) — vertical slice examples
+- [Milan Jovanovic: Where Does Shared Logic Live?](https://www.milanjovanovic.tech/blog/vertical-slice-architecture-where-does-the-shared-logic-live) — feature boundaries
 
-**Cost & Token Management:**
-- [AI Cost Crisis: AI Cost Sprawl Is Crashing Your Innovation](https://www.cloudzero.com/blog/ai-cost-crisis/)
-- [Tracking LLM token usage across providers](https://portkey.ai/blog/tracking-llm-token-usage-across-providers-teams-and-workloads/)
-- [Understanding LLM Billing: From Characters to Tokens](https://www.edenai.co/post/understanding-llm-billing-from-characters-to-tokens)
+### Tertiary (LOW confidence, needs validation)
 
-**Pitfall Research:**
-- [AnyCable, Rails, and the pitfalls of LLM-streaming](https://evilmartians.com/chronicles/anycable-rails-and-the-pitfalls-of-llm-streaming)
-- [Serverless strategies for streaming LLM responses](https://aws.amazon.com/blogs/compute/serverless-strategies-for-streaming-llm-responses/)
-- [React 19 useOptimistic Deep Dive](https://dev.to/a1guy/react-19-useoptimistic-deep-dive-building-instant-resilient-and-user-friendly-uis-49fp)
-
-**Multi-Tenant Patterns:**
-- [Multi-tenant Architecture | AI in Production Guide](https://azure.github.io/AI-in-Production-Guide/chapters/chapter_13_building_for_everyone_multitenant_architecture)
-- [Multitenancy and Azure OpenAI](https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/service/openai)
-
-### Tertiary (Community patterns, needs validation)
-
-**Integration Challenges:**
-- [Vercel AI SDK + tRPC Integration Discussion](https://github.com/vercel/ai/discussions/3236)
-- [tRPC Streaming Issue](https://github.com/trpc/trpc/issues/6103)
-
-**UX Best Practices:**
-- [Parallel: UX for AI Chatbots (2025)](https://www.parallelhq.com/blog/ux-ai-chatbots)
-- [IntuitionLabs: Conversational AI UI Comparison 2025](https://intuitionlabs.ai/articles/conversational-ai-ui-comparison-2025)
+- [Drizzle Issue #3826: Rename + Other Changes](https://github.com/drizzle-team/drizzle-orm/issues/3826) — potential migration edge case
+- [UX Planet: Sidebar Design Best Practices](https://uxplanet.org/best-ux-practices-for-designing-a-sidebar-9174ee0ecaa2) — workspace switcher placement
 
 ---
 
-**Research completed:** 2026-01-22
-**Ready for roadmap:** Yes
+*Research completed: 2026-01-27*
 
-**Next step:** Use this summary as context for roadmap creation. Phase structure recommendations directly inform milestone definition.
+*Ready for roadmap: yes*

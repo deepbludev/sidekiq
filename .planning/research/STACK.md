@@ -1,618 +1,522 @@
-# Technology Stack for AI Chat Integration
+# Stack Research: v0.2 Workspace Model & Multi-Tenant Isolation
 
-**Project:** Sidekiq - AI Chat Application
-**Researched:** 2026-01-22
-**Focus:** Adding AI chat capabilities to existing Next.js foundation
+**Domain:** Workspace model, multi-tenant isolation, vertical slice architecture, message regeneration for AI chat app
+**Researched:** 2026-01-27
+**Confidence:** HIGH
+**Scope:** NEW capabilities only -- existing stack (Next.js 15, tRPC 11, Drizzle ORM 0.41, Better Auth, Vercel AI SDK 6, Tailwind v4, Radix UI) is validated and NOT re-researched.
+
+---
 
 ## Executive Summary
 
-The 2025 stack for adding AI chat to Next.js applications centers on **Vercel AI SDK 6.x** with **Server-Sent Events (SSE)** for streaming. Vercel's AI Gateway provides unified multi-provider access, but for enterprise features like guardrails and advanced observability, **Portkey AI Gateway** is the superior choice. The existing stack (Next.js 15, tRPC 11, Drizzle, Better Auth) is solid, but **tRPC cannot be used for streaming chat endpoints** due to fundamental incompatibility with the AI SDK's hooks.
+v0.2 requires **zero new npm dependencies**. Every feature (workspace isolation, vertical slice refactor, Sidekiq sharing, message regeneration, expanded model list) can be built entirely with the existing stack. The work is primarily:
 
-**Confidence:** HIGH (verified with official docs and current releases)
+1. **Schema evolution** via Drizzle migrations (teams -> workspaces, add `workspaceId` to threads/sidekiqs)
+2. **tRPC middleware** for workspace context injection and tenant isolation
+3. **File reorganization** to vertical slices (no library changes)
+4. **AI SDK `regenerate()`** function already exists in `useChat` hook
+5. **Gateway `getAvailableModels()`** API for dynamic model discovery
 
----
-
-## Core AI Stack
-
-### AI SDK (Required)
-
-| Package | Version | Purpose | Installation |
-|---------|---------|---------|--------------|
-| `ai` | `^6.0.48` | Core SDK for streaming text/objects, agents, and UI hooks | `pnpm add ai` |
-| `@ai-sdk/openai` | `^3.0.x` | OpenAI provider (GPT-4, GPT-4o, etc.) | `pnpm add @ai-sdk/openai` |
-| `@ai-sdk/anthropic` | `^3.0.13` | Anthropic provider (Claude models) | `pnpm add @ai-sdk/anthropic` |
-
-**Why Vercel AI SDK:**
-- **Industry standard** with 20+ million monthly downloads
-- **Unified API** across all LLM providers (OpenAI, Anthropic, Google, etc.)
-- **Native SSE streaming** with React hooks (`useChat`, `useCompletion`)
-- **Built-in message management** with UIMessage type for persistence
-- **Agent abstractions** in v6 for reusable AI agents (future Sidekiqs enhancement)
-- **Excellent Next.js 15 integration** with App Router and React Server Components
-- **Production-ready** error handling, retries, and state management
-
-**AI SDK 6 Features (Latest):**
-- Agent abstraction with `ToolLoopAgent` class
-- Tool approval systems (human-in-the-loop)
-- v3 Language Model Specification
-- Migration from v5 is straightforward: `npx @ai-sdk/codemod v6`
-
-**Confidence:** HIGH (verified with GitHub releases, official docs)
+This is a strong signal: the v0.1 stack was well-chosen. The v0.2 features are architecture and data model problems, not technology gaps.
 
 ---
 
-## AI Gateway (Multi-Provider Management)
+## Recommended Stack Changes
 
-### Option 1: Vercel AI Gateway (Recommended for Simplicity)
+### Summary: No New Dependencies Required
 
-**When to use:**
-- Already deploying on Vercel
-- Need simple multi-provider routing
-- Want built-in failover and load balancing
-- Prefer minimal setup
-
-**Pros:**
-- Free tier with reasonable limits (25MB request size, 1-month cache TTL)
-- Integrated with Vercel platform (logs, metrics)
-- Zero additional infrastructure
-- Model switching via string IDs: `'anthropic/claude-opus-4.5'` or `'openai/gpt-4o'`
-- Automatic failover between providers
-- BYOK (bring your own key) with no token markup
-
-**Cons:**
-- Limited guardrails and compliance features
-- Basic observability compared to enterprise solutions
-- Tied to Vercel ecosystem
-
-**Configuration:**
-```typescript
-import { generateText } from 'ai';
-
-const result = await generateText({
-  model: 'anthropic/claude-opus-4.5', // Uses Vercel AI Gateway by default
-  prompt: 'Hello!',
-});
-```
-
-**Confidence:** MEDIUM (verified via official blog posts and docs, but Gateway announced May 2025 - recent feature)
-
-### Option 2: Portkey AI Gateway (Recommended for Production/Enterprise)
-
-**When to use:**
-- Need advanced observability and analytics
-- Require compliance (SOC2, HIPAA, GDPR, CCPA)
-- Want enterprise guardrails (PII redaction, jailbreak detection)
-- Need semantic caching (vs simple caching)
-- Planning to scale with governance features
-
-**Pros:**
-- **Open-source** (MIT license) and self-hostable
-- Routes to **250+ LLMs** with 50+ AI guardrails
-- **Blazing fast** with integrated guardrails
-- **Full observability**: detailed logs, latency metrics, token/cost analytics
-- **Native Vercel AI SDK integration** (official provider)
-- **Enterprise features**: role-based access control, policy enforcement
-- **Semantic caching** (vs simple response caching)
-- **Reliability**: automatic retries, fallback routing, load balancing
-
-**Cons:**
-- Additional infrastructure (self-hosted or Portkey Cloud)
-- Free tier limited (10k logs, 90-day max cache age)
-- Paid plans start at $49/month for premium features
-
-**Integration:**
-```typescript
-import { createPortkey } from '@portkey-ai/vercel-provider';
-
-const portkey = createPortkey({
-  apiKey: process.env.PORTKEY_API_KEY,
-});
-
-const result = await generateText({
-  model: portkey('anthropic/claude-opus-4.5'),
-  prompt: 'Hello!',
-});
-```
-
-**Official AI SDK Provider:** [ai-sdk.dev/providers/community-providers/portkey](https://ai-sdk.dev/providers/community-providers/portkey)
-
-**Confidence:** HIGH (verified with official Portkey docs, GitHub repo, and AI SDK provider listing)
-
-### Recommendation
-
-**Start with Vercel AI Gateway** for MVP. Provider-specific packages (`@ai-sdk/openai`, `@ai-sdk/anthropic`) give you flexibility to switch to Portkey later without code changes to your chat logic.
-
-**Migrate to Portkey** when you need:
-- Advanced observability and cost tracking
-- Compliance certifications
-- Guardrails (PII redaction, content filtering)
-- Multi-tenant governance
+| Feature | Requires New Dependency? | Implementation Approach |
+|---------|--------------------------|------------------------|
+| Vertical slice architecture | No | File reorganization only |
+| Teams -> Workspaces migration | No | Drizzle schema changes + migrations |
+| Workspace isolation in tRPC | No | tRPC middleware context extension |
+| Sidebar workspace switcher | No | React state + existing Radix UI components |
+| Sidekiq sharing within workspaces | No | Schema changes (add `workspaceId` to sidekiqs) |
+| Regenerate message button | No | `useChat().regenerate()` already in AI SDK |
+| Expanded AI model list | No | `gateway.getAvailableModels()` already in `@ai-sdk/gateway` |
 
 ---
 
-## Streaming Architecture
+## Detailed Technical Patterns
 
-### SSE (Server-Sent Events) - RECOMMENDED
+### 1. Drizzle Schema Migrations (Teams -> Workspaces)
 
-**Why SSE over WebSockets:**
-- **Purpose-built for AI streaming**: 80% of real-time use cases are server-to-client
-- **Simpler infrastructure**: Standard HTTP, no protocol upgrade required
-- **Vercel AI SDK native support**: `useChat` hook returns streaming responses
-- **Firewall-friendly**: Runs over HTTP/HTTPS
-- **Automatic reconnection**: Built into EventSource API
-- **Easier to scale**: Stateless, works with standard HTTP load balancers
-- **Next.js 15 integration**: ReadableStream API in Route Handlers
+**Approach:** Rename `team` table to `workspace` and evolve the data model. Use `drizzle-kit generate` which will prompt for renames vs. drops.
 
-**When to use WebSockets instead:**
-- Bidirectional communication required (collaborative editing, multiplayer games)
-- Client needs to send frequent updates to server during streaming
+**What changes in schema.ts:**
 
-**Confidence:** HIGH (verified with multiple sources including HackerNoon, Ricky Spears, and sniki.dev)
+```
+Current tables:         v0.2 tables:
+  team            ->      workspace (rename)
+  team_member     ->      workspace_member (rename)
+  team_invite     ->      workspace_invite (rename)
+  team_role enum  ->      workspace_role enum (rename)
 
-### Implementation Pattern
-
-```typescript
-// app/api/chat/route.ts
-import { streamText } from 'ai';
-import { openai } from '@ai-sdk/openai';
-
-export async function POST(req: Request) {
-  const { messages } = await req.json();
-
-  const result = streamText({
-    model: openai('gpt-4o'),
-    messages,
-  });
-
-  return result.toDataStreamResponse();
-}
+New columns:
+  workspace.type: 'personal' | 'team' (discriminator)
+  workspace.isPersonal: boolean (derived, for queries)
+  threads.workspaceId: text (FK to workspace, nullable initially)
+  sidekiqs.workspaceId: text (replaces existing teamId FK)
 ```
 
-```typescript
-// Client component
-'use client';
-import { useChat } from 'ai/react';
+**Migration strategy:**
 
-export function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
-    api: '/api/chat',
-  });
+Drizzle Kit supports table/column renames interactively during `drizzle-kit generate`. When prompted "Is workspace table created or renamed from team?" select "renamed." This preserves data.
 
-  return (
-    <form onSubmit={handleSubmit}>
-      {messages.map(m => (
-        <div key={m.id}>{m.content}</div>
-      ))}
-      <input value={input} onChange={handleInputChange} />
-    </form>
-  );
-}
-```
+For adding `workspaceId` to threads (currently user-owned, no workspace):
+1. Add column as NULLABLE first (safe, additive DDL)
+2. Backfill: set `workspaceId` to user's personal workspace for all existing threads
+3. Add NOT NULL constraint after backfill
 
-**Confidence:** HIGH (verified with official AI SDK docs and Next.js guides)
+**Confidence:** HIGH (verified with Drizzle ORM migration docs and community best practices)
+
+**Source:** [Drizzle ORM Migrations](https://orm.drizzle.team/docs/migrations), [Drizzle Kit Generate](https://orm.drizzle.team/docs/drizzle-kit-generate)
 
 ---
 
-## State Management for Chat
+### 2. Workspace Isolation via tRPC Middleware
 
-### Vercel AI SDK Hooks (Recommended)
+**Approach:** Create a `workspaceProcedure` that extends `protectedProcedure` with workspace context.
 
-**Use `useChat` from `ai/react`:**
-- Decoupled state management (integrates with Zustand, Redux, MobX if needed)
-- Handles SSE streaming complexity automatically
-- Manages optimistic updates, error rollback, loading states
-- Reduces 200-300 lines of boilerplate to 10-20 lines
-- Built-in message types: `UIMessage` (source of truth for UI state)
+**Pattern:** tRPC context extension middleware injects `workspaceId` and `workspaceRole` into the context. All workspace-scoped procedures use this base instead of `protectedProcedure`.
 
-**Why NOT React Query for streaming chat:**
-- React Query is designed for request/response patterns, not streaming
-- Vercel AI SDK hooks already handle state, caching, and error recovery
-- Duplicate state management adds complexity
-- React Query is still perfect for non-streaming tRPC endpoints (Sidekiq CRUD, team management, etc.)
+```
+Middleware chain:
+  publicProcedure
+    -> protectedProcedure (adds session.user)
+      -> workspaceProcedure (adds workspaceId, workspaceRole, verifies membership)
+```
 
-**Hybrid Approach (Recommended for Sidekiq):**
-- **AI SDK hooks** (`useChat`) for streaming chat messages
-- **React Query + tRPC** for everything else (Sidekiqs, teams, threads, settings)
+**How workspace is identified:**
+- Client sends `workspaceId` as input on every workspace-scoped tRPC call
+- Middleware validates user is a member of that workspace
+- Context is extended with `workspaceId` and `workspaceRole`
 
-**Confidence:** HIGH (verified with AI SDK 5/6 blog posts and official docs)
+**Why NOT use RLS (Row-Level Security):**
+- The app already has application-level isolation via `userId` WHERE clauses in every query
+- RLS adds debugging complexity (silent row filtering)
+- RLS is overkill for this scale (single-tenant PostgreSQL, <1000 users initially)
+- Application-level isolation is easier to test and understand
+- RLS is better suited for compliance-heavy enterprise apps or when multiple DB clients access the same database
+
+**Why application-level workspace filtering is sufficient:**
+- All data access goes through tRPC (single entry point)
+- Middleware enforces membership check before ANY workspace query
+- TypeScript type safety ensures `workspaceId` is always present in workspace procedures
+- Consistent with existing pattern (v0.1 uses `userId` filtering everywhere)
+
+**Confidence:** HIGH (verified with tRPC middleware docs, PostgreSQL RLS analysis)
+
+**Sources:**
+- [tRPC Middlewares](https://trpc.io/docs/server/middlewares)
+- [tRPC Context](https://trpc.io/docs/server/context)
+- [PostgreSQL RLS Limitations](https://www.bytebase.com/blog/postgres-row-level-security-limitations-and-alternatives/)
+- [Drizzle ORM RLS](https://orm.drizzle.team/docs/rls)
 
 ---
 
-## tRPC Integration (Critical Constraint)
+### 3. Vertical Slice Architecture (File Reorganization)
 
-### The Problem
+**Approach:** Move from horizontal layers (`components/`, `hooks/`, `lib/`, `server/`) to feature-driven slices (`features/`). The `app/` directory stays as a thin routing layer.
 
-**tRPC cannot be used with Vercel AI SDK's streaming hooks** (`useChat`, `useCompletion`).
+**No dependencies needed.** This is purely a file reorganization. TypeScript path aliases (`@sidekiq/*`) continue to work. Barrel exports (`index.ts`) provide the public API for each feature.
 
-**Why:**
-- tRPC transforms all outputs through its middleware/serialization pipeline
-- Vercel AI SDK requires raw `ReadableStream` responses
-- `useChat` hook requires a standard fetch-compatible API endpoint (string URL)
-- tRPC's SSE support returns iterators, not the expected stream format
-
-**Attempted Workarounds:**
-- Converting tRPC iterator to ReadableStream + LangChainAdapter (complex, brittle)
-- Using trpc-openapi to create REST-like endpoints (defeats tRPC's purpose)
-
-**Community Consensus (2025):**
-- No official first-class support for tRPC + Vercel AI SDK streaming
-- GitHub discussions (vercel/ai#3236, trpc/trpc#6103) confirm incompatibility
-
-**Confidence:** HIGH (verified with GitHub issue discussions and developer reports)
-
-### Recommended Architecture
-
-**Separate concerns:**
+**Target structure:**
 
 ```
-Streaming Chat Endpoints (Next.js Route Handlers):
-  ├─ app/api/chat/route.ts          → POST /api/chat (AI SDK streamText)
-  ├─ app/api/chat/generate-title/route.ts  → POST /api/chat/generate-title
-  └─ Uses: Vercel AI SDK directly
+src/
+  app/                          # Thin routing layer (stays mostly unchanged)
+    (auth)/
+    (dashboard)/
+      chat/
+      settings/
+      sidekiqs/
+    api/
+      chat/route.ts             # Streaming endpoint (stays here)
+      trpc/[trpc]/route.ts
+      auth/[...all]/route.ts
 
-Non-Streaming tRPC Endpoints:
-  ├─ sidekiqs.create                → Create Sidekiq
-  ├─ sidekiqs.update                → Update Sidekiq
-  ├─ threads.list                   → List threads
-  ├─ threads.delete                 → Delete thread
-  ├─ teams.* (all team operations)
-  └─ Uses: tRPC + React Query
+  features/                     # NEW: Vertical slices
+    workspace/                  # Workspace management feature
+      components/
+      hooks/
+      server/                   # tRPC router, workspace middleware
+      validations/
+      types/
+      index.ts                  # Public barrel export
+
+    chat/                       # Chat/messaging feature
+      components/
+      hooks/
+      server/                   # Message-related server logic
+      validations/
+      index.ts
+
+    sidekiq/                    # Custom assistant feature
+      components/
+      hooks/
+      server/                   # tRPC router
+      validations/
+      index.ts
+
+    auth/                       # Authentication feature
+      components/
+      server/                   # Better Auth config
+      index.ts
+
+    model-picker/               # Model selection feature
+      components/
+      hooks/
+      index.ts
+
+    sidebar/                    # Sidebar navigation feature
+      components/
+      hooks/
+      index.ts
+
+  shared/                       # Cross-cutting concerns
+    ui/                         # Radix-based UI primitives (Button, Dialog, etc.)
+    lib/                        # Generic utilities (cn, date-grouping, etc.)
+    server/                     # DB connection, shared tRPC setup
+    styles/
+    types/                      # Shared types
+
+  server/                       # Root server config (DB, tRPC init)
+    db/
+      schema.ts                 # Stays centralized (Drizzle requires single schema file)
+      index.ts
+    api/
+      trpc.ts                   # tRPC init, base procedures
+      root.ts                   # Root router (merges feature routers)
 ```
 
-**Benefits:**
-- Keep tRPC for type-safe CRUD operations
-- Use AI SDK's battle-tested streaming for chat
-- Clear separation of concerns
-- Both approaches work within Next.js App Router
+**Key decisions:**
+- `schema.ts` stays centralized because Drizzle Kit requires a single schema entry point in `drizzle.config.ts`. Feature-specific schema fragments can be split into files and re-exported from a central schema, but the drizzle config points to one file.
+- `app/api/chat/route.ts` stays in the routing layer because Next.js Route Handlers must be in the `app/api/` directory.
+- tRPC routers move into feature directories but are still merged in `server/api/root.ts`.
+- Each feature has an `index.ts` barrel file that controls the public API surface.
 
-**Confidence:** HIGH (based on community consensus and official AI SDK patterns)
+**Why vertical slices now:**
+- At 170 files and growing, horizontal layers are becoming hard to navigate
+- v0.2 adds workspace as a cross-cutting concern that touches many features
+- Feature isolation makes it easier to reason about workspace scoping per feature
+- Testing becomes more focused (test one slice at a time)
+
+**Confidence:** HIGH (well-established pattern, verified with Next.js docs and community guides)
+
+**Sources:**
+- [Next.js Project Structure](https://nextjs.org/docs/app/getting-started/project-structure)
+- [Feature-Sliced Design with Next.js](https://feature-sliced.design/docs/guides/tech/with-nextjs)
+- [Feature Driven Architecture in Next.js](https://medium.com/@JMauclair/feature-driven-architecture-fda-a-scalable-way-to-structure-your-next-js-applications-b8c1703a29c0)
 
 ---
 
-## Message Persistence
+### 4. Message Regeneration
 
-### Database (PostgreSQL + Drizzle)
+**Approach:** Use the built-in `regenerate()` function from `useChat()` hook (Vercel AI SDK 5+, present in AI SDK 6).
 
-**Use for:**
-- Long-term message storage
-- Thread history
-- Full-text search across conversations
-- Audit logs
-
-**AI SDK 5+ Approach (Prefix-based schema):**
-
+**API:**
 ```typescript
-// schema.ts (Drizzle)
-export const messages = pgTable('messages', {
-  id: text('id').primaryKey(),
-  threadId: text('thread_id').notNull(),
-  role: text('role').notNull(), // 'user' | 'assistant' | 'system'
-  content: text('content').notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
+const { regenerate } = useChat({ ... });
 
-  // Metadata
-  model: text('model'), // e.g., 'gpt-4o'
-  tokenCount: integer('token_count'),
+// Regenerate last assistant message
+regenerate();
 
-  // Tool calls (prefix-based approach)
-  toolCallId: text('tool_call_id'),
-  toolName: text('tool_name'),
-  toolArgs: jsonb('tool_args'),
-  toolResult: jsonb('tool_result'),
-});
+// Regenerate specific message
+regenerate({ messageId: "msg_123" });
 ```
 
-**Why prefix-based over JSONB:**
-- Avoids data integrity issues with polymorphic JSONB columns
-- Type-safe column access
-- Better query performance
-- Easier to add indexes on specific fields
+**Backend changes needed:** The existing `/api/chat` route handler already supports receiving messages and streaming responses. Regeneration works by:
+1. The SDK removes the last assistant message from the UI state
+2. Re-sends the conversation (without the removed message) to the server
+3. Server streams a new response
 
-**Official Example:** [vercel-labs/ai-sdk-persistence-db](https://github.com/vercel-labs/ai-sdk-persistence-db)
+**No new endpoint needed.** The existing POST `/api/chat` handles this transparently because `regenerate()` internally re-sends the messages array.
 
-**Persistence Flow:**
-```typescript
-const { messages, append } = useChat({
-  api: '/api/chat',
-  onFinish: async (message) => {
-    // Save to database via tRPC
-    await trpc.messages.create.mutate({
-      threadId,
-      role: message.role,
-      content: message.content,
-      // ... metadata
+**UI changes needed:**
+- Add a "Regenerate" button on the last assistant message (or failed messages)
+- Wire it to `regenerate()` from the `useChat` hook
+- Handle loading state during regeneration
+
+**Confidence:** HIGH (verified with official AI SDK docs)
+
+**Source:** [AI SDK useChat Reference](https://ai-sdk.dev/docs/reference/ai-sdk-ui/use-chat)
+
+---
+
+### 5. Expanded AI Model List
+
+**Approach:** Replace the hardcoded `AVAILABLE_MODELS` array in `models-metadata.ts` with dynamic model discovery from the Vercel AI Gateway.
+
+**Two options:**
+
+**Option A: Dynamic discovery via `gateway.getAvailableModels()` (Recommended)**
+- Call `gateway.getAvailableModels()` at build time or with ISR (Incremental Static Regeneration)
+- Returns all 85+ models with names, descriptions, pricing, context windows, and tags
+- REST endpoint also available: `GET https://ai-gateway.vercel.sh/v1/models`
+- No hardcoded model list needed -- always up-to-date
+- Requires `@ai-sdk/gateway` version 3.x (already installed as `^3.0.22`)
+
+**Option B: Curated static list (Simpler, more controlled)**
+- Expand the current `AVAILABLE_MODELS` array in `models-metadata.ts`
+- Hand-pick models from the gateway catalog
+- More control over what users see, but requires manual updates
+
+**Recommendation:** Use Option A (dynamic discovery) with a curated filter layer. Fetch all models from the gateway, then apply an allowlist/blocklist to control which models appear in the picker. This gives automatic model updates while maintaining curation.
+
+**No new dependencies.** The `@ai-sdk/gateway` package (already at `^3.0.22`) provides `getAvailableModels()`.
+
+**Confidence:** HIGH (verified with Vercel AI Gateway docs and AI SDK provider docs)
+
+**Sources:**
+- [Vercel AI Gateway Models & Providers](https://vercel.com/docs/ai-gateway/models-and-providers)
+- [AI SDK Gateway Provider](https://ai-sdk.dev/providers/ai-sdk-providers/ai-gateway)
+- [Browse AI Gateway Models](https://vercel.com/ai-gateway/models)
+
+---
+
+## What NOT to Add (and Why)
+
+### Do NOT Add: PostgreSQL Row-Level Security (RLS)
+
+**Why not:**
+- Adds significant complexity to migrations and debugging
+- Application-level isolation via tRPC middleware is sufficient for this scale
+- RLS policies make query debugging harder (rows silently filtered)
+- Would require switching from simple `postgres` driver to a connection-per-request model with session variables
+- Drizzle's `pgPolicy` API exists but is better suited for Supabase/Neon managed environments
+- Can be added later as a defense-in-depth layer if compliance requires it
+
+### Do NOT Add: Separate Multi-Tenant Database Library (Nile, etc.)
+
+**Why not:**
+- Nile solves a different problem (virtual tenant databases, serverless multi-tenant PostgreSQL)
+- The project uses standard PostgreSQL with Drizzle -- adding Nile would mean a database migration
+- Application-level tenant isolation with `workspaceId` column filtering is the right pattern for a single-database app
+- Schema-based multi-tenancy (one PostgreSQL schema per workspace) is overkill for <100 workspaces
+
+### Do NOT Add: Zustand or Redux for Workspace State
+
+**Why not:**
+- Active workspace state can be managed with React Context + localStorage (current pattern with `useActiveTeam`)
+- Adding a state management library for one piece of state is over-engineering
+- React Query (via tRPC) already handles server state
+- The current `useActiveTeam` hook pattern is clean and sufficient -- rename/extend it to `useActiveWorkspace`
+
+### Do NOT Add: Feature-Sliced Design (FSD) Library
+
+**Why not:**
+- FSD is a methodology, not a library -- it's just a folder convention
+- The project doesn't need an npm package for folder structure
+- Adopt the principles (feature isolation, barrel exports, public API boundaries) without the formalism
+- FSD's strict layer hierarchy (shared -> entities -> features -> widgets -> pages) is overly rigid for a 170-file app
+
+### Do NOT Add: Custom Migration Framework
+
+**Why not:**
+- Drizzle Kit (`drizzle-kit generate` + `drizzle-kit migrate`) handles all migration needs
+- It supports interactive rename prompts for table/column renames
+- Custom SQL migrations are supported via `drizzle-kit generate --custom`
+- The existing migration workflow (`pnpm db:generate` + `pnpm db:migrate`) is established
+
+### Do NOT Add: Redis for Workspace Session Caching
+
+**Why not:**
+- Not needed at this scale (single workspace context per user session)
+- localStorage + React state handles workspace selection adequately
+- PostgreSQL queries with proper indexes are fast enough for workspace lookups
+- Defer Redis to a future milestone when performance demands it
+
+---
+
+## Existing Dependencies: Version Compatibility Notes
+
+All existing dependencies are compatible with v0.2 features. No version bumps required.
+
+| Package | Current Version | v0.2 Compatible? | Notes |
+|---------|----------------|-------------------|-------|
+| `drizzle-orm` | `^0.41.0` | Yes | Supports table renames, new columns, RLS (if needed later) |
+| `drizzle-kit` | `^0.30.5` | Yes | Interactive rename prompts, custom migrations |
+| `@trpc/server` | `^11.0.0` | Yes | Middleware context extension, pipe() for workspace auth |
+| `@ai-sdk/react` | `^3.0.50` | Yes | `useChat().regenerate()` available |
+| `@ai-sdk/gateway` | `^3.0.22` | Yes | `gateway.getAvailableModels()` available |
+| `ai` | `^6.0.48` | Yes | UIMessage, streamText, all needed features |
+| `better-auth` | `^1.3` | Yes | Session management unchanged |
+| `@tanstack/react-query` | `^5.69.0` | Yes | Query invalidation on workspace switch |
+
+---
+
+## Database Schema Changes (Preview)
+
+### New Enum
+
+```
+workspace_type: 'personal' | 'team'
+```
+
+### Renamed Tables
+
+| v0.1 Table | v0.2 Table | Migration |
+|------------|------------|-----------|
+| `team` | `workspace` | Rename via drizzle-kit |
+| `team_member` | `workspace_member` | Rename via drizzle-kit |
+| `team_invite` | `workspace_invite` | Rename via drizzle-kit |
+| `team_role` enum | `workspace_role` enum | Rename via drizzle-kit |
+
+### New Columns
+
+| Table | Column | Type | Why |
+|-------|--------|------|-----|
+| `workspace` | `type` | `workspace_type` enum | Distinguish personal vs team workspaces |
+| `thread` | `workspaceId` | `text` (FK) | Scope threads to workspaces |
+| `sidekiq` | `workspaceId` | `text` (FK) | Replace `teamId`, scope to workspaces |
+
+### Removed Columns
+
+| Table | Column | Why |
+|-------|--------|-----|
+| `sidekiq` | `teamId` | Replaced by `workspaceId` |
+| `sidekiq` | `isPublic` | Replaced by workspace-level sharing |
+| `sidekiq` | `canTeamEdit` | Replaced by workspace role permissions |
+
+---
+
+## tRPC Middleware Architecture (Preview)
+
+### Procedure Hierarchy
+
+```
+publicProcedure
+  -> timingMiddleware
+
+protectedProcedure (existing)
+  -> timingMiddleware
+  -> authMiddleware (validates session, adds user to ctx)
+
+workspaceProcedure (NEW)
+  -> protectedProcedure (inherits auth)
+  -> workspaceMiddleware:
+      1. Extract workspaceId from input
+      2. Query workspace_member for (userId, workspaceId)
+      3. If not member -> throw FORBIDDEN
+      4. Extend ctx with { workspaceId, workspaceRole, workspace }
+```
+
+### Usage Pattern
+
+```
+// Feature router uses workspaceProcedure as base:
+list: workspaceProcedure
+  .input(listThreadsSchema)  // workspaceId already in ctx, not needed in input
+  .query(async ({ ctx }) => {
+    // ctx.workspaceId is guaranteed present
+    // ctx.workspaceRole is 'owner' | 'admin' | 'member'
+    return db.query.threads.findMany({
+      where: and(
+        eq(threads.workspaceId, ctx.workspaceId),
+        eq(threads.userId, ctx.session.user.id),
+      ),
     });
-  },
-});
+  }),
 ```
-
-**Confidence:** HIGH (verified with official Vercel Labs repo and AI SDK 5 blog)
-
-### Redis (Optional but Recommended)
-
-**Use Redis for:**
-- Short-term message caching (recent 10-20 messages)
-- Session state for active conversations
-- Rate limiting counters
-- Semantic caching for repeated queries
-
-**When to add Redis:**
-- When scaling beyond 100 concurrent users
-- When conversation history becomes expensive to query
-- When implementing semantic caching for cost reduction (up to 90% savings)
-
-**Redis Data Structures:**
-```
-# Session cache (recent messages)
-SET mysession:<userId>:<threadId>:messages JSON
-EXPIRE mysession:<userId>:<threadId>:messages 3600
-
-# Rate limiting
-INCR ratelimit:<userId>:sidekiq_creation
-EXPIRE ratelimit:<userId>:sidekiq_creation 3600
-```
-
-**Best Practices (2025):**
-- Use server-side message IDs for consistency across sessions
-- Separate short-term (Redis) from long-term (PostgreSQL) memory
-- Redis hashes for message storage, RediSearch for queries
-- TTL for automatic cleanup (e.g., 1 hour for active sessions)
-
-**Recommended Libraries:**
-- `ioredis` - Full-featured Redis client
-- `upstash/redis` - Serverless Redis (Vercel-compatible)
-
-**When to skip Redis (for now):**
-- MVP with <50 users
-- Cost optimization can come later
-- PostgreSQL sufficient for chat history
-
-**Confidence:** HIGH (verified with Upstash blog, Redis official docs, and Azure tutorials)
 
 ---
 
-## Supporting Libraries
+## Installation
 
-### Message Formatting & Rendering
-
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| `react-markdown` | `^9.0.0` | Render markdown in messages | When supporting markdown in chat responses |
-| `remark-gfm` | `^4.0.0` | GitHub-flavored markdown | For tables, task lists, strikethrough |
-| `react-syntax-highlighter` | `^15.6.0` | Code block syntax highlighting | For code-heavy AI responses |
-
-**Confidence:** MEDIUM (common pattern in AI chat apps, not verified with official sources)
-
-### Token Counting
-
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| `js-tiktoken` | `^1.0.10` | Token counting for OpenAI models | When tracking costs or implementing context limits |
-
-**Note:** AI SDK handles token counting internally, only needed for advanced cost tracking.
-
-**Confidence:** MEDIUM (common but not required for MVP)
-
----
-
-## Installation Guide
-
-### Core AI Chat Setup
+No installation needed. Zero new dependencies.
 
 ```bash
-# Core AI SDK
-pnpm add ai
+# Nothing to install for v0.2!
+# All features use existing packages.
 
-# Provider packages (choose based on models you support)
-pnpm add @ai-sdk/openai @ai-sdk/anthropic
-
-# Optional: Markdown rendering
-pnpm add react-markdown remark-gfm react-syntax-highlighter
-pnpm add -D @types/react-syntax-highlighter
+# Only run migrations after schema changes:
+pnpm db:generate
+pnpm db:migrate
 ```
-
-### Environment Variables
-
-```bash
-# .env (add to existing)
-
-# OpenAI
-OPENAI_API_KEY=sk-...
-
-# Anthropic
-ANTHROPIC_API_KEY=sk-ant-...
-
-# Vercel AI Gateway (if using)
-# No additional keys required - uses provider keys above
-
-# Portkey AI Gateway (if using)
-PORTKEY_API_KEY=ptk-...
-```
-
-**Confidence:** HIGH (verified with official docs)
-
----
-
-## What NOT to Use
-
-### ❌ LangChain / LangGraph
-
-**Why avoid:**
-- Adds significant complexity and abstraction overhead
-- Vercel AI SDK provides everything needed for chat streaming
-- LangChain's Python origins lead to TypeScript awkwardness
-- Not needed unless building complex agent workflows (v2 feature)
-
-**When to reconsider:**
-- If building advanced RAG (Retrieval-Augmented Generation)
-- If implementing complex multi-step agent reasoning (future milestone)
-
-**Confidence:** HIGH (based on ecosystem trends and Vercel's positioning)
-
-### ❌ Socket.io / WebSockets
-
-**Why avoid:**
-- Overkill for unidirectional streaming
-- More complex infrastructure (stateful connections)
-- SSE is simpler and sufficient for AI chat
-
-**When to reconsider:**
-- If adding real-time collaboration features (v2)
-- If adding multi-user cursor tracking
-
-**Confidence:** HIGH (verified with multiple sources on SSE vs WebSocket for AI chat)
-
-### ❌ Custom Streaming Implementation
-
-**Why avoid:**
-- Vercel AI SDK handles streaming complexity
-- Reinventing the wheel leads to bugs (connection drops, partial message reconstruction)
-- 200-300 lines of boilerplate vs 10-20 with AI SDK
-
-**Confidence:** HIGH (based on AI SDK value proposition)
-
-### ❌ Multiple AI SDKs (e.g., OpenAI SDK + Anthropic SDK directly)
-
-**Why avoid:**
-- Each provider has different APIs and streaming formats
-- Vercel AI SDK provides unified interface
-- Harder to add new providers later
-
-**When to use provider SDKs directly:**
-- If needing provider-specific features not exposed by AI SDK
-- For non-chat use cases (embeddings, fine-tuning, etc.)
-
-**Confidence:** HIGH (based on AI SDK design philosophy)
 
 ---
 
 ## Alternatives Considered
 
-### Cloudflare AI Gateway
-
-**Pros:**
-- Edge-based caching (low latency globally)
-- Free tier with generous limits
-- Supports 25+ providers
-
-**Cons:**
-- Less mature observability than Portkey
-- Fewer guardrails
-- Better suited for Cloudflare Workers deployment
-
-**Why not recommended:**
-- Project deploys to Vercel, not Cloudflare
-- Portkey provides better feature set for production
-
-**Confidence:** MEDIUM (based on feature comparison articles)
-
-### OpenRouter
-
-**Pros:**
-- Single API for 200+ models
-- Pay-as-you-go pricing
-- No need to manage multiple API keys
-
-**Cons:**
-- Markup on model costs (not bring-your-own-key)
-- Less control over provider selection
-- No guardrails or governance features
-
-**Why not recommended:**
-- Project spec requires BYOK (bring your own key)
-- Higher costs at scale
-
-**Confidence:** MEDIUM (based on comparison articles)
+| Decision | Recommended | Alternative | Why Not Alternative |
+|----------|-------------|-------------|---------------------|
+| Tenant isolation | Application-level (tRPC middleware) | PostgreSQL RLS | Overkill for scale, harder to debug, adds migration complexity |
+| Architecture | Feature slices in `src/features/` | Feature-Sliced Design (FSD) | FSD is too rigid/formal for 170-file app |
+| Workspace state | React Context + localStorage | Zustand | Over-engineering for single piece of state |
+| Model list | Dynamic via `getAvailableModels()` | Expand hardcoded array | Dynamic stays up-to-date, less maintenance |
+| Message regeneration | `useChat().regenerate()` | Custom endpoint | SDK already provides exactly this |
+| Schema migration | Drizzle Kit rename | Drop + recreate tables | Rename preserves data, zero downtime |
+| Workspace ID in queries | tRPC middleware injection | Pass workspaceId in every input | Middleware is DRY, type-safe, impossible to forget |
+| Multi-tenant database | Single DB + column filtering | Nile / schema-per-tenant | Vastly simpler, sufficient for scale |
 
 ---
 
-## Migration Path
+## Stack Patterns by Feature
 
-### Phase 1: MVP (Current)
-- Vercel AI SDK Core (`ai@6.0.48`)
-- Provider packages (`@ai-sdk/openai`, `@ai-sdk/anthropic`)
-- Next.js Route Handlers for streaming
-- PostgreSQL + Drizzle for persistence
-- No AI Gateway (direct provider access)
+### Vertical Slice Architecture Refactor
+- **Tools:** TypeScript path aliases, barrel exports (`index.ts`)
+- **Pattern:** `src/features/{feature}/` with components, hooks, server, validations
+- **Key constraint:** `schema.ts` stays centralized (Drizzle Kit requirement)
+- **Key constraint:** Route Handlers stay in `app/api/` (Next.js requirement)
 
-### Phase 2: Scale (50-500 users)
-- Add Vercel AI Gateway for unified provider management
-- Implement Redis caching for active sessions
-- Add semantic caching for cost optimization
+### Workspace Data Model
+- **Tools:** Drizzle ORM, drizzle-kit generate/migrate
+- **Pattern:** Table rename + new columns + multi-step migration (nullable -> backfill -> NOT NULL)
+- **Key constraint:** Personal workspace auto-created on user signup (handle in Better Auth hooks or tRPC)
 
-### Phase 3: Enterprise (500+ users)
-- Migrate to Portkey AI Gateway for observability
-- Add guardrails (PII redaction, content filtering)
-- Implement role-based access controls
-- Advanced cost tracking and analytics
+### Workspace Isolation
+- **Tools:** tRPC middleware, Drizzle WHERE clauses
+- **Pattern:** `workspaceProcedure` extends `protectedProcedure` with workspace context
+- **Key constraint:** Every workspace-scoped query MUST filter by `workspaceId`
 
-**Confidence:** HIGH (based on product roadmap and scaling patterns)
+### Sidekiq Sharing
+- **Tools:** Drizzle schema, tRPC router
+- **Pattern:** Replace `ownerId`-only filtering with `workspaceId` filtering + role-based edit permissions
+- **Key constraint:** Owner still exists but workspace members can access shared Sidekiqs
 
----
+### Regenerate Message
+- **Tools:** AI SDK `useChat().regenerate()`
+- **Pattern:** Button on assistant messages calls `regenerate()` or `regenerate({ messageId })`
+- **Key constraint:** Backend route handler unchanged; SDK handles re-submission
 
-## Summary Recommendation
-
-### Install Now
-
-```bash
-pnpm add ai @ai-sdk/openai @ai-sdk/anthropic
-```
-
-### Architecture
-
-- **Streaming:** Next.js Route Handlers with AI SDK's `streamText` + SSE
-- **Client State:** AI SDK's `useChat` hook (not React Query for streaming)
-- **Non-Streaming API:** Keep tRPC + React Query for CRUD operations
-- **Persistence:** PostgreSQL (existing) with prefix-based message schema
-- **Multi-Provider:** Start with direct provider access, add Vercel AI Gateway when needed
-
-### Redis (Defer to Phase 2)
-
-Add Redis when:
-- Active users exceed 50-100 concurrent
-- PostgreSQL queries for chat history become slow
-- Implementing semantic caching for cost savings
-
-**Confidence:** HIGH (all recommendations verified with official sources)
+### Expanded Model List
+- **Tools:** `@ai-sdk/gateway` `getAvailableModels()` or REST API
+- **Pattern:** Server-side fetch at build/request time, filter/curate, pass to client model picker
+- **Key constraint:** Need to handle model metadata (pricing, features) from gateway response format
 
 ---
 
 ## Sources
 
 ### Official Documentation
-- [Vercel AI SDK Introduction](https://ai-sdk.dev/docs/introduction)
-- [AI SDK GitHub Releases](https://github.com/vercel/ai/releases)
-- [AI SDK Anthropic Provider](https://ai-sdk.dev/providers/ai-sdk-providers/anthropic)
-- [Portkey AI Gateway Documentation](https://portkey.ai/features/ai-gateway)
-- [Portkey GitHub Repository](https://github.com/Portkey-AI/gateway)
-- [Portkey Vercel AI SDK Provider](https://ai-sdk.dev/providers/community-providers/portkey)
-- [Vercel AI SDK Persistence DB](https://github.com/vercel-labs/ai-sdk-persistence-db)
+- [Drizzle ORM Migrations](https://orm.drizzle.team/docs/migrations)
+- [Drizzle ORM RLS](https://orm.drizzle.team/docs/rls)
+- [Drizzle Kit Generate](https://orm.drizzle.team/docs/drizzle-kit-generate)
+- [tRPC Middlewares](https://trpc.io/docs/server/middlewares)
+- [tRPC Context](https://trpc.io/docs/server/context)
+- [AI SDK useChat Reference](https://ai-sdk.dev/docs/reference/ai-sdk-ui/use-chat)
+- [AI SDK Gateway Provider](https://ai-sdk.dev/providers/ai-sdk-providers/ai-gateway)
+- [Vercel AI Gateway Models & Providers](https://vercel.com/docs/ai-gateway/models-and-providers)
+- [Next.js Project Structure](https://nextjs.org/docs/app/getting-started/project-structure)
 
-### Technical Articles & Guides
-- [Streaming in Next.js 15: WebSockets vs Server-Sent Events | HackerNoon](https://hackernoon.com/streaming-in-nextjs-15-websockets-vs-server-sent-events)
-- [Go with SSE for Your AI Chat App • sniki.dev](https://www.sniki.dev/posts/sse-vs-websockets-for-ai-chat/)
-- [Real-time AI in Next.js: How to stream responses with the Vercel AI SDK - LogRocket](https://blog.logrocket.com/nextjs-vercel-ai-sdk-streaming/)
-- [Vercel AI SDK Complete Guide: Building Production-Ready AI Chat Apps - DEV Community](https://dev.to/pockit_tools/vercel-ai-sdk-complete-guide-building-production-ready-ai-chat-apps-with-nextjs-4cp6)
+### Architecture Patterns
+- [Feature-Sliced Design with Next.js](https://feature-sliced.design/docs/guides/tech/with-nextjs)
+- [Feature Driven Architecture in Next.js](https://medium.com/@JMauclair/feature-driven-architecture-fda-a-scalable-way-to-structure-your-next-js-applications-b8c1703a29c0)
+- [Scalable Next.js Project Architecture](https://blog.logrocket.com/structure-scalable-next-js-project-architecture/)
 
-### AI Gateway Comparisons
-- [Best LLM Gateways in 2025 | Helicone](https://www.helicone.ai/blog/top-llm-gateways-comparison-2025)
-- [Portkey vs Vercel AI Gateway Comparison](https://portkey.ai/buyers-guide/ai-gateway-solutions)
-- [AI Gateway vs Vercel AI Gateway Comparison | ResultantAI](https://resultantai.com/compare/portkey)
+### Multi-Tenancy Research
+- [PostgreSQL RLS Limitations](https://www.bytebase.com/blog/postgres-row-level-security-limitations-and-alternatives/)
+- [Row-Level Security for Multi-Tenant Apps](https://www.simplyblock.io/blog/underated-postgres-multi-tenancy-with-row-level-security/)
+- [Schema-based Multi-Tenancy with Drizzle ORM](https://medium.com/@vimulatus/schema-based-multi-tenancy-with-drizzle-orm-6562483c9b03)
+- [Drizzle ORM Multi-Tenancy Discussion](https://github.com/drizzle-team/drizzle-orm/discussions/1539)
+- [tRPC Multi-Tenant Context](https://discord-questions.trpc.io/m/1191810200659837038)
 
-### Redis & Persistence
-- [Saving AI SDK v5 Chat Messages in Redis | Upstash Blog](https://upstash.com/blog/ai-sdk-chat-history)
-- [Redis for GenAI apps | Redis Docs](https://redis.io/docs/latest/develop/get-started/redis-in-ai/)
-- [Build smarter AI agents with Redis memory management](https://redis.io/blog/build-smarter-ai-agents-manage-short-term-and-long-term-memory-with-redis/)
-
-### Integration Challenges
-- [Any way to integrate with tRPC? · vercel/ai · Discussion #3236](https://github.com/vercel/ai/discussions/3236)
-- [Any way to integrate with Vercel AI SDK? · Issue #6103 · trpc/trpc](https://github.com/trpc/trpc/issues/6103)
-
-### Release Announcements
-- [AI SDK 6 - Vercel](https://vercel.com/blog/ai-sdk-6)
-- [AI SDK 5 - Vercel](https://vercel.com/blog/ai-sdk-5)
+### Migration Best Practices
+- [8 Drizzle ORM Patterns for Clean Migrations](https://medium.com/@bhagyarana80/8-drizzle-orm-patterns-for-clean-fast-migrations-456c4c35b9d8)
+- [Drizzle ORM Custom Migrations](https://orm.drizzle.team/docs/kit-custom-migrations)
 
 ---
 
-*Research completed: 2026-01-22*
-*Next step: Use this stack analysis to inform roadmap phase structure*
+*Research completed: 2026-01-27*
+*Next step: Use this stack analysis to inform v0.2 roadmap phase structure*
