@@ -43,6 +43,7 @@ All v0.1 decisions documented with outcomes.
 - **Refactor Architecture to Vertical Slicing by Feature** (architecture)
 - **Rethink teams as workspaces** (architecture)
 - **Regenerate message button** (ui)
+- **Include all available models in the Vercel AI Gateway** (api)
 
 ### Blockers/Concerns
 
