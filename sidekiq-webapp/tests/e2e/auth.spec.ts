@@ -97,20 +97,20 @@ test.describe("Form Validation", () => {
 });
 
 test.describe("Route Protection", () => {
-  test("should redirect unauthenticated user from dashboard to sign-in", async ({
+  test("should redirect unauthenticated user from chat to sign-in", async ({
     page,
   }) => {
-    await page.goto("/dashboard");
+    await page.goto("/chat");
 
     // Should redirect to sign-in with callbackUrl
-    await expect(page).toHaveURL(/\/sign-in\?callbackUrl=%2Fdashboard/);
+    await expect(page).toHaveURL(/\/sign-in\?callbackUrl=%2Fchat/);
   });
 
   test("should preserve callbackUrl parameter", async ({ page }) => {
-    await page.goto("/dashboard");
+    await page.goto("/chat");
 
     // Check that we're on sign-in page with the callbackUrl
-    await expect(page).toHaveURL(/\/sign-in\?callbackUrl=%2Fdashboard/);
+    await expect(page).toHaveURL(/\/sign-in\?callbackUrl=%2Fchat/);
     await expect(page.getByText("Welcome back")).toBeVisible();
   });
 });
@@ -164,7 +164,7 @@ test.describe("Sign-in Link Preservation", () => {
     page,
   }) => {
     // Start at sign-in with a callbackUrl
-    await page.goto("/sign-in?callbackUrl=%2Fdashboard");
+    await page.goto("/sign-in?callbackUrl=%2Fchat");
 
     // The sign-up link should ideally preserve the callback
     // (This tests that sign-up now accepts callbackUrl)

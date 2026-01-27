@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 // Mock better-auth/cookies
 vi.mock("better-auth/cookies", () => ({
@@ -97,15 +97,13 @@ describe("middleware", () => {
       mockedGetSessionCookie.mockReturnValue(null);
     });
 
-    it("should redirect to sign-in from dashboard when not authenticated", () => {
-      const request = createMockRequest("/dashboard");
+    it("should redirect to sign-in from chat when not authenticated", () => {
+      const request = createMockRequest("/chat");
       const response = middleware(request);
 
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/sign-in");
-      expect(response.headers.get("location")).toContain(
-        "callbackUrl=%2Fdashboard",
-      );
+      expect(response.headers.get("location")).toContain("callbackUrl=%2Fchat");
     });
 
     it("should redirect to sign-in from any protected route", () => {
@@ -125,36 +123,36 @@ describe("middleware", () => {
       mockedGetSessionCookie.mockReturnValue("valid-session-token");
     });
 
-    it("should redirect from sign-in to dashboard when authenticated", () => {
+    it("should redirect from sign-in to chat when authenticated", () => {
       const request = createMockRequest("/sign-in");
       const response = middleware(request);
 
       expect(response.status).toBe(307);
-      expect(response.headers.get("location")).toContain("/dashboard");
+      expect(response.headers.get("location")).toContain("/chat");
     });
 
-    it("should redirect from sign-up to dashboard when authenticated", () => {
+    it("should redirect from sign-up to chat when authenticated", () => {
       const request = createMockRequest("/sign-up");
       const response = middleware(request);
 
       expect(response.status).toBe(307);
-      expect(response.headers.get("location")).toContain("/dashboard");
+      expect(response.headers.get("location")).toContain("/chat");
     });
 
-    it("should redirect from forgot-password to dashboard when authenticated", () => {
+    it("should redirect from forgot-password to chat when authenticated", () => {
       const request = createMockRequest("/forgot-password");
       const response = middleware(request);
 
       expect(response.status).toBe(307);
-      expect(response.headers.get("location")).toContain("/dashboard");
+      expect(response.headers.get("location")).toContain("/chat");
     });
 
-    it("should redirect from reset-password to dashboard when authenticated", () => {
+    it("should redirect from reset-password to chat when authenticated", () => {
       const request = createMockRequest("/reset-password");
       const response = middleware(request);
 
       expect(response.status).toBe(307);
-      expect(response.headers.get("location")).toContain("/dashboard");
+      expect(response.headers.get("location")).toContain("/chat");
     });
   });
 
@@ -163,8 +161,8 @@ describe("middleware", () => {
       mockedGetSessionCookie.mockReturnValue("valid-session-token");
     });
 
-    it("should allow access to dashboard when authenticated", () => {
-      const request = createMockRequest("/dashboard");
+    it("should allow access to chat when authenticated", () => {
+      const request = createMockRequest("/chat");
       const response = middleware(request);
 
       expect(response.headers.get("x-middleware-next")).toBe("1");
