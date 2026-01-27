@@ -12,7 +12,7 @@ import {
 import {
   TeamForm,
   type TeamFormValues,
-} from "@sidekiq/components/team/team-form";
+} from "@sidekiq/workspace/components/team-form";
 import { api } from "@sidekiq/shared/trpc/react";
 import { toast } from "sonner";
 

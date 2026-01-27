@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@sidekiq/ui/card";
-import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
+import { TeamAvatar } from "@sidekiq/workspace/components/team-avatar";
 import { api } from "@sidekiq/shared/trpc/react";
 import { toast } from "sonner";
 import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";

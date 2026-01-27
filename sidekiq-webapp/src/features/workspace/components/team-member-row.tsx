@@ -26,8 +26,8 @@ import {
   canLeaveTeam,
   getRoleLabel,
   type TeamRole,
-} from "@sidekiq/lib/team-permissions";
-import type { TeamMember } from "@sidekiq/hooks/use-member-search";
+} from "@sidekiq/workspace/lib/permissions";
+import type { TeamMember } from "@sidekiq/workspace/hooks/use-member-search";
 
 interface TeamMemberRowProps {
   /** The team member to display */

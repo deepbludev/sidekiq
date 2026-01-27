@@ -8,15 +8,18 @@ import { Button } from "@sidekiq/ui/button";
 import { Input } from "@sidekiq/ui/input";
 import { Label } from "@sidekiq/ui/label";
 import { Separator } from "@sidekiq/ui/separator";
-import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
-import { TeamMemberList } from "@sidekiq/components/team/team-member-list";
-import { TeamInvitesList } from "@sidekiq/components/team/team-invites-list";
-import { DeleteTeamDialog } from "@sidekiq/components/team/delete-team-dialog";
+import { TeamAvatar } from "@sidekiq/workspace/components/team-avatar";
+import { TeamMemberList } from "@sidekiq/workspace/components/team-member-list";
+import { TeamInvitesList } from "@sidekiq/workspace/components/team-invites-list";
+import { DeleteTeamDialog } from "@sidekiq/workspace/components/delete-team-dialog";
 import { AvatarPicker } from "@sidekiq/sidekiqs/components/avatar-picker";
 import { api } from "@sidekiq/shared/trpc/react";
 import { toast } from "sonner";
 import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
-import { canDeleteTeam, type TeamRole } from "@sidekiq/lib/team-permissions";
+import {
+  canDeleteTeam,
+  type TeamRole,
+} from "@sidekiq/workspace/lib/permissions";
 
 interface TeamSettingsSectionProps {
   /** Team ID to display settings for */

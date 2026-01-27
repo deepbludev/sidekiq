@@ -22,4 +22,5 @@ export { SidebarSearch } from "@sidekiq/shared/layout/sidebar-search";
 // Chats panels moved to @sidekiq/chats/components/ (Plan 09-03)
 // Sidekiqs panel moved to @sidekiq/sidekiqs/components/ (Plan 09-04)
 export { SidebarPanelSidekiqs } from "@sidekiq/sidekiqs/components/sidebar-panel-sidekiqs";
-export { SidebarPanelTeams } from "./sidebar-panel-teams";
+// Teams panel moved to @sidekiq/workspace/components/ (Plan 09-05)
+export { SidebarPanelTeams } from "@sidekiq/workspace/components/sidebar-panel-teams";

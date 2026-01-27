@@ -12,8 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@sidekiq/ui/dropdown-menu";
-import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
-import { useActiveTeam } from "@sidekiq/hooks/use-active-team";
+import { TeamAvatar } from "@sidekiq/workspace/components/team-avatar";
+import { useActiveTeam } from "@sidekiq/workspace/hooks/use-active-team";
 import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 
 import { SidebarSearch } from "@sidekiq/shared/layout/sidebar-search";

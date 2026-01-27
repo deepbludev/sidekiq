@@ -11,10 +11,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@sidekiq/ui/dropdown-menu";
-import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
-import { TeamSettingsSection } from "@sidekiq/components/team/team-settings-section";
-import { TeamEmptyState } from "@sidekiq/components/team/team-empty-state";
-import { TeamCreateDialog } from "@sidekiq/components/team/team-create-dialog";
+import { TeamAvatar } from "@sidekiq/workspace/components/team-avatar";
+import { TeamSettingsSection } from "@sidekiq/workspace/components/team-settings-section";
+import { TeamEmptyState } from "@sidekiq/workspace/components/team-empty-state";
+import { TeamCreateDialog } from "@sidekiq/workspace/components/team-create-dialog";
 import { api } from "@sidekiq/shared/trpc/react";
 import { authClient } from "@sidekiq/auth/api/client";
 import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";

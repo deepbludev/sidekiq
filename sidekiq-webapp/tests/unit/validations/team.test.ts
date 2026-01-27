@@ -13,7 +13,7 @@ import {
   transferOwnershipSchema,
   leaveTeamSchema,
   getTeamByIdSchema,
-} from "@sidekiq/lib/validations/team";
+} from "@sidekiq/workspace/validations";
 
 describe("teamAvatarSchema", () => {
   it("should accept valid initials type (same as sidekiqAvatarSchema)", () => {

@@ -10,7 +10,7 @@ import {
   canUpdateTeam,
   getRoleIcon,
   getRoleLabel,
-} from "@sidekiq/lib/team-permissions";
+} from "@sidekiq/workspace/lib/permissions";
 
 describe("canInvite", () => {
   it("should return true for owner", () => {

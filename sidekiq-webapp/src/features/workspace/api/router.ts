@@ -16,7 +16,7 @@ import {
   changeRoleSchema,
   transferOwnershipSchema,
   leaveTeamSchema,
-} from "@sidekiq/lib/validations/team";
+} from "@sidekiq/workspace/validations";
 import {
   canInvite,
   canRemoveMember,
@@ -26,8 +26,8 @@ import {
   canLeaveTeam,
   canRevokeInvite,
   type TeamRole,
-} from "@sidekiq/lib/team-permissions";
-import { sendTeamInviteEmail } from "@sidekiq/lib/emails/team-invite";
+} from "@sidekiq/workspace/lib/permissions";
+import { sendTeamInviteEmail } from "@sidekiq/workspace/api/emails";
 import {
   createTRPCRouter,
   protectedProcedure,

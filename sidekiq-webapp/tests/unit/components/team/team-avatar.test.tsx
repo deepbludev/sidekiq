@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
+import { TeamAvatar } from "@sidekiq/workspace/components/team-avatar";
 
 /**
  * Helper to render TeamAvatar with sensible defaults.

@@ -1,6 +1,6 @@
 import { healthRouter } from "@sidekiq/shared/trpc/routers/health";
 import { sidekiqRouter } from "@sidekiq/sidekiqs/api/router";
-import { teamRouter } from "@sidekiq/server/api/routers/team";
+import { teamRouter } from "@sidekiq/workspace/api/router";
 import { threadRouter } from "@sidekiq/chats/api/router";
 import { userRouter } from "@sidekiq/user/api/router";
 import {

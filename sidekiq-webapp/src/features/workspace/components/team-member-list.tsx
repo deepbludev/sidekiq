@@ -5,14 +5,14 @@ import { Search, UserPlus } from "lucide-react";
 
 import { Input } from "@sidekiq/ui/input";
 import { Button } from "@sidekiq/ui/button";
-import { TeamMemberRow } from "@sidekiq/components/team/team-member-row";
-import { RemoveMemberDialog } from "@sidekiq/components/team/remove-member-dialog";
-import { InviteMemberDialog } from "@sidekiq/components/team/invite-member-dialog";
+import { TeamMemberRow } from "@sidekiq/workspace/components/team-member-row";
+import { RemoveMemberDialog } from "@sidekiq/workspace/components/remove-member-dialog";
+import { InviteMemberDialog } from "@sidekiq/workspace/components/invite-member-dialog";
 import {
   useMemberSearch,
   type TeamMember,
-} from "@sidekiq/hooks/use-member-search";
-import { canInvite, type TeamRole } from "@sidekiq/lib/team-permissions";
+} from "@sidekiq/workspace/hooks/use-member-search";
+import { canInvite, type TeamRole } from "@sidekiq/workspace/lib/permissions";
 import { api } from "@sidekiq/shared/trpc/react";
 
 interface TeamMemberListProps {

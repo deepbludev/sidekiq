@@ -8,7 +8,7 @@ import { getActiveFeature } from "@sidekiq/shared/lib/sidebar-utils";
 
 import { SidebarPanelChats } from "@sidekiq/chats/components/sidebar-panel-chats";
 import { SidebarPanelSidekiqs } from "@sidekiq/sidekiqs/components/sidebar-panel-sidekiqs";
-import { SidebarPanelTeams } from "@sidekiq/components/sidebar/sidebar-panel-teams";
+import { SidebarPanelTeams } from "@sidekiq/workspace/components/sidebar-panel-teams";
 
 /**
  * Props for the SidebarPanel component.

@@ -5,9 +5,9 @@ import Link from "next/link";
 import { Plus, Users } from "lucide-react";
 
 import { Button } from "@sidekiq/ui/button";
-import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
-import { TeamCreateDialog } from "@sidekiq/components/team/team-create-dialog";
-import { useActiveTeam } from "@sidekiq/hooks/use-active-team";
+import { TeamAvatar } from "@sidekiq/workspace/components/team-avatar";
+import { TeamCreateDialog } from "@sidekiq/workspace/components/team-create-dialog";
+import { useActiveTeam } from "@sidekiq/workspace/hooks/use-active-team";
 import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 import { cn } from "@sidekiq/shared/lib/utils";
 
