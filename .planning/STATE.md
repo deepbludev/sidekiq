@@ -31,7 +31,7 @@ All v0.1 decisions documented with outcomes.
 
 ### Pending Todos
 
-14 pending todos in `.planning/todos/pending/`:
+13 pending todos in `.planning/todos/pending/`:
 - **Replace dashboard with /chat as default landing page** (ui)
 - **Implement Projects feature** (ui)
 - **Migrate next lint to ESLint CLI** (tooling)
@@ -40,7 +40,6 @@ All v0.1 decisions documented with outcomes.
 - **Mid-conversation Sidekiq switching with @mentions** (ui)
 - **Sidekiq voice tone / personality feature** (ui)
 - **Extend available emoji options for Sidekiq avatar** (ui)
-- **Two-tier sidebar navigation architecture** (ui) — DONE in Phase 8.2
 - **Rich markdown editor for chat input** (ui)
 - **Fix chat textarea loses focus after sending message** (ui)
 - **Refactor Architecture to Vertical Slicing by Feature** (architecture)
