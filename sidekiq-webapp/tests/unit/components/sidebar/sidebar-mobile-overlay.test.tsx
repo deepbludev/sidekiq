@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 
-import { SidebarMobileOverlay } from "@sidekiq/components/sidebar/sidebar-mobile-overlay";
+import { SidebarMobileOverlay } from "@sidekiq/shared/layout/sidebar-mobile-overlay";
 
 /** Mock next/navigation hooks */
 const mockPush = vi.fn();

@@ -2,7 +2,7 @@
 
 import { type RefObject } from "react";
 import { Search, X } from "lucide-react";
-import { Input } from "@sidekiq/components/ui/input";
+import { Input } from "@sidekiq/ui/input";
 
 interface SidebarSearchProps {
   /** Current search query value */

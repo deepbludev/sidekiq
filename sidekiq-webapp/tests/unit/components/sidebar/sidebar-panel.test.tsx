@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-import { SidebarPanel } from "@sidekiq/components/sidebar/sidebar-panel";
+import { SidebarPanel } from "@sidekiq/shared/layout/sidebar-panel";
 
 /** Mock next/navigation hooks */
 const mockPathname = vi.fn<() => string>(() => "/chat");

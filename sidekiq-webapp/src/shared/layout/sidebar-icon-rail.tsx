@@ -18,12 +18,8 @@ import type { LucideIcon } from "lucide-react";
 
 import { cn } from "@sidekiq/shared/lib/utils";
 import { getActiveFeature } from "@sidekiq/shared/lib/sidebar-utils";
-import { Button } from "@sidekiq/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@sidekiq/components/ui/tooltip";
+import { Button } from "@sidekiq/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@sidekiq/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,12 +30,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@sidekiq/components/ui/dropdown-menu";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@sidekiq/components/ui/avatar";
+} from "@sidekiq/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@sidekiq/ui/avatar";
 import { authClient } from "@sidekiq/server/better-auth/client";
 
 /**
