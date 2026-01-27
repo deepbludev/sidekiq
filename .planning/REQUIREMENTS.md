@@ -11,7 +11,7 @@ Requirements for v0.2 Workspaces milestone. Each maps to roadmap phases.
 
 - [ ] **ARCH-01**: Codebase reorganized into vertical feature slices under `src/features/` (chat, sidekiq, workspace, auth, settings, sidebar, model-picker)
 - [ ] **ARCH-02**: Shared cross-cutting utilities moved to `src/shared/` (UI primitives, utils, types, constants)
-- [ ] **ARCH-03**: Drizzle schema remains centralized in `src/server/db/schema.ts` with features importing from it
+- [ ] **ARCH-03**: Drizzle schema remains centralized, moved from `src/server/db/schema.ts` to `src/shared/db/schema.ts` with features importing from it
 - [ ] **ARCH-04**: tRPC routers moved to feature directories and merged in root router
 - [ ] **ARCH-05**: All existing tests pass after restructuring with zero behavior changes
 

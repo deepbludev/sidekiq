@@ -42,7 +42,7 @@ See: .planning/milestones/v0.1-ROADMAP.md
 **Requirements:**
 - ARCH-01: Codebase reorganized into vertical feature slices under `src/features/`
 - ARCH-02: Shared cross-cutting utilities moved to `src/shared/`
-- ARCH-03: Drizzle schema remains centralized in `src/server/db/schema.ts`
+- ARCH-03: Drizzle schema remains centralized, moved from `src/server/db/schema.ts` to `src/shared/db/schema.ts`
 - ARCH-04: tRPC routers moved to feature directories and merged in root router
 - ARCH-05: All existing tests pass after restructuring with zero behavior changes
 
