@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 
 // Mock the gateway module to avoid server-only import
-vi.mock("@sidekiq/lib/ai/gateway", () => ({
+vi.mock("@sidekiq/ai/api/gateway", () => ({
   gateway: vi.fn(),
 }));
 
-import { chatRequestSchema } from "@sidekiq/lib/validations/chat";
-import { DEFAULT_MODEL } from "@sidekiq/lib/ai/models";
+import { chatRequestSchema } from "@sidekiq/chats/validations";
+import { DEFAULT_MODEL } from "@sidekiq/ai/api/models";
 
 describe("chatRequestSchema", () => {
   describe("valid requests", () => {

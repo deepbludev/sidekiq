@@ -19,38 +19,66 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: "@sidekiq/chats",
+        find: /^@sidekiq\/chats$/,
         replacement: path.resolve(__dirname, "./src/features/chats/index.ts"),
       },
       {
-        find: "@sidekiq/sidekiqs",
+        find: /^@sidekiq\/chats\/(.*)/,
+        replacement: path.resolve(__dirname, "./src/features/chats/$1"),
+      },
+      {
+        find: /^@sidekiq\/sidekiqs$/,
         replacement: path.resolve(
           __dirname,
           "./src/features/sidekiqs/index.ts",
         ),
       },
       {
-        find: "@sidekiq/auth",
+        find: /^@sidekiq\/sidekiqs\/(.*)/,
+        replacement: path.resolve(__dirname, "./src/features/sidekiqs/$1"),
+      },
+      {
+        find: /^@sidekiq\/auth$/,
         replacement: path.resolve(__dirname, "./src/features/auth/index.ts"),
       },
       {
-        find: "@sidekiq/user",
+        find: /^@sidekiq\/auth\/(.*)/,
+        replacement: path.resolve(__dirname, "./src/features/auth/$1"),
+      },
+      {
+        find: /^@sidekiq\/user$/,
         replacement: path.resolve(__dirname, "./src/features/user/index.ts"),
       },
       {
-        find: "@sidekiq/ai",
+        find: /^@sidekiq\/user\/(.*)/,
+        replacement: path.resolve(__dirname, "./src/features/user/$1"),
+      },
+      {
+        find: /^@sidekiq\/ai$/,
         replacement: path.resolve(__dirname, "./src/features/ai/index.ts"),
       },
       {
-        find: "@sidekiq/workspace",
+        find: /^@sidekiq\/ai\/(.*)/,
+        replacement: path.resolve(__dirname, "./src/features/ai/$1"),
+      },
+      {
+        find: /^@sidekiq\/workspace$/,
         replacement: path.resolve(
           __dirname,
           "./src/features/workspace/index.ts",
         ),
       },
       {
-        find: "@sidekiq/billing",
+        find: /^@sidekiq\/workspace\/(.*)/,
+        replacement: path.resolve(__dirname, "./src/features/workspace/$1"),
+      },
+      {
+        find: /^@sidekiq\/billing$/,
         replacement: path.resolve(__dirname, "./src/features/billing/index.ts"),
+      },
+      {
+        find: /^@sidekiq\/billing\/(.*)/,
+        replacement: path.resolve(__dirname, "./src/features/billing/$1"),
       },
       {
         find: /^@sidekiq\/shared\/(.*)/,

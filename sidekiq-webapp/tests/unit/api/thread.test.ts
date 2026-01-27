@@ -34,7 +34,7 @@ vi.mock("@sidekiq/server/better-auth", () => ({
 }));
 
 // Import after mocks
-import { threadRouter } from "@sidekiq/server/api/routers/thread";
+import { threadRouter } from "@sidekiq/chats/api/router";
 import { createCallerFactory } from "@sidekiq/shared/trpc/trpc";
 import { db } from "@sidekiq/shared/db";
 

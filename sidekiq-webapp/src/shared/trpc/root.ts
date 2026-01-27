@@ -1,8 +1,8 @@
 import { healthRouter } from "@sidekiq/shared/trpc/routers/health";
 import { sidekiqRouter } from "@sidekiq/sidekiqs/api/router";
 import { teamRouter } from "@sidekiq/server/api/routers/team";
-import { threadRouter } from "@sidekiq/server/api/routers/thread";
-import { userRouter } from "@sidekiq/server/api/routers/user";
+import { threadRouter } from "@sidekiq/chats/api/router";
+import { userRouter } from "@sidekiq/user/api/router";
 import {
   createCallerFactory,
   createTRPCRouter,

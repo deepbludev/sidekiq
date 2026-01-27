@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 
 import { MessageItem } from "./message-item";
 import { EmptyState } from "./empty-state";
-import type { SidekiqAvatar } from "@sidekiq/lib/validations/sidekiq";
+import type { SidekiqAvatar } from "@sidekiq/sidekiqs/validations";
 
 export interface ModelSwitch {
   afterMessageIndex: number;

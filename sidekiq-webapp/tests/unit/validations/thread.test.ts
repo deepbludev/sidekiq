@@ -9,7 +9,7 @@ import {
   renameThreadInputSchema,
   listThreadsInputSchema,
   getTitleInputSchema,
-} from "@sidekiq/lib/validations/thread";
+} from "@sidekiq/chats/validations";
 
 describe("threadIdSchema", () => {
   it("should accept valid thread ID", () => {

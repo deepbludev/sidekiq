@@ -20,10 +20,10 @@ import { TypingIndicator } from "./typing-indicator";
 import { ChatScrollAnchor } from "./chat-scroll-anchor";
 import { ScrollToBottom } from "./scroll-to-bottom";
 import { ModelSwitchHint } from "./model-switch-hint";
-import { ModelPicker } from "@sidekiq/components/model-picker";
-import { useModelSelection } from "@sidekiq/hooks/use-model-selection";
+import { ModelPicker } from "@sidekiq/ai/components/model-picker";
+import { useModelSelection } from "@sidekiq/ai/hooks/use-model-selection";
 import { api } from "@sidekiq/shared/trpc/react";
-import type { SidekiqAvatar } from "@sidekiq/lib/validations/sidekiq";
+import type { SidekiqAvatar } from "@sidekiq/sidekiqs/validations";
 
 interface ChatInterfaceProps {
   /**

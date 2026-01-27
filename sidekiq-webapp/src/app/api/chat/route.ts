@@ -3,12 +3,12 @@ import type { UIMessage, ModelMessage } from "ai";
 import { nanoid } from "nanoid";
 import { eq, sql } from "drizzle-orm";
 
-import { getModel } from "@sidekiq/lib/ai/models";
-import { generateThreadTitle } from "@sidekiq/lib/ai/title";
-import { chatRequestSchema } from "@sidekiq/lib/validations/chat";
+import { getModel } from "@sidekiq/ai/api/models";
+import { generateThreadTitle } from "@sidekiq/ai/api/title";
+import { chatRequestSchema } from "@sidekiq/chats/validations";
 import { db } from "@sidekiq/shared/db";
 import { messages, threads, sidekiqs } from "@sidekiq/shared/db/schema";
-import { getSession } from "@sidekiq/server/better-auth/server";
+import { getSession } from "@sidekiq/auth/api/server";
 
 /**
  * Extract text content from a UIMessage's parts.

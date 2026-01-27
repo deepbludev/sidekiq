@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import type { SidekiqAvatar } from "@sidekiq/lib/validations/sidekiq";
-import { SidekiqIndicator } from "@sidekiq/components/sidekiq/sidekiq-indicator";
+import type { SidekiqAvatar } from "@sidekiq/sidekiqs/validations";
+import { SidekiqIndicator } from "@sidekiq/sidekiqs/components/sidekiq-indicator";
 import { Popover, PopoverContent, PopoverTrigger } from "@sidekiq/ui/popover";
 import { Button } from "@sidekiq/ui/button";
 

@@ -4,11 +4,11 @@ import type { UIMessage } from "ai";
 import { useState } from "react";
 
 import { cn } from "@sidekiq/shared/lib/utils";
-import { getModelConfig } from "@sidekiq/lib/ai/models-metadata";
+import { getModelConfig } from "@sidekiq/ai/api/models-metadata";
 import { MessageActions } from "./message-actions";
 import { MessageContent } from "./message-content";
-import { SidekiqAvatar } from "@sidekiq/components/sidekiq/sidekiq-avatar";
-import type { SidekiqAvatar as SidekiqAvatarType } from "@sidekiq/lib/validations/sidekiq";
+import { SidekiqAvatar } from "@sidekiq/sidekiqs/components/sidekiq-avatar";
+import type { SidekiqAvatar as SidekiqAvatarType } from "@sidekiq/sidekiqs/validations";
 
 /**
  * Metadata attached to assistant messages from the database.
