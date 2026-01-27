@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-26)
 Phase: v0.1 complete — awaiting next milestone
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-01-27 — Completed quick task 017: Replace dashboard with /chat as default landing page
+Last activity: 2026-01-27 — Completed quick task 018: Improved chat message metadata and fix seed emojis
 
 Progress: [██████████] v0.1 shipped
 
@@ -31,7 +31,7 @@ All v0.1 decisions documented with outcomes.
 
 ### Pending Todos
 
-12 pending todos in `.planning/todos/pending/`:
+11 pending todos in `.planning/todos/pending/`:
 - **Implement Projects feature** (ui)
 - **Migrate next lint to ESLint CLI** (tooling)
 - **Allow importing/exporting Sidekiq config from/to JSON file** (ui)
@@ -43,7 +43,6 @@ All v0.1 decisions documented with outcomes.
 - **Fix chat textarea loses focus after sending message** (ui)
 - **Refactor Architecture to Vertical Slicing by Feature** (architecture)
 - **Rethink teams as workspaces** (architecture)
-- **Improved chat message metadata on hover** (ui)
 
 ### Blockers/Concerns
 
@@ -68,10 +67,11 @@ All v0.1 decisions documented with outcomes.
 | 015 | Phase 8.2 unit tests | 2026-01-26 | 693c488 |
 | 016 | Fix sidekiq edit/create page vertical scroll overflow | 2026-01-26 | 2997a19 |
 | 017 | Replace dashboard with /chat as default landing page | 2026-01-27 | 70233ad |
+| 018 | Improved chat message metadata and fix seed emojis | 2026-01-27 | efae19b |
 
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed quick task 017
+Stopped at: Completed quick task 018
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
