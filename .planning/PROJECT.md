@@ -66,10 +66,21 @@ If everything else fails, this must work: selecting a model, creating a Sidekiq 
 
 ### Active
 
-- [ ] Share Sidekiq with team (teamId assignment)
-- [ ] Team members view and use shared Sidekiqs
-- [ ] Sidekiq owner controls edit permissions (canTeamEdit flag)
-- [ ] Team deletion transfers Sidekiqs to owner
+**v0.2 Workspaces:**
+- [ ] Refactor codebase to vertical feature slices (chat, sidekiq, workspace, auth, settings)
+- [ ] Migrate teams → workspaces with unified data model
+- [ ] Personal workspace created automatically for every user
+- [ ] Workspace switcher in sidebar with full context isolation
+- [ ] All content (threads, sidekiqs) scoped to active workspace
+- [ ] Share Sidekiq within workspace (workspace-scoped visibility)
+- [ ] Workspace members can use shared Sidekiqs
+- [ ] Sidekiq owner controls edit permissions within workspace
+- [ ] Workspace invitation system (reuse existing invite infrastructure)
+- [ ] Workspace member management with roles
+- [ ] Regenerate message button for AI responses
+- [ ] Include all available models in the Vercel AI Gateway
+
+**Carried forward (not in v0.2 scope):**
 - [ ] Failed message sends show error toast and remove failed message
 - [ ] Streaming failures detected with retry option
 - [ ] Network errors show user-friendly messages
@@ -84,17 +95,31 @@ If everything else fails, this must work: selecting a model, creating a Sidekiq 
 ### Out of Scope
 
 - Payments & Credits — Separate milestone after core features work
+- Per-workspace billing/usage tracking — Deferred, workspace model first
 - Conversation branching (edit creates fork) — v2 feature, adds complexity
-- Message regeneration — v2 feature
 - Web Search tool — v2 feature
 - Image Generation tool — v2 feature
 - Deep Research tool — v2 feature
-- Projects (organize chats) — v2 feature
+- Projects (organize chats) — v2 feature, would be within a workspace
 - Public Sidekiqs directory — v2 feature
 - Social login (Google) — GitHub OAuth sufficient for now
 - Mobile app — Web-first
 - Real-time collaboration — Streaming only to initiating user
 - Sidekiq folders — Nice-to-have, can defer
+- Workspace-level settings — Defer to future milestone
+
+## Current Milestone: v0.2 Workspaces
+
+**Goal:** Restructure the codebase into vertical feature slices and migrate teams to a workspace model with full content isolation, Sidekiq sharing, and a unified data model where personal content lives in a personal workspace.
+
+**Target features:**
+- Vertical slice architecture refactor (foundation for workspace features)
+- Teams → Workspaces migration with unified data model
+- Personal workspace auto-created per user
+- Sidebar workspace switcher with full context isolation
+- Workspace-scoped Sidekiq sharing
+- Regenerate message button
+- Expanded model list in AI Gateway
 
 ## Context
 
@@ -104,7 +129,7 @@ Tech stack: Next.js 15 (App Router), tRPC 11, Drizzle ORM, PostgreSQL, Better Au
 
 Design: Linear-inspired with oklch blue-indigo (hue 260) palette, Inter font, 6px base border radius, dark-mode-first. Two-tier sidebar with 48px icon rail and 288px contextual panels.
 
-Architecture: Horizontal layers — api (tRPC routers), components (UI), hooks, lib (utilities). Future consideration: vertical feature slicing.
+Architecture: Horizontal layers — api (tRPC routers), components (UI), hooks, lib (utilities). v0.2 will refactor to vertical feature slices.
 
 Testing: Vitest unit tests, Playwright E2E tests.
 
@@ -131,6 +156,8 @@ Known tech debt:
 | deletedSidekiqName column for graceful degradation | Preserves context when Sidekiq is deleted | ✓ Good |
 | DEFER Convex migration | PostgreSQL/Drizzle has no pain points, reconsider later | ✓ Good |
 | Manual psql for ALTER TYPE ADD VALUE | Drizzle transaction constraints prevent enum modifications | ⚠️ Revisit |
+| Unified workspace data model (personal = workspace) | Simplifies queries, avoids special-casing personal content | — Pending |
+| Vertical slice refactor before workspace features | Clean foundation, feature boundaries before adding workspace complexity | — Pending |
 
 ## Constraints
 
@@ -138,6 +165,7 @@ Known tech debt:
 - **Package manager**: pnpm only — strict requirement
 - **UI quality**: Polished from start, not "functional then beautiful" — user experience is core value proposition
 - **No payments in v1**: Core features must work before monetization — shipping usable product first
+- **Workspace migration**: Existing team data must be preserved — no data loss during teams→workspaces migration
 
 ---
-*Last updated: 2026-01-26 after v0.1 milestone*
+*Last updated: 2026-01-27 after v0.2 milestone start*

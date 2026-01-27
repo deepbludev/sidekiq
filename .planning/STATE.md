@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-26)
+See: .planning/PROJECT.md (updated 2026-01-27)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** Planning next milestone
+**Current focus:** v0.2 Workspaces — defining requirements
 
 ## Current Position
 
-Phase: v0.1 complete — awaiting next milestone
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-27 — Completed quick task 020: Fix conversation splits after 2nd message
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-01-27 — Milestone v0.2 Workspaces started
 
-Progress: [██████████] v0.1 shipped
+Progress: [░░░░░░░░░░] v0.2 starting
 
 ## Milestone History
 
@@ -28,6 +28,7 @@ Progress: [██████████] v0.1 shipped
 
 Decisions are logged in PROJECT.md Key Decisions table.
 All v0.1 decisions documented with outcomes.
+New v0.2 decisions: unified workspace model, vertical slice refactor first.
 
 ### Pending Todos
 
@@ -40,11 +41,10 @@ All v0.1 decisions documented with outcomes.
 - **Sidekiq voice tone / personality feature** (ui)
 - **Rich markdown editor for chat input** (ui)
 - **Fix chat textarea loses focus after sending message** (ui)
-- **Refactor Architecture to Vertical Slicing by Feature** (architecture)
-- **Rethink teams as workspaces** (architecture)
-- **Regenerate message button** (ui)
-- **Include all available models in the Vercel AI Gateway** (api)
-- **Fix hydration error on ChatInput form** (ui)
+- **Refactor Architecture to Vertical Slicing by Feature** (architecture) — IN v0.2
+- **Rethink teams as workspaces** (architecture) — IN v0.2
+- **Regenerate message button** (ui) — IN v0.2
+- **Include all available models in the Vercel AI Gateway** (api) — IN v0.2
 
 ### Blockers/Concerns
 
@@ -76,6 +76,6 @@ All v0.1 decisions documented with outcomes.
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed quick task 020
+Stopped at: Starting milestone v0.2 Workspaces
 Resume file: None
-Next: `/gsd:new-milestone` to start next milestone
+Next: Complete requirements and roadmap definition
