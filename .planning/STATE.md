@@ -31,7 +31,7 @@ All v0.1 decisions documented with outcomes.
 
 ### Pending Todos
 
-11 pending todos in `.planning/todos/pending/`:
+12 pending todos in `.planning/todos/pending/`:
 - **Implement Projects feature** (ui)
 - **Migrate next lint to ESLint CLI** (tooling)
 - **Allow importing/exporting Sidekiq config from/to JSON file** (ui)
@@ -43,6 +43,7 @@ All v0.1 decisions documented with outcomes.
 - **Fix chat textarea loses focus after sending message** (ui)
 - **Refactor Architecture to Vertical Slicing by Feature** (architecture)
 - **Rethink teams as workspaces** (architecture)
+- **Regenerate message button** (ui)
 
 ### Blockers/Concerns
 
