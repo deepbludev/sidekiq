@@ -74,8 +74,16 @@ export function ChatInterface({
   // Track the actual thread ID (may change after redirect for new threads)
   const [activeThreadId, setActiveThreadId] = useState<string | null>(threadId);
 
+  // Track activeThreadId in a ref for transport body function to read dynamically
+  const activeThreadIdRef = useRef<string | null>(threadId);
+
   // Track if we've already redirected to prevent duplicate navigation
   const hasRedirectedRef = useRef(false);
+
+  // Keep activeThreadIdRef in sync with activeThreadId state
+  useEffect(() => {
+    activeThreadIdRef.current = activeThreadId;
+  }, [activeThreadId]);
 
   // Track model switches for inline hints
   const [modelSwitches, setModelSwitches] = useState<
@@ -156,6 +164,8 @@ export function ChatInterface({
         const newThreadId = response.headers.get("X-Thread-Id");
         if (newThreadId) {
           hasRedirectedRef.current = true;
+          // Update ref immediately (synchronous) before React state update
+          activeThreadIdRef.current = newThreadId;
           // Track the new thread ID for title polling
           setActiveThreadId(newThreadId);
           // Use history API to update URL without navigation/remount
@@ -172,21 +182,24 @@ export function ChatInterface({
   );
 
   // Create transport with custom fetch to capture thread ID
-  // Use activeThreadId (stateful) instead of threadId (prop) so subsequent messages
-  // include the threadId after thread creation. For new Sidekiq chats, sidekiqId is
-  // included only on first message; subsequent messages use the created threadId.
+  // Use a function for body that reads from activeThreadIdRef, allowing the frozen
+  // Chat instance to dynamically resolve the latest threadId on each request.
+  // For new Sidekiq chats, sidekiqId is included only on first message;
+  // subsequent messages use the created threadId.
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
         api: "/api/chat",
-        body: activeThreadId
-          ? { threadId: activeThreadId }
-          : sidekiq
-            ? { sidekiqId: sidekiq.id }
-            : {},
+        body: () => {
+          const currentThreadId = activeThreadIdRef.current;
+          if (currentThreadId) {
+            return { threadId: currentThreadId };
+          }
+          return sidekiq ? { sidekiqId: sidekiq.id } : {};
+        },
         fetch: customFetch,
       }),
-    [activeThreadId, sidekiq, customFetch],
+    [sidekiq, customFetch],
   );
 
   const { messages, sendMessage, status, stop, error } = useChat({
