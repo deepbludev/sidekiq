@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   updateModelPreferencesSchema,
   type UpdateModelPreferencesInput,
-} from "@sidekiq/lib/validations/user";
+} from "@sidekiq/user/validations";
 
 describe("updateModelPreferencesSchema", () => {
   describe("valid inputs", () => {

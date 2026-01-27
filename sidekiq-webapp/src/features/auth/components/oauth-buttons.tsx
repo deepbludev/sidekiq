@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Github, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { authClient } from "@sidekiq/server/better-auth/client";
+import { authClient } from "@sidekiq/auth/api/client";
 import { Button } from "@sidekiq/ui/button";
 
 interface OAuthButtonsProps {

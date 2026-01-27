@@ -6,12 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-import { authClient } from "@sidekiq/server/better-auth/client";
-import {
-  resetPasswordSchema,
-  type ResetPasswordInput,
-} from "@sidekiq/lib/validations/auth";
+import { authClient } from "@sidekiq/auth/api/client";
+import { signInSchema, type SignInInput } from "@sidekiq/auth/validations";
 import { Button } from "@sidekiq/ui/button";
 import { Input } from "@sidekiq/ui/input";
 import {
@@ -23,40 +21,41 @@ import {
   FormMessage,
 } from "@sidekiq/ui/form";
 
-interface ResetPasswordFormProps {
-  token: string;
+interface SignInFormProps {
+  callbackURL?: string;
 }
 
 /**
- * Reset password form to set new password using token from email
+ * Sign in form with email/password authentication
  */
-export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
+export function SignInForm({ callbackURL = "/chat" }: SignInFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const form = useForm<ResetPasswordInput>({
-    resolver: zodResolver(resetPasswordSchema),
+  const form = useForm<SignInInput>({
+    resolver: zodResolver(signInSchema),
     defaultValues: {
+      email: "",
       password: "",
-      confirmPassword: "",
     },
   });
 
-  async function onSubmit(values: ResetPasswordInput) {
+  async function onSubmit(values: SignInInput) {
     setIsLoading(true);
     try {
-      const { error } = await authClient.resetPassword({
-        newPassword: values.password,
-        token,
+      const { error } = await authClient.signIn.email({
+        email: values.email,
+        password: values.password,
+        callbackURL,
       });
 
       if (error) {
-        toast.error(error.message ?? "Failed to reset password");
+        toast.error(error.message ?? "Invalid email or password");
         return;
       }
 
-      toast.success("Password reset successfully");
-      router.push("/sign-in");
+      toast.success("Signed in successfully");
+      router.push(callbackURL);
     } catch {
       toast.error("An unexpected error occurred");
     } finally {
@@ -69,14 +68,14 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="password"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">New Password</FormLabel>
+              <FormLabel className="text-foreground">Email</FormLabel>
               <FormControl>
                 <Input
-                  type="password"
-                  placeholder="••••••••"
+                  type="email"
+                  placeholder="you@example.com"
                   className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
                   {...field}
                 />
@@ -87,12 +86,18 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         />
         <FormField
           control={form.control}
-          name="confirmPassword"
+          name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">
-                Confirm Password
-              </FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel className="text-foreground">Password</FormLabel>
+                <Link
+                  href="/forgot-password"
+                  className="text-muted-foreground hover:text-foreground text-sm"
+                >
+                  Forgot password?
+                </Link>
+              </div>
               <FormControl>
                 <Input
                   type="password"
@@ -107,7 +112,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         />
         <Button type="submit" disabled={isLoading} className="w-full">
           {isLoading && <Loader2 className="animate-spin" />}
-          Reset Password
+          Sign In
         </Button>
       </form>
     </Form>

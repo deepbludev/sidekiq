@@ -3,7 +3,7 @@ import { and, eq, asc } from "drizzle-orm";
 import type { UIMessage } from "ai";
 import type { Metadata } from "next";
 
-import { getSession } from "@sidekiq/server/better-auth/server";
+import { getSession } from "@sidekiq/auth/api/server";
 import { db } from "@sidekiq/shared/db";
 import { threads, messages } from "@sidekiq/shared/db/schema";
 import { ChatInterface } from "@sidekiq/chats/components/chat-interface";

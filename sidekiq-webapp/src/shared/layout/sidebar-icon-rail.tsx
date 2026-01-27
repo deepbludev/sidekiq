@@ -32,7 +32,7 @@ import {
   DropdownMenuTrigger,
 } from "@sidekiq/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@sidekiq/ui/avatar";
-import { authClient } from "@sidekiq/server/better-auth/client";
+import { authClient } from "@sidekiq/auth/api/client";
 
 /**
  * Props for the RailIcon sub-component.

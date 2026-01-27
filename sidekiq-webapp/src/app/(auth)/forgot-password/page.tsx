@@ -1,5 +1,5 @@
-import { AuthCard } from "@sidekiq/components/auth/auth-card";
-import { ForgotPasswordForm } from "@sidekiq/components/auth/forgot-password-form";
+import { AuthCard } from "@sidekiq/auth/components/auth-card";
+import { ForgotPasswordForm } from "@sidekiq/auth/components/forgot-password-form";
 
 export default function ForgotPasswordPage() {
   return (

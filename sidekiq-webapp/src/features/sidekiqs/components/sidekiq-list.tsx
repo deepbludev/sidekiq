@@ -9,7 +9,7 @@ import { Button } from "@sidekiq/ui/button";
 import { Input } from "@sidekiq/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@sidekiq/ui/toggle-group";
 import { cn } from "@sidekiq/shared/lib/utils";
-import { useViewPreference } from "@sidekiq/hooks/use-view-preference";
+import { useViewPreference } from "@sidekiq/user/hooks/use-view-preference";
 import { useSidekiqActions } from "../hooks/use-sidekiq-actions";
 import { api } from "@sidekiq/shared/trpc/react";
 

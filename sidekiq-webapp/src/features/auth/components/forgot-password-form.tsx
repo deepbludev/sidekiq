@@ -6,11 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { authClient } from "@sidekiq/server/better-auth/client";
+import { authClient } from "@sidekiq/auth/api/client";
 import {
   forgotPasswordSchema,
   type ForgotPasswordInput,
-} from "@sidekiq/lib/validations/auth";
+} from "@sidekiq/auth/validations";
 import { Button } from "@sidekiq/ui/button";
 import { Input } from "@sidekiq/ui/input";
 import {

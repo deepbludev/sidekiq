@@ -1,6 +1,6 @@
-import { AuthCard } from "@sidekiq/components/auth/auth-card";
-import { SignInForm } from "@sidekiq/components/auth/sign-in-form";
-import { OAuthButtons } from "@sidekiq/components/auth/oauth-buttons";
+import { AuthCard } from "@sidekiq/auth/components/auth-card";
+import { SignInForm } from "@sidekiq/auth/components/sign-in-form";
+import { OAuthButtons } from "@sidekiq/auth/components/oauth-buttons";
 
 interface SignInPageProps {
   searchParams: Promise<{ callbackUrl?: string }>;

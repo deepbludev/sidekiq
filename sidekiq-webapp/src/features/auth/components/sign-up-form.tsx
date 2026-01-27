@@ -7,8 +7,8 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-import { authClient } from "@sidekiq/server/better-auth/client";
-import { signUpSchema, type SignUpInput } from "@sidekiq/lib/validations/auth";
+import { authClient } from "@sidekiq/auth/api/client";
+import { signUpSchema, type SignUpInput } from "@sidekiq/auth/validations";
 import { Button } from "@sidekiq/ui/button";
 import { Input } from "@sidekiq/ui/input";
 import {

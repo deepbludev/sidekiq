@@ -25,7 +25,7 @@ vi.mock("@sidekiq/shared/db", () => ({
   },
 }));
 
-vi.mock("@sidekiq/server/better-auth", () => ({
+vi.mock("@sidekiq/auth/api", () => ({
   auth: {
     api: {
       getSession: vi.fn(),

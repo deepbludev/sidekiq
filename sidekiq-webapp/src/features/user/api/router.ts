@@ -5,7 +5,7 @@ import {
   protectedProcedure,
 } from "@sidekiq/shared/trpc/trpc";
 import { user, type UserPreferences } from "@sidekiq/shared/db/schema";
-import { updateModelPreferencesSchema } from "@sidekiq/lib/validations/user";
+import { updateModelPreferencesSchema } from "@sidekiq/user/validations";
 
 /**
  * User router - User preferences and settings.

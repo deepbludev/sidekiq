@@ -6,10 +6,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
-import { authClient } from "@sidekiq/server/better-auth/client";
-import { signInSchema, type SignInInput } from "@sidekiq/lib/validations/auth";
+import { authClient } from "@sidekiq/auth/api/client";
+import {
+  resetPasswordSchema,
+  type ResetPasswordInput,
+} from "@sidekiq/auth/validations";
 import { Button } from "@sidekiq/ui/button";
 import { Input } from "@sidekiq/ui/input";
 import {
@@ -21,41 +23,40 @@ import {
   FormMessage,
 } from "@sidekiq/ui/form";
 
-interface SignInFormProps {
-  callbackURL?: string;
+interface ResetPasswordFormProps {
+  token: string;
 }
 
 /**
- * Sign in form with email/password authentication
+ * Reset password form to set new password using token from email
  */
-export function SignInForm({ callbackURL = "/chat" }: SignInFormProps) {
+export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const form = useForm<SignInInput>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<ResetPasswordInput>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
-      email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  async function onSubmit(values: SignInInput) {
+  async function onSubmit(values: ResetPasswordInput) {
     setIsLoading(true);
     try {
-      const { error } = await authClient.signIn.email({
-        email: values.email,
-        password: values.password,
-        callbackURL,
+      const { error } = await authClient.resetPassword({
+        newPassword: values.password,
+        token,
       });
 
       if (error) {
-        toast.error(error.message ?? "Invalid email or password");
+        toast.error(error.message ?? "Failed to reset password");
         return;
       }
 
-      toast.success("Signed in successfully");
-      router.push(callbackURL);
+      toast.success("Password reset successfully");
+      router.push("/sign-in");
     } catch {
       toast.error("An unexpected error occurred");
     } finally {
@@ -68,14 +69,14 @@ export function SignInForm({ callbackURL = "/chat" }: SignInFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="email"
+          name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Email</FormLabel>
+              <FormLabel className="text-foreground">New Password</FormLabel>
               <FormControl>
                 <Input
-                  type="email"
-                  placeholder="you@example.com"
+                  type="password"
+                  placeholder="••••••••"
                   className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
                   {...field}
                 />
@@ -86,18 +87,12 @@ export function SignInForm({ callbackURL = "/chat" }: SignInFormProps) {
         />
         <FormField
           control={form.control}
-          name="password"
+          name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <div className="flex items-center justify-between">
-                <FormLabel className="text-foreground">Password</FormLabel>
-                <Link
-                  href="/forgot-password"
-                  className="text-muted-foreground hover:text-foreground text-sm"
-                >
-                  Forgot password?
-                </Link>
-              </div>
+              <FormLabel className="text-foreground">
+                Confirm Password
+              </FormLabel>
               <FormControl>
                 <Input
                   type="password"
@@ -112,7 +107,7 @@ export function SignInForm({ callbackURL = "/chat" }: SignInFormProps) {
         />
         <Button type="submit" disabled={isLoading} className="w-full">
           {isLoading && <Loader2 className="animate-spin" />}
-          Sign In
+          Reset Password
         </Button>
       </form>
     </Form>

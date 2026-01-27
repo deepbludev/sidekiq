@@ -4,7 +4,7 @@ import {
   signInSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
-} from "@sidekiq/lib/validations/auth";
+} from "@sidekiq/auth/validations";
 
 describe("signUpSchema", () => {
   it("should accept valid input", () => {

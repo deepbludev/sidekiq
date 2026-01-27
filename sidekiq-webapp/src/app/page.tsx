@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
-import { getSession } from "@sidekiq/server/better-auth/server";
+import { getSession } from "@sidekiq/auth/api/server";
 import { Button } from "@sidekiq/ui/button";
 
 export default async function Home() {
