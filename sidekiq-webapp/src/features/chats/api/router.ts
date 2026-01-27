@@ -14,7 +14,7 @@ import {
   renameThreadInputSchema,
   listThreadsInputSchema,
   getTitleInputSchema,
-} from "@sidekiq/lib/validations/thread";
+} from "../validations";
 
 /**
  * Thread router - CRUD operations for conversation threads.
