@@ -4,10 +4,66 @@ import type { UIMessage } from "ai";
 import { useState } from "react";
 
 import { cn } from "@sidekiq/lib/utils";
+import { getModelConfig } from "@sidekiq/lib/ai/models-metadata";
 import { MessageActions } from "./message-actions";
 import { MessageContent } from "./message-content";
 import { SidekiqAvatar } from "@sidekiq/components/sidekiq/sidekiq-avatar";
 import type { SidekiqAvatar as SidekiqAvatarType } from "@sidekiq/lib/validations/sidekiq";
+
+/**
+ * Metadata attached to assistant messages from the database.
+ * Passed through UIMessage.metadata for persisted messages.
+ */
+interface MessageMetadata {
+  model?: string | null;
+  inputTokens?: number | null;
+  outputTokens?: number | null;
+  latencyMs?: number | null;
+  finishReason?: string | null;
+  createdAt?: string | Date | number;
+}
+
+/**
+ * Formats assistant message metadata into a display string.
+ * Format: "Model Name . N tokens . X.Xs . 2:30 PM"
+ *
+ * @param metadata - The message metadata from UIMessage
+ * @param createdAt - The message timestamp
+ * @returns Formatted string or null if no metadata available
+ */
+function formatMessageMetadata(
+  metadata: MessageMetadata | null,
+  createdAt: Date | null,
+): string | null {
+  const parts: string[] = [];
+
+  // Model display name
+  if (metadata?.model) {
+    const config = getModelConfig(metadata.model);
+    parts.push(config?.name ?? metadata.model);
+  }
+
+  // Total token count (input + output)
+  const input = metadata?.inputTokens ?? 0;
+  const output = metadata?.outputTokens ?? 0;
+  const totalTokens = input + output;
+  if (totalTokens > 0) {
+    parts.push(`${totalTokens} tokens`);
+  }
+
+  // Latency
+  if (metadata?.latencyMs && metadata.latencyMs > 0) {
+    const seconds = metadata.latencyMs / 1000;
+    parts.push(`${seconds.toFixed(1)}s`);
+  }
+
+  // Timestamp
+  if (createdAt) {
+    parts.push(formatTime(createdAt));
+  }
+
+  return parts.length > 0 ? parts.join(" \u00b7 ") : null;
+}
 
 interface MessageItemProps {
   /** The message to render */
@@ -164,18 +220,43 @@ export function MessageItem({
           />
         </div>
 
-        {/* Timestamp (visible on hover) */}
-        {(() => {
-          const createdAt = getCreatedAt(message);
-          if (showTimestamp && createdAt) {
-            return (
-              <time className="text-muted-foreground mt-1.5 block text-xs">
-                {formatTime(createdAt)}
-              </time>
-            );
-          }
-          return null;
-        })()}
+        {/* Metadata / timestamp (visible on hover) */}
+        {showTimestamp &&
+          (() => {
+            const createdAt = getCreatedAt(message);
+            if (isUser) {
+              // User messages: timestamp only
+              if (createdAt) {
+                return (
+                  <time className="text-muted-foreground mt-1.5 block text-xs">
+                    {formatTime(createdAt)}
+                  </time>
+                );
+              }
+              return null;
+            }
+
+            // Assistant messages: rich metadata
+            const metadata = (message.metadata ??
+              null) as MessageMetadata | null;
+            const metadataStr = formatMessageMetadata(metadata, createdAt);
+            if (metadataStr) {
+              return (
+                <p className="text-muted-foreground mt-1.5 text-xs">
+                  {metadataStr}
+                </p>
+              );
+            }
+            // Fallback: just timestamp if no metadata
+            if (createdAt) {
+              return (
+                <time className="text-muted-foreground mt-1.5 block text-xs">
+                  {formatTime(createdAt)}
+                </time>
+              );
+            }
+            return null;
+          })()}
       </div>
     </div>
   );

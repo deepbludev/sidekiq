@@ -99,6 +99,10 @@ export default async function ThreadPage({ params }: ThreadPageProps) {
       role: true,
       content: true,
       createdAt: true,
+      model: true,
+      inputTokens: true,
+      outputTokens: true,
+      metadata: true,
     },
   });
 
@@ -108,6 +112,12 @@ export default async function ThreadPage({ params }: ThreadPageProps) {
     role: msg.role,
     parts: [{ type: "text", text: msg.content }],
     createdAt: msg.createdAt,
+    metadata: {
+      model: msg.model,
+      inputTokens: msg.inputTokens,
+      outputTokens: msg.outputTokens,
+      ...(msg.metadata && typeof msg.metadata === "object" ? msg.metadata : {}),
+    },
   }));
 
   return (
