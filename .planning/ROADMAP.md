@@ -55,7 +55,7 @@ See: .planning/milestones/v0.1-ROADMAP.md
 **Plans:** 6 plans
 
 Plans:
-- [ ] 09-01-PLAN.md -- Config foundation + shared server infrastructure (db, trpc, lib, env)
+- [x] 09-01-PLAN.md -- Config foundation + shared server infrastructure (db, trpc, lib, env)
 - [ ] 09-02-PLAN.md -- Shared UI, icons, theme, sidebar layout migration
 - [ ] 09-03-PLAN.md -- Chats feature slice (components, hooks, router, validations)
 - [ ] 09-04-PLAN.md -- Sidekiqs + AI feature slices
@@ -218,7 +218,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 9. Vertical Slice Architecture | v0.2 | 0/6 | Planned | - |
+| 9. Vertical Slice Architecture | v0.2 | 1/6 | In progress | - |
 | 10. Workspace Schema Migration | v0.2 | 0/TBD | Not started | - |
 | 11. Workspace Authorization | v0.2 | 0/TBD | Not started | - |
 | 12. Workspace UX & Members | v0.2 | 0/TBD | Not started | - |
