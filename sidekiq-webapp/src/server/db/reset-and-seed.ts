@@ -73,7 +73,7 @@ Always ask clarifying questions about the intended audience and purpose before m
         "Rewrite this in a friendlier tone",
       ],
       defaultModel: null,
-      avatar: { type: "emoji" as const, color: "#8b5cf6", emoji: "pen" },
+      avatar: { type: "emoji" as const, color: "#8b5cf6", emoji: "✏️" },
       isFavorite: false,
       lastUsedAt: new Date(now.getTime() - 2 * 60 * 60 * 1000), // 2 hours ago
       threadCount: 2,
@@ -137,7 +137,7 @@ Always cite sources when possible and distinguish between established facts and 
       avatar: {
         type: "emoji" as const,
         color: "#10b981",
-        emoji: "magnifying-glass",
+        emoji: "🔍",
       },
       isFavorite: true,
       lastUsedAt: new Date(now.getTime() - 30 * 60 * 1000), // 30 minutes ago
@@ -170,7 +170,7 @@ Always cite sources when possible and distinguish between established facts and 
       avatar: {
         type: "emoji" as const,
         color: "#f59e0b",
-        emoji: "crystal-ball",
+        emoji: "🔮",
       },
       isFavorite: false,
       lastUsedAt: null,
@@ -208,7 +208,7 @@ Always cite sources when possible and distinguish between established facts and 
       avatar: {
         type: "emoji" as const,
         color: "#1e293b",
-        emoji: "pirate-flag",
+        emoji: "🏴‍☠️",
       },
       isFavorite: true,
       lastUsedAt: new Date(now.getTime() - 45 * 60 * 1000), // 45 minutes ago
@@ -315,7 +315,7 @@ Once I have these details, I can draft a compelling email for you.`,
     model: "google/gemini-2.0-flash",
     inputTokens: 45,
     outputTokens: 112,
-    metadata: null,
+    metadata: { finishReason: "stop", latencyMs: 2100, aborted: false },
     createdAt: new Date(now.getTime() - 2 * 60 * 60 * 1000 + 30000),
   },
   {
@@ -365,7 +365,7 @@ Feel free to adjust the time slots and add any specific portfolio pieces you'd l
     model: "google/gemini-2.0-flash",
     inputTokens: 89,
     outputTokens: 198,
-    metadata: null,
+    metadata: { finishReason: "stop", latencyMs: 3500, aborted: false },
     createdAt: new Date(now.getTime() - 1 * 60 * 60 * 1000),
   },
 
@@ -429,7 +429,7 @@ Would you like me to expand on any section or adjust the focus?`,
     model: "google/gemini-2.0-flash",
     inputTokens: 42,
     outputTokens: 245,
-    metadata: null,
+    metadata: { finishReason: "stop", latencyMs: 4200, aborted: false },
     createdAt: new Date(now.getTime() - 5 * 60 * 60 * 1000),
   },
 
@@ -505,7 +505,7 @@ Would you like me to show you a complete improved version?`,
     model: "anthropic/claude-sonnet-4",
     inputTokens: 156,
     outputTokens: 234,
-    metadata: null,
+    metadata: { finishReason: "stop", latencyMs: 3800, aborted: false },
     createdAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000 + 60000),
   },
   {
@@ -622,7 +622,7 @@ Key improvements:
     model: "anthropic/claude-sonnet-4",
     inputTokens: 78,
     outputTokens: 456,
-    metadata: null,
+    metadata: { finishReason: "stop", latencyMs: 6200, aborted: false },
     createdAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000),
   },
 
@@ -709,7 +709,7 @@ Would you like me to dive deeper into any of these?`,
     model: "google/gemini-2.0-flash",
     inputTokens: 38,
     outputTokens: 312,
-    metadata: null,
+    metadata: { finishReason: "stop", latencyMs: 5100, aborted: false },
     createdAt: new Date(now.getTime() - 30 * 60 * 1000),
   },
 ];
