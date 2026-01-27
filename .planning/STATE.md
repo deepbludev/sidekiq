@@ -31,7 +31,7 @@ All v0.1 decisions documented with outcomes.
 
 ### Pending Todos
 
-13 pending todos in `.planning/todos/pending/`:
+14 pending todos in `.planning/todos/pending/`:
 - **Replace dashboard with /chat as default landing page** (ui)
 - **Implement Projects feature** (ui)
 - **Migrate next lint to ESLint CLI** (tooling)
@@ -45,6 +45,7 @@ All v0.1 decisions documented with outcomes.
 - **Fix chat textarea loses focus after sending message** (ui)
 - **Refactor Architecture to Vertical Slicing by Feature** (architecture)
 - **Rethink teams as workspaces** (architecture)
+- **Improved chat message metadata on hover** (ui)
 
 ### Blockers/Concerns
 
