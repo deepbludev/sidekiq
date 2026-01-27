@@ -66,6 +66,7 @@ export function ChatInterface({
 }: ChatInterfaceProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
+  const utils = api.useUtils();
   const [currentTitle, setCurrentTitle] = useState<string | null>(
     initialTitle ?? null,
   );
@@ -106,8 +107,10 @@ export function ChatInterface({
   useEffect(() => {
     if (titleData?.title && !currentTitle) {
       setCurrentTitle(titleData.title);
+      // Re-invalidate sidebar thread list so it picks up the generated title
+      void utils.thread.list.invalidate();
     }
-  }, [titleData?.title, currentTitle]);
+  }, [titleData?.title, currentTitle, utils.thread.list]);
 
   // Update document.title when currentTitle changes
   useEffect(() => {
@@ -158,6 +161,8 @@ export function ChatInterface({
           // Use history API to update URL without navigation/remount
           // This preserves the streaming connection (router.replace would unmount and abort)
           window.history.replaceState(null, "", `/chat/${newThreadId}`);
+          // Invalidate sidebar thread list so the new thread appears immediately
+          void utils.thread.list.invalidate();
         }
       }
 
