@@ -99,44 +99,44 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ARCH-01 | — | Pending |
-| ARCH-02 | — | Pending |
-| ARCH-03 | — | Pending |
-| ARCH-04 | — | Pending |
-| ARCH-05 | — | Pending |
-| WKSP-01 | — | Pending |
-| WKSP-02 | — | Pending |
-| WKSP-03 | — | Pending |
-| WKSP-04 | — | Pending |
-| WKSP-05 | — | Pending |
-| WKSP-06 | — | Pending |
-| WKSP-07 | — | Pending |
-| WKSP-08 | — | Pending |
-| WKSP-09 | — | Pending |
-| WKSP-10 | — | Pending |
-| WKMB-01 | — | Pending |
-| WKMB-02 | — | Pending |
-| WKMB-03 | — | Pending |
-| WKMB-04 | — | Pending |
-| WKMB-05 | — | Pending |
-| WKMB-06 | — | Pending |
-| SKSH-01 | — | Pending |
-| SKSH-02 | — | Pending |
-| SKSH-03 | — | Pending |
-| SKSH-04 | — | Pending |
-| SKSH-05 | — | Pending |
-| SKSH-06 | — | Pending |
-| CHAT-01 | — | Pending |
-| CHAT-02 | — | Pending |
-| CHAT-03 | — | Pending |
-| MODL-01 | — | Pending |
-| MODL-02 | — | Pending |
+| ARCH-01 | Phase 9 | Pending |
+| ARCH-02 | Phase 9 | Pending |
+| ARCH-03 | Phase 9 | Pending |
+| ARCH-04 | Phase 9 | Pending |
+| ARCH-05 | Phase 9 | Pending |
+| WKSP-01 | Phase 10 | Pending |
+| WKSP-02 | Phase 10 | Pending |
+| WKSP-03 | Phase 10 | Pending |
+| WKSP-04 | Phase 10 | Pending |
+| WKSP-05 | Phase 10 | Pending |
+| WKSP-06 | Phase 11 | Pending |
+| WKSP-07 | Phase 11 | Pending |
+| WKSP-08 | Phase 12 | Pending |
+| WKSP-09 | Phase 12 | Pending |
+| WKSP-10 | Phase 12 | Pending |
+| WKMB-01 | Phase 12 | Pending |
+| WKMB-02 | Phase 12 | Pending |
+| WKMB-03 | Phase 12 | Pending |
+| WKMB-04 | Phase 12 | Pending |
+| WKMB-05 | Phase 12 | Pending |
+| WKMB-06 | Phase 12 | Pending |
+| SKSH-01 | Phase 13 | Pending |
+| SKSH-02 | Phase 13 | Pending |
+| SKSH-03 | Phase 13 | Pending |
+| SKSH-04 | Phase 13 | Pending |
+| SKSH-05 | Phase 13 | Pending |
+| SKSH-06 | Phase 13 | Pending |
+| CHAT-01 | Phase 14 | Pending |
+| CHAT-02 | Phase 14 | Pending |
+| CHAT-03 | Phase 14 | Pending |
+| MODL-01 | Phase 14 | Pending |
+| MODL-02 | Phase 14 | Pending |
 
 **Coverage:**
 - v0.2 requirements: 32 total
-- Mapped to phases: 0
-- Unmapped: 32 ⚠️
+- Mapped to phases: 32
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-27*
-*Last updated: 2026-01-27 after initial definition*
+*Last updated: 2026-01-27 after roadmap creation*
