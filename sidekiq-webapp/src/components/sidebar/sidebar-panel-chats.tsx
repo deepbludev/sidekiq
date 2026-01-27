@@ -14,7 +14,7 @@ import {
 } from "@sidekiq/components/ui/dropdown-menu";
 import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
 import { useActiveTeam } from "@sidekiq/hooks/use-active-team";
-import type { SidekiqAvatar } from "@sidekiq/server/db/schema";
+import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 
 import { SidebarSearch } from "./sidebar-search";
 import { SidebarThreadList } from "./sidebar-thread-list";

@@ -8,7 +8,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@sidekiq/components/ui/toggle-group";
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 
 /**
  * Theme toggle with segmented control showing Light/Dark/System options.

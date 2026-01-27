@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Fuse from "fuse.js";
 import { Sparkles, Plus } from "lucide-react";
 
-import { api } from "@sidekiq/trpc/react";
+import { api } from "@sidekiq/shared/trpc/react";
 import {
   Dialog,
   DialogContent,

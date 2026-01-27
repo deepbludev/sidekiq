@@ -7,7 +7,7 @@ import { Send, Square } from "lucide-react";
 import { Button } from "@sidekiq/components/ui/button";
 import { Textarea } from "@sidekiq/components/ui/textarea";
 import { SidekiqAvatar } from "@sidekiq/components/sidekiq/sidekiq-avatar";
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 import type { SidekiqAvatar as SidekiqAvatarType } from "@sidekiq/lib/validations/sidekiq";
 
 interface ChatInputProps {

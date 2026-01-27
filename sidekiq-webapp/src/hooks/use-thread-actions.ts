@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { api } from "@sidekiq/trpc/react";
+import { api } from "@sidekiq/shared/trpc/react";
 
 interface UseThreadActionsProps {
   /** Currently active thread ID (for redirect after delete) */

@@ -4,8 +4,8 @@ import type { UIMessage } from "ai";
 import type { Metadata } from "next";
 
 import { getSession } from "@sidekiq/server/better-auth/server";
-import { db } from "@sidekiq/server/db";
-import { threads, messages } from "@sidekiq/server/db/schema";
+import { db } from "@sidekiq/shared/db";
+import { threads, messages } from "@sidekiq/shared/db/schema";
 import { ChatInterface } from "@sidekiq/components/chat/chat-interface";
 
 /**

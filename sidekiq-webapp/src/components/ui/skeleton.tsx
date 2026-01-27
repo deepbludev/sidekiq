@@ -1,4 +1,4 @@
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (

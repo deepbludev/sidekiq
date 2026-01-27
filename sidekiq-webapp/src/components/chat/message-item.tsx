@@ -3,7 +3,7 @@
 import type { UIMessage } from "ai";
 import { useState } from "react";
 
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 import { getModelConfig } from "@sidekiq/lib/ai/models-metadata";
 import { MessageActions } from "./message-actions";
 import { MessageContent } from "./message-content";

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createGateway } from "@ai-sdk/gateway";
-import { env } from "@sidekiq/env";
+import { env } from "@sidekiq/shared/env";
 
 /**
  * AI Gateway instance for unified access to multiple LLM providers.

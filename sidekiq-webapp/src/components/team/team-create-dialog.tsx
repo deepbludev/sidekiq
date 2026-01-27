@@ -13,7 +13,7 @@ import {
   TeamForm,
   type TeamFormValues,
 } from "@sidekiq/components/team/team-form";
-import { api } from "@sidekiq/trpc/react";
+import { api } from "@sidekiq/shared/trpc/react";
 import { toast } from "sonner";
 
 interface TeamCreateDialogProps {

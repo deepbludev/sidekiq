@@ -1,8 +1,8 @@
 "use client";
 
 import { Avatar, AvatarFallback } from "@sidekiq/components/ui/avatar";
-import { cn } from "@sidekiq/lib/utils";
-import { getInitials } from "@sidekiq/lib/utils/avatar";
+import { cn } from "@sidekiq/shared/lib/utils";
+import { getInitials } from "@sidekiq/shared/lib/avatar";
 
 interface SidekiqAvatarProps {
   name: string;

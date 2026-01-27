@@ -4,7 +4,7 @@ import { ArrowDown } from "lucide-react";
 import { useEffect, useState, type RefObject } from "react";
 
 import { Button } from "@sidekiq/components/ui/button";
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 
 interface ScrollToBottomProps {
   /** Reference to the scroll container */

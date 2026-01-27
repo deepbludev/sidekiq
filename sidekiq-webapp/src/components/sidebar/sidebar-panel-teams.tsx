@@ -8,8 +8,8 @@ import { Button } from "@sidekiq/components/ui/button";
 import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
 import { TeamCreateDialog } from "@sidekiq/components/team/team-create-dialog";
 import { useActiveTeam } from "@sidekiq/hooks/use-active-team";
-import type { SidekiqAvatar } from "@sidekiq/server/db/schema";
-import { cn } from "@sidekiq/lib/utils";
+import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
+import { cn } from "@sidekiq/shared/lib/utils";
 
 /**
  * Teams panel for the two-tier sidebar.

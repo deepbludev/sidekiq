@@ -3,7 +3,7 @@
 import { Sparkles, Code, Search, FileText } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 
 interface PromptCategory {
   name: string;

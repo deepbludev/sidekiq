@@ -10,12 +10,12 @@ import {
   PopoverTrigger,
 } from "@sidekiq/components/ui/popover";
 import { Input } from "@sidekiq/components/ui/input";
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 import {
   EMOJI_CATEGORIES,
   searchEmojis,
-} from "@sidekiq/lib/constants/emoji-data";
-import type { EmojiEntry } from "@sidekiq/lib/constants/emoji-data";
+} from "@sidekiq/shared/constants/emoji-data";
+import type { EmojiEntry } from "@sidekiq/shared/constants/emoji-data";
 
 interface EmojiPickerPopoverProps {
   value?: string;

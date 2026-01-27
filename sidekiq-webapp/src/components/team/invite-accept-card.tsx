@@ -13,9 +13,9 @@ import {
   CardTitle,
 } from "@sidekiq/components/ui/card";
 import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
-import { api } from "@sidekiq/trpc/react";
+import { api } from "@sidekiq/shared/trpc/react";
 import { toast } from "sonner";
-import type { SidekiqAvatar } from "@sidekiq/server/db/schema";
+import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 
 interface InviteData {
   teamName: string;

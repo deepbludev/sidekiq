@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 import { Separator } from "@sidekiq/components/ui/separator";
 import { SidekiqPicker } from "@sidekiq/components/sidekiq/sidekiq-picker";
 import { useKeyboardShortcuts } from "@sidekiq/hooks/use-keyboard-shortcuts";

@@ -1,8 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq } from "drizzle-orm";
 
-import { createTRPCRouter, protectedProcedure } from "@sidekiq/server/api/trpc";
-import { threads } from "@sidekiq/server/db/schema";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+} from "@sidekiq/shared/trpc/trpc";
+import { threads } from "@sidekiq/shared/db/schema";
 import {
   deleteThreadInputSchema,
   archiveThreadInputSchema,

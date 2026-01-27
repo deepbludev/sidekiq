@@ -2,8 +2,8 @@
 
 import { Check } from "lucide-react";
 
-import { cn } from "@sidekiq/lib/utils";
-import { AVATAR_COLORS, type AvatarColor } from "@sidekiq/lib/utils/avatar";
+import { cn } from "@sidekiq/shared/lib/utils";
+import { AVATAR_COLORS, type AvatarColor } from "@sidekiq/shared/lib/avatar";
 
 interface ColorPickerProps {
   value: string;

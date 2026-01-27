@@ -22,7 +22,7 @@ import { ScrollToBottom } from "./scroll-to-bottom";
 import { ModelSwitchHint } from "./model-switch-hint";
 import { ModelPicker } from "@sidekiq/components/model-picker";
 import { useModelSelection } from "@sidekiq/hooks/use-model-selection";
-import { api } from "@sidekiq/trpc/react";
+import { api } from "@sidekiq/shared/trpc/react";
 import type { SidekiqAvatar } from "@sidekiq/lib/validations/sidekiq";
 
 interface ChatInterfaceProps {

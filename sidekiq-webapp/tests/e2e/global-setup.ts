@@ -4,7 +4,7 @@
  * Runs ONCE before all E2E tests to ensure the database
  * has fresh seeded data for consistent test runs.
  */
-import { resetAndSeed } from "../../src/server/db/reset-and-seed";
+import { resetAndSeed } from "../../src/shared/db/reset-and-seed";
 
 async function globalSetup(): Promise<void> {
   console.log(

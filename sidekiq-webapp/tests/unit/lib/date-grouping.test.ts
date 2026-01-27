@@ -3,7 +3,7 @@ import {
   groupThreadsByDate,
   formatThreadTimestamp,
   type Thread,
-} from "@sidekiq/lib/date-grouping";
+} from "@sidekiq/shared/lib/date-grouping";
 
 /**
  * Unit tests for date-grouping.ts functions.

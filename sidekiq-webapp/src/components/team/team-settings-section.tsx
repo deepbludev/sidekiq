@@ -13,9 +13,9 @@ import { TeamMemberList } from "@sidekiq/components/team/team-member-list";
 import { TeamInvitesList } from "@sidekiq/components/team/team-invites-list";
 import { DeleteTeamDialog } from "@sidekiq/components/team/delete-team-dialog";
 import { AvatarPicker } from "@sidekiq/components/sidekiq/avatar-picker";
-import { api } from "@sidekiq/trpc/react";
+import { api } from "@sidekiq/shared/trpc/react";
 import { toast } from "sonner";
-import type { SidekiqAvatar } from "@sidekiq/server/db/schema";
+import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 import { canDeleteTeam, type TeamRole } from "@sidekiq/lib/team-permissions";
 
 interface TeamSettingsSectionProps {
@@ -159,11 +159,7 @@ export function TeamSettingsSection({
                 disabled={userRole !== "owner" && userRole !== "admin"}
                 type="button"
               >
-                <TeamAvatar
-                  avatar={team.avatar}
-                  name={team.name}
-                  size="xl"
-                />
+                <TeamAvatar avatar={team.avatar} name={team.name} size="xl" />
                 {(userRole === "owner" || userRole === "admin") && (
                   <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
                     <span className="text-xs text-white">Edit</span>

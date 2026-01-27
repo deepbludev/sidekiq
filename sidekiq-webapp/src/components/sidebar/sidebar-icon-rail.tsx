@@ -16,8 +16,8 @@ import {
 import { useTheme } from "next-themes";
 import type { LucideIcon } from "lucide-react";
 
-import { cn } from "@sidekiq/lib/utils";
-import { getActiveFeature } from "@sidekiq/lib/sidebar-utils";
+import { cn } from "@sidekiq/shared/lib/utils";
+import { getActiveFeature } from "@sidekiq/shared/lib/sidebar-utils";
 import { Button } from "@sidekiq/components/ui/button";
 import {
   Tooltip,

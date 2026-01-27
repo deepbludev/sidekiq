@@ -4,7 +4,7 @@ import { createCodePlugin } from "@streamdown/code";
 import { useMemo } from "react";
 import { Streamdown } from "streamdown";
 
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 
 interface MessageContentProps {
   /** The markdown content to render */

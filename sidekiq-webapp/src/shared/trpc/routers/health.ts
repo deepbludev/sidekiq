@@ -1,4 +1,4 @@
-import { createTRPCRouter, publicProcedure } from "@sidekiq/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "@sidekiq/shared/trpc/trpc";
 
 /**
  * Health check router for verifying API connectivity

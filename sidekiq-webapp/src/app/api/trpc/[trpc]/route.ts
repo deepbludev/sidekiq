@@ -1,9 +1,9 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { type NextRequest } from "next/server";
 
-import { env } from "@sidekiq/env";
-import { appRouter } from "@sidekiq/server/api/root";
-import { createTRPCContext } from "@sidekiq/server/api/trpc";
+import { env } from "@sidekiq/shared/env";
+import { appRouter } from "@sidekiq/shared/trpc/root";
+import { createTRPCContext } from "@sidekiq/shared/trpc/trpc";
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when

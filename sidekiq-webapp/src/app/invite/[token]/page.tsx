@@ -1,9 +1,9 @@
 import { headers } from "next/headers";
 import { auth } from "@sidekiq/server/better-auth";
-import { createCaller } from "@sidekiq/server/api/root";
-import { createTRPCContext } from "@sidekiq/server/api/trpc";
+import { createCaller } from "@sidekiq/shared/trpc/root";
+import { createTRPCContext } from "@sidekiq/shared/trpc/trpc";
 import { InviteAcceptCard } from "@sidekiq/components/team/invite-accept-card";
-import { env } from "@sidekiq/env";
+import { env } from "@sidekiq/shared/env";
 
 interface InvitePageProps {
   params: Promise<{ token: string }>;

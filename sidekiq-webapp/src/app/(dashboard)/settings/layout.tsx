@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { User, Users } from "lucide-react";
 
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 
 const settingsNav = [
   { href: "/settings", label: "Profile", icon: User, exact: true },

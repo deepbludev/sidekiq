@@ -11,8 +11,11 @@ import {
   toggleFavoriteSchema,
   updateSidekiqSchema,
 } from "@sidekiq/lib/validations/sidekiq";
-import { createTRPCRouter, protectedProcedure } from "@sidekiq/server/api/trpc";
-import { sidekiqs, threads } from "@sidekiq/server/db/schema";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+} from "@sidekiq/shared/trpc/trpc";
+import { sidekiqs, threads } from "@sidekiq/shared/db/schema";
 
 /**
  * Simple in-memory rate limiter.

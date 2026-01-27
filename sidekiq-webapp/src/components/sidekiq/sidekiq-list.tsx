@@ -11,10 +11,10 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@sidekiq/components/ui/toggle-group";
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 import { useViewPreference } from "@sidekiq/hooks/use-view-preference";
 import { useSidekiqActions } from "@sidekiq/hooks/use-sidekiq-actions";
-import { api } from "@sidekiq/trpc/react";
+import { api } from "@sidekiq/shared/trpc/react";
 
 import { SidekiqCard } from "./sidekiq-card";
 import { SidekiqEmptyState } from "./sidekiq-empty-state";

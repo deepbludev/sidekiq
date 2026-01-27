@@ -1,6 +1,6 @@
 "use client";
 
-import type { DateGroup } from "@sidekiq/lib/date-grouping";
+import type { DateGroup } from "@sidekiq/shared/lib/date-grouping";
 
 interface SidebarThreadGroupProps {
   /** The date group to display */

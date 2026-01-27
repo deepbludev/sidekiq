@@ -16,7 +16,7 @@ import { Label } from "@sidekiq/components/ui/label";
 import { SidekiqAvatar } from "./sidekiq-avatar";
 import { ColorPicker } from "./color-picker";
 import { EmojiPickerPopover } from "./emoji-picker-popover";
-import type { AvatarColor } from "@sidekiq/lib/utils/avatar";
+import type { AvatarColor } from "@sidekiq/shared/lib/avatar";
 
 interface SidekiqAvatarValue {
   type: "initials" | "emoji";

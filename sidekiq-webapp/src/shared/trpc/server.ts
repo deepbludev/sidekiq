@@ -4,8 +4,8 @@ import { createHydrationHelpers } from "@trpc/react-query/rsc";
 import { headers } from "next/headers";
 import { cache } from "react";
 
-import { createCaller, type AppRouter } from "@sidekiq/server/api/root";
-import { createTRPCContext } from "@sidekiq/server/api/trpc";
+import { createCaller, type AppRouter } from "@sidekiq/shared/trpc/root";
+import { createTRPCContext } from "@sidekiq/shared/trpc/trpc";
 import { createQueryClient } from "./query-client";
 
 /**

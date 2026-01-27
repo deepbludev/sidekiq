@@ -1,4 +1,4 @@
-import { healthRouter } from "@sidekiq/server/api/routers/health";
+import { healthRouter } from "@sidekiq/shared/trpc/routers/health";
 import { sidekiqRouter } from "@sidekiq/server/api/routers/sidekiq";
 import { teamRouter } from "@sidekiq/server/api/routers/team";
 import { threadRouter } from "@sidekiq/server/api/routers/thread";
@@ -6,7 +6,7 @@ import { userRouter } from "@sidekiq/server/api/routers/user";
 import {
   createCallerFactory,
   createTRPCRouter,
-} from "@sidekiq/server/api/trpc";
+} from "@sidekiq/shared/trpc/trpc";
 
 /**
  * This is the primary router for your server.

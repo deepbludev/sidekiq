@@ -23,7 +23,7 @@ import { nanoid } from "nanoid";
 
 import { Button } from "@sidekiq/components/ui/button";
 import { Input } from "@sidekiq/components/ui/input";
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 
 interface StarterItem {
   id: string;

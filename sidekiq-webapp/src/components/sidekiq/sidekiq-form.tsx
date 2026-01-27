@@ -23,7 +23,7 @@ import {
   type SidekiqFormValues,
   type SidekiqAvatar,
 } from "@sidekiq/lib/validations/sidekiq";
-import { createDefaultAvatar } from "@sidekiq/lib/utils/avatar";
+import { createDefaultAvatar } from "@sidekiq/shared/lib/avatar";
 import { useSidekiqActions } from "@sidekiq/hooks/use-sidekiq-actions";
 import { ModelPicker } from "@sidekiq/components/model-picker/model-picker";
 import { DEFAULT_MODEL } from "@sidekiq/lib/ai/models-metadata";

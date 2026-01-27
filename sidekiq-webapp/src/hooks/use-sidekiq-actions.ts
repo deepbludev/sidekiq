@@ -8,7 +8,7 @@ import type {
   DeleteSidekiqInput,
   UpdateSidekiqInput,
 } from "@sidekiq/lib/validations/sidekiq";
-import { api } from "@sidekiq/trpc/react";
+import { api } from "@sidekiq/shared/trpc/react";
 
 /**
  * Hook providing Sidekiq mutation actions with optimistic updates.

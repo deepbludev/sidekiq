@@ -2,8 +2,8 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { Resend } from "resend";
 
-import { env } from "@sidekiq/env";
-import { db } from "@sidekiq/server/db";
+import { env } from "@sidekiq/shared/env";
+import { db } from "@sidekiq/shared/db";
 
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 

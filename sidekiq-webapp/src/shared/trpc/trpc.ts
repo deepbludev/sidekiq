@@ -12,7 +12,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { auth } from "@sidekiq/server/better-auth";
-import { db } from "@sidekiq/server/db";
+import { db } from "@sidekiq/shared/db";
 
 /**
  * 1. CONTEXT

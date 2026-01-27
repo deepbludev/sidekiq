@@ -9,7 +9,7 @@ import { Input } from "@sidekiq/components/ui/input";
 import { Label } from "@sidekiq/components/ui/label";
 import { AvatarPicker } from "@sidekiq/components/sidekiq/avatar-picker";
 import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
-import type { SidekiqAvatar } from "@sidekiq/server/db/schema";
+import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 
 const teamFormSchema = z.object({
   name: z

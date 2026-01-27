@@ -32,14 +32,14 @@ import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
-} from "@sidekiq/server/api/trpc";
+} from "@sidekiq/shared/trpc/trpc";
 import {
   teams,
   teamMembers,
   teamInvites,
   user,
-} from "@sidekiq/server/db/schema";
-import { type db as DbType } from "@sidekiq/server/db";
+} from "@sidekiq/shared/db/schema";
+import { type db as DbType } from "@sidekiq/shared/db";
 
 const INVITE_TOKEN_LENGTH = 32;
 const INVITE_EXPIRY_DAYS = 7;
@@ -452,7 +452,7 @@ export const teamRouter = createTRPCRouter({
         });
       } else {
         // Generate URL without sending email
-        const { env } = await import("@sidekiq/env");
+        const { env } = await import("@sidekiq/shared/env");
         inviteUrl = `${env.BETTER_AUTH_URL}/invite/${token}`;
       }
 

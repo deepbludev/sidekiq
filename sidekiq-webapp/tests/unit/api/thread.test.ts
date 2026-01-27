@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach, type Mock } from "vitest";
 import { TRPCError } from "@trpc/server";
 
 // Mock modules before importing
-vi.mock("@sidekiq/server/db", () => ({
+vi.mock("@sidekiq/shared/db", () => ({
   db: {
     query: {
       threads: {
@@ -35,8 +35,8 @@ vi.mock("@sidekiq/server/better-auth", () => ({
 
 // Import after mocks
 import { threadRouter } from "@sidekiq/server/api/routers/thread";
-import { createCallerFactory } from "@sidekiq/server/api/trpc";
-import { db } from "@sidekiq/server/db";
+import { createCallerFactory } from "@sidekiq/shared/trpc/trpc";
+import { db } from "@sidekiq/shared/db";
 
 /**
  * Helper to create a mock context with session

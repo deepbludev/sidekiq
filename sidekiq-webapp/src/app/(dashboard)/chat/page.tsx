@@ -3,8 +3,8 @@ import { and, eq, or, isNull } from "drizzle-orm";
 
 import { getSession } from "@sidekiq/server/better-auth/server";
 import { ChatInterface } from "@sidekiq/components/chat/chat-interface";
-import { db } from "@sidekiq/server/db";
-import { sidekiqs } from "@sidekiq/server/db/schema";
+import { db } from "@sidekiq/shared/db";
+import { sidekiqs } from "@sidekiq/shared/db/schema";
 
 interface NewChatPageProps {
   searchParams: Promise<{ sidekiq?: string }>;

@@ -22,7 +22,7 @@ import {
 } from "@sidekiq/components/ui/dropdown-menu";
 import { Input } from "@sidekiq/components/ui/input";
 import { Skeleton } from "@sidekiq/components/ui/skeleton";
-import { api } from "@sidekiq/trpc/react";
+import { api } from "@sidekiq/shared/trpc/react";
 import { SidekiqAvatar } from "@sidekiq/components/sidekiq/sidekiq-avatar";
 
 /**

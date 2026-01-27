@@ -7,14 +7,14 @@ import { MessageSquare, Search } from "lucide-react";
 import Fuse, { type FuseResult } from "fuse.js";
 import type { ReactNode } from "react";
 
-import { api } from "@sidekiq/trpc/react";
+import { api } from "@sidekiq/shared/trpc/react";
 import { useScrollPosition } from "@sidekiq/hooks/use-scroll-position";
 import {
   groupThreadsByDate,
   type DateGroup,
   type Thread,
   type GroupedThreads,
-} from "@sidekiq/lib/date-grouping";
+} from "@sidekiq/shared/lib/date-grouping";
 import { ThreadItem } from "@sidekiq/components/thread/thread-item";
 import { SidebarThreadGroup } from "./sidebar-thread-group";
 import { Skeleton } from "@sidekiq/components/ui/skeleton";

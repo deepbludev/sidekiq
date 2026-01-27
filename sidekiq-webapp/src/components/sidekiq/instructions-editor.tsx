@@ -6,7 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@sidekiq/components/ui/button";
 import { Textarea } from "@sidekiq/components/ui/textarea";
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 
 // Dynamic import for markdown preview (avoid SSR issues)
 const MDPreview = dynamic(

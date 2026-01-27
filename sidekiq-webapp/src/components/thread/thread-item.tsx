@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pin, Archive, MoreHorizontal } from "lucide-react";
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 import { ThreadContextMenu } from "./thread-context-menu";
 import { DeleteThreadDialog } from "./delete-thread-dialog";
 import { RenameThreadInput } from "./rename-thread-input";
@@ -17,7 +17,7 @@ import {
 } from "@sidekiq/components/ui/dropdown-menu";
 import { Button } from "@sidekiq/components/ui/button";
 import { SidekiqAvatar } from "@sidekiq/components/sidekiq/sidekiq-avatar";
-import type { SidekiqAvatar as SidekiqAvatarType } from "@sidekiq/server/db/schema";
+import type { SidekiqAvatar as SidekiqAvatarType } from "@sidekiq/shared/db/schema";
 
 interface Thread {
   id: string;

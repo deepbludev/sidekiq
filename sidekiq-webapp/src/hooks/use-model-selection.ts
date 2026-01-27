@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { api } from "@sidekiq/trpc/react";
+import { api } from "@sidekiq/shared/trpc/react";
 import { DEFAULT_MODEL, isValidModel } from "@sidekiq/lib/ai/models-metadata";
 
 interface UseModelSelectionOptions {

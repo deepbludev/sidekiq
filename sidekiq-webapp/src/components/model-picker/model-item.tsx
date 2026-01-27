@@ -5,7 +5,7 @@ import { CommandItem } from "@sidekiq/components/ui/command";
 import { ProviderIcon } from "@sidekiq/components/icons/provider-icons";
 import type { ModelConfig } from "@sidekiq/lib/ai/models-metadata";
 import { ModelHoverCard } from "./model-hover-card";
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 // CRITICAL: Import Tooltip components for favorite button
 import {
   Tooltip,

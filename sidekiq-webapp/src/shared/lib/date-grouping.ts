@@ -6,7 +6,7 @@ import {
   formatDistanceToNow,
   format,
 } from "date-fns";
-import type { SidekiqAvatar } from "@sidekiq/server/db/schema";
+import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 
 /**
  * Date group categories for thread organization.

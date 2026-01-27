@@ -16,7 +16,7 @@ vi.mock("@sidekiq/lib/ai/models", () => ({
   DEFAULT_MODEL: "google/gemini-2.0-flash",
 }));
 
-vi.mock("@sidekiq/server/db", () => ({
+vi.mock("@sidekiq/shared/db", () => ({
   db: {
     query: {
       threads: {
@@ -51,7 +51,7 @@ vi.mock("nanoid", () => ({
 import { POST } from "@sidekiq/app/api/chat/route";
 import { streamText, convertToModelMessages } from "ai";
 import { getModel } from "@sidekiq/lib/ai/models";
-import { db } from "@sidekiq/server/db";
+import { db } from "@sidekiq/shared/db";
 import { getSession } from "@sidekiq/server/better-auth/server";
 
 /**

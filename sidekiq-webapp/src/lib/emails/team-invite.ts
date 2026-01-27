@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { env } from "@sidekiq/env";
+import { env } from "@sidekiq/shared/env";
 
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 

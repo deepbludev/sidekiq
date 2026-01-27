@@ -6,8 +6,8 @@ import { eq, sql } from "drizzle-orm";
 import { getModel } from "@sidekiq/lib/ai/models";
 import { generateThreadTitle } from "@sidekiq/lib/ai/title";
 import { chatRequestSchema } from "@sidekiq/lib/validations/chat";
-import { db } from "@sidekiq/server/db";
-import { messages, threads, sidekiqs } from "@sidekiq/server/db/schema";
+import { db } from "@sidekiq/shared/db";
+import { messages, threads, sidekiqs } from "@sidekiq/shared/db/schema";
 import { getSession } from "@sidekiq/server/better-auth/server";
 
 /**

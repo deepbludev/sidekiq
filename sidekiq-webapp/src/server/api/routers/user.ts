@@ -1,7 +1,10 @@
 import { eq } from "drizzle-orm";
 
-import { createTRPCRouter, protectedProcedure } from "@sidekiq/server/api/trpc";
-import { user, type UserPreferences } from "@sidekiq/server/db/schema";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+} from "@sidekiq/shared/trpc/trpc";
+import { user, type UserPreferences } from "@sidekiq/shared/db/schema";
 import { updateModelPreferencesSchema } from "@sidekiq/lib/validations/user";
 
 /**
@@ -17,7 +20,7 @@ export const userRouter = createTRPCRouter({
       columns: { preferences: true },
     });
 
-    return (result?.preferences ?? {});
+    return result?.preferences ?? {};
   }),
 
   /**
@@ -32,7 +35,7 @@ export const userRouter = createTRPCRouter({
         columns: { preferences: true },
       });
 
-      const currentPrefs = (current?.preferences ?? {});
+      const currentPrefs = current?.preferences ?? {};
       const updatedPrefs: UserPreferences = { ...currentPrefs };
 
       // Update default model if provided

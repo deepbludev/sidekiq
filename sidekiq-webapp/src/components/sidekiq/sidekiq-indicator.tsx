@@ -2,7 +2,7 @@
 
 import { SidekiqAvatar } from "./sidekiq-avatar";
 import type { SidekiqAvatar as SidekiqAvatarType } from "@sidekiq/lib/validations/sidekiq";
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 
 interface SidekiqIndicatorProps {
   sidekiq: {

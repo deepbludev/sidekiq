@@ -4,7 +4,7 @@ import { type Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 
-import { TRPCReactProvider } from "@sidekiq/trpc/react";
+import { TRPCReactProvider } from "@sidekiq/shared/trpc/react";
 import { ThemeProvider } from "@sidekiq/components/theme/theme-provider";
 
 export const metadata: Metadata = {

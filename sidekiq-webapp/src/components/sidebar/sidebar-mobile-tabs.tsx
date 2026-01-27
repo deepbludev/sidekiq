@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { MessageSquare, Settings, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-import { cn } from "@sidekiq/lib/utils";
+import { cn } from "@sidekiq/shared/lib/utils";
 import { SidebarMobileOverlay } from "./sidebar-mobile-overlay";
 
 /**

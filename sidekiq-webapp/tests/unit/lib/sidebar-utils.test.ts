@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   getActiveFeature,
   type SidebarFeature,
-} from "@sidekiq/lib/sidebar-utils";
+} from "@sidekiq/shared/lib/sidebar-utils";
 
 describe("getActiveFeature", () => {
   describe("chat routes -> chats", () => {

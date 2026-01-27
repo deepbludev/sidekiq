@@ -4,7 +4,7 @@ import {
   generateColorFromName,
   getInitials,
   createDefaultAvatar,
-} from "@sidekiq/lib/utils/avatar";
+} from "@sidekiq/shared/lib/avatar";
 
 describe("AVATAR_COLORS", () => {
   it("should contain 12 colors", () => {

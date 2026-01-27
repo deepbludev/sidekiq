@@ -1,6 +1,6 @@
 import { type Config } from "drizzle-kit";
 
-import { env } from "@sidekiq/env";
+import { env } from "@sidekiq/shared/env";
 
 export default {
   schema: "./src/shared/db/schema.ts",

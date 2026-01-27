@@ -15,7 +15,7 @@ import {
 import { Button } from "@sidekiq/components/ui/button";
 import { SidekiqForm } from "@sidekiq/components/sidekiq/sidekiq-form";
 import type { SidekiqAvatar } from "@sidekiq/lib/validations/sidekiq";
-import { api } from "@sidekiq/trpc/react";
+import { api } from "@sidekiq/shared/trpc/react";
 
 /**
  * Edit Sidekiq page.

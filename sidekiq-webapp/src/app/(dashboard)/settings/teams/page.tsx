@@ -15,9 +15,9 @@ import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
 import { TeamSettingsSection } from "@sidekiq/components/team/team-settings-section";
 import { TeamEmptyState } from "@sidekiq/components/team/team-empty-state";
 import { TeamCreateDialog } from "@sidekiq/components/team/team-create-dialog";
-import { api } from "@sidekiq/trpc/react";
+import { api } from "@sidekiq/shared/trpc/react";
 import { authClient } from "@sidekiq/server/better-auth/client";
-import type { SidekiqAvatar } from "@sidekiq/server/db/schema";
+import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 
 /**
  * Team settings page.

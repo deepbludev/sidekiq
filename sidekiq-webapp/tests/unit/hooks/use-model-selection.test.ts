@@ -26,7 +26,7 @@ let mockQueryResult: {
   isLoading: false,
 };
 
-vi.mock("@sidekiq/trpc/react", () => ({
+vi.mock("@sidekiq/shared/trpc/react", () => ({
   api: {
     useUtils: () => ({
       user: {

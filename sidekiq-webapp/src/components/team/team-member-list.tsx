@@ -13,7 +13,7 @@ import {
   type TeamMember,
 } from "@sidekiq/hooks/use-member-search";
 import { canInvite, type TeamRole } from "@sidekiq/lib/team-permissions";
-import { api } from "@sidekiq/trpc/react";
+import { api } from "@sidekiq/shared/trpc/react";
 
 interface TeamMemberListProps {
   /** Team ID for API calls */
