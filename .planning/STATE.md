@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-26)
 Phase: v0.1 complete — awaiting next milestone
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-01-27 — Completed quick task 019: Extend available emoji options for Sidekiq avatar
+Last activity: 2026-01-27 — Completed quick task 020: Fix conversation splits after 2nd message
 
 Progress: [██████████] v0.1 shipped
 
@@ -69,10 +69,11 @@ All v0.1 decisions documented with outcomes.
 | 017 | Replace dashboard with /chat as default landing page | 2026-01-27 | 70233ad |
 | 018 | Improved chat message metadata and fix seed emojis | 2026-01-27 | efae19b |
 | 019 | Extend available emoji options for Sidekiq avatar | 2026-01-27 | d0b4afc |
+| 020 | Fix conversation splits after 2nd message | 2026-01-27 | 8b77503 |
 
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed quick task 019
+Stopped at: Completed quick task 020
 Resume file: None
 Next: `/gsd:new-milestone` to start next milestone
