@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-26)
 Phase: v0.1 complete — awaiting next milestone
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-01-26 — v0.1 milestone complete
+Last activity: 2026-01-26 — Completed quick task 016: Fix sidekiq edit/create page vertical scroll overflow
 
 Progress: [██████████] v0.1 shipped
 
@@ -69,6 +69,7 @@ All v0.1 decisions documented with outcomes.
 | 013 | Phase 8 unit tests | 2026-01-26 | 47a4b68 |
 | 014 | Fix unit tests for Phase 8.1 | 2026-01-26 | ec99974 |
 | 015 | Phase 8.2 unit tests | 2026-01-26 | 693c488 |
+| 016 | Fix sidekiq edit/create page vertical scroll overflow | 2026-01-26 | 2997a19 |
 
 ## Session Continuity
 
