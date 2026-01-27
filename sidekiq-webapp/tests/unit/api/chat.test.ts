@@ -11,7 +11,7 @@ vi.mock("ai", () => ({
   convertToModelMessages: vi.fn(),
 }));
 
-vi.mock("@sidekiq/lib/ai/models", () => ({
+vi.mock("@sidekiq/ai/api/models", () => ({
   getModel: vi.fn(),
   DEFAULT_MODEL: "google/gemini-2.0-flash",
 }));
@@ -39,7 +39,7 @@ vi.mock("@sidekiq/shared/db", () => ({
   },
 }));
 
-vi.mock("@sidekiq/server/better-auth/server", () => ({
+vi.mock("@sidekiq/auth/api/server", () => ({
   getSession: vi.fn(),
 }));
 
@@ -50,9 +50,9 @@ vi.mock("nanoid", () => ({
 // Import after mocks
 import { POST } from "@sidekiq/app/api/chat/route";
 import { streamText, convertToModelMessages } from "ai";
-import { getModel } from "@sidekiq/lib/ai/models";
+import { getModel } from "@sidekiq/ai/api/models";
 import { db } from "@sidekiq/shared/db";
-import { getSession } from "@sidekiq/server/better-auth/server";
+import { getSession } from "@sidekiq/auth/api/server";
 
 /**
  * Helper to create a mock Request object

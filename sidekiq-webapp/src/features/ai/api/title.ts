@@ -1,5 +1,5 @@
 import { generateText } from "ai";
-import { getModel } from "@sidekiq/lib/ai/models";
+import { getModel } from "./models";
 
 /** Budget model for title generation - fast and cheap */
 const TITLE_MODEL = "openai/gpt-4o-mini";

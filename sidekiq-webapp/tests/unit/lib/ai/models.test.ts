@@ -7,10 +7,10 @@ import {
   isValidModel,
   getModelsByProvider,
   type Provider,
-} from "@sidekiq/lib/ai/models";
+} from "@sidekiq/ai/api/models";
 
 // Mock the gateway module
-vi.mock("@sidekiq/lib/ai/gateway", () => ({
+vi.mock("@sidekiq/ai/api/gateway", () => ({
   gateway: vi.fn((modelId: string) => ({ modelId })),
 }));
 
@@ -54,7 +54,7 @@ describe("getModel", () => {
   });
 
   it("should call gateway with the model ID", async () => {
-    const { gateway } = await import("@sidekiq/lib/ai/gateway");
+    const { gateway } = await import("@sidekiq/ai/api/gateway");
     const modelId = "anthropic/claude-sonnet-4-20250514";
 
     getModel(modelId);

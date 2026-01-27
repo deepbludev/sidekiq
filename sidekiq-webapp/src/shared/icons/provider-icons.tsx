@@ -1,6 +1,6 @@
 "use client";
 
-import type { Provider } from "@sidekiq/lib/ai/models-metadata";
+import type { Provider } from "@sidekiq/ai/api/models-metadata";
 import { cn } from "@sidekiq/shared/lib/utils";
 
 interface ProviderIconProps {

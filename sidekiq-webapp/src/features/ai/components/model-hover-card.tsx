@@ -11,10 +11,7 @@ import {
   ProviderIcon,
   getProviderDisplayName,
 } from "@sidekiq/shared/icons/provider-icons";
-import type {
-  ModelConfig,
-  ModelFeature,
-} from "@sidekiq/lib/ai/models-metadata";
+import type { ModelConfig, ModelFeature } from "../api/models-metadata";
 
 interface ModelHoverCardProps {
   model: ModelConfig;

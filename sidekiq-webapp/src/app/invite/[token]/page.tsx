@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import { auth } from "@sidekiq/server/better-auth";
+import { auth } from "@sidekiq/auth/api";
 import { createCaller } from "@sidekiq/shared/trpc/root";
 import { createTRPCContext } from "@sidekiq/shared/trpc/trpc";
 import { InviteAcceptCard } from "@sidekiq/components/team/invite-accept-card";

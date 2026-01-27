@@ -52,8 +52,8 @@ vi.mock("@sidekiq/shared/trpc/react", () => ({
 }));
 
 // Import after mocking
-import { useModelSelection } from "@sidekiq/hooks/use-model-selection";
-import { DEFAULT_MODEL } from "@sidekiq/lib/ai/models-metadata";
+import { useModelSelection } from "@sidekiq/ai/hooks/use-model-selection";
+import { DEFAULT_MODEL } from "@sidekiq/ai/api/models-metadata";
 
 describe("useModelSelection", () => {
   beforeEach(() => {

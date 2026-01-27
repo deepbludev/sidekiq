@@ -1,5 +1,5 @@
 import { Separator } from "@sidekiq/ui/separator";
-import { getModelConfig } from "@sidekiq/lib/ai/models-metadata";
+import { getModelConfig } from "@sidekiq/ai/api/models-metadata";
 
 interface ModelSwitchHintProps {
   previousModel: string;

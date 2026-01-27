@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { ModelPickerTrigger } from "@sidekiq/components/model-picker/model-picker-trigger";
-import type { ModelConfig } from "@sidekiq/lib/ai/models-metadata";
+import { ModelPickerTrigger } from "@sidekiq/ai/components/model-picker-trigger";
+import type { ModelConfig } from "@sidekiq/ai/api/models-metadata";
 
 const mockModel: ModelConfig = {
   id: "anthropic/claude-sonnet-4-20250514",

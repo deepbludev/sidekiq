@@ -8,7 +8,7 @@ import {
   getProviders,
   type Provider,
   type ModelFeature,
-} from "@sidekiq/lib/ai/models-metadata";
+} from "@sidekiq/ai/api/models-metadata";
 
 describe("AVAILABLE_MODELS extended metadata", () => {
   it("should contain 8 models", () => {

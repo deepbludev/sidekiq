@@ -3,7 +3,7 @@
 import { Check, Star } from "lucide-react";
 import { CommandItem } from "@sidekiq/ui/command";
 import { ProviderIcon } from "@sidekiq/shared/icons/provider-icons";
-import type { ModelConfig } from "@sidekiq/lib/ai/models-metadata";
+import type { ModelConfig } from "../api/models-metadata";
 import { ModelHoverCard } from "./model-hover-card";
 import { cn } from "@sidekiq/shared/lib/utils";
 // CRITICAL: Import Tooltip components for favorite button

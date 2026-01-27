@@ -5,7 +5,7 @@ import { forwardRef } from "react";
 
 import { Button } from "@sidekiq/ui/button";
 import { ProviderIcon } from "@sidekiq/shared/icons/provider-icons";
-import type { ModelConfig } from "@sidekiq/lib/ai/models-metadata";
+import type { ModelConfig } from "../api/models-metadata";
 import { cn } from "@sidekiq/shared/lib/utils";
 
 interface ModelPickerTriggerProps extends React.ComponentPropsWithoutRef<"button"> {
