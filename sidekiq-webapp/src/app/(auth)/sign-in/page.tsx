@@ -8,7 +8,7 @@ interface SignInPageProps {
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
   const { callbackUrl } = await searchParams;
-  const callbackURL = callbackUrl ?? "/dashboard";
+  const callbackURL = callbackUrl ?? "/chat";
 
   return (
     <AuthCard

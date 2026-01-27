@@ -8,7 +8,7 @@ interface SignUpPageProps {
 
 export default async function SignUpPage({ searchParams }: SignUpPageProps) {
   const { callbackUrl } = await searchParams;
-  const callbackURL = callbackUrl ?? "/dashboard";
+  const callbackURL = callbackUrl ?? "/chat";
 
   return (
     <AuthCard

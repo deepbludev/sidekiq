@@ -28,7 +28,7 @@ interface SignInFormProps {
 /**
  * Sign in form with email/password authentication
  */
-export function SignInForm({ callbackURL = "/dashboard" }: SignInFormProps) {
+export function SignInForm({ callbackURL = "/chat" }: SignInFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 

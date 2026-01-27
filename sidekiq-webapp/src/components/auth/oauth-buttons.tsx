@@ -14,9 +14,7 @@ interface OAuthButtonsProps {
 /**
  * OAuth provider buttons for sign in/up pages
  */
-export function OAuthButtons({
-  callbackURL = "/dashboard",
-}: OAuthButtonsProps) {
+export function OAuthButtons({ callbackURL = "/chat" }: OAuthButtonsProps) {
   const [isGitHubLoading, setIsGitHubLoading] = useState(false);
 
   async function handleGitHubSignIn() {

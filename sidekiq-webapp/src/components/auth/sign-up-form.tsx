@@ -27,7 +27,7 @@ interface SignUpFormProps {
 /**
  * Sign up form with email/password registration
  */
-export function SignUpForm({ callbackURL = "/dashboard" }: SignUpFormProps) {
+export function SignUpForm({ callbackURL = "/chat" }: SignUpFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 

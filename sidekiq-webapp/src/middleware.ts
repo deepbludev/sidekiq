@@ -22,7 +22,7 @@ const authRoutes = [
 /**
  * Middleware for route protection
  * - Redirects unauthenticated users from protected routes to /sign-in
- * - Redirects authenticated users from auth routes to /dashboard
+ * - Redirects authenticated users from auth routes to /chat
  */
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -44,7 +44,7 @@ export function middleware(request: NextRequest) {
     isAuthenticated &&
     authRoutes.some((route) => pathname.startsWith(route))
   ) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/chat", request.url));
   }
 
   // Check if accessing protected routes while not authenticated
