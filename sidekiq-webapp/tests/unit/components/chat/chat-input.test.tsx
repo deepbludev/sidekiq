@@ -191,6 +191,55 @@ describe("ChatInput", () => {
     });
   });
 
+  describe("focus management", () => {
+    it("should restore focus to textarea after input is cleared", async () => {
+      const { rerender } = renderChatInput({ input: "Hello" });
+
+      const textarea = screen.getByPlaceholderText(/type a message/i);
+
+      // Simulate clearing the input (message sent)
+      rerender(
+        <ChatInput
+          input=""
+          setInput={vi.fn()}
+          onSubmit={vi.fn((e: FormEvent<HTMLFormElement>) =>
+            e.preventDefault(),
+          )}
+          isStreaming={false}
+          onStop={vi.fn()}
+        />,
+      );
+
+      // Focus should be restored to textarea
+      expect(textarea).toHaveFocus();
+    });
+
+    it("should not focus textarea while streaming", async () => {
+      const { rerender } = renderChatInput({
+        input: "Hello",
+        isStreaming: false,
+      });
+
+      const textarea = screen.getByPlaceholderText(/type a message/i);
+
+      // Clear input while streaming should not trigger focus
+      rerender(
+        <ChatInput
+          input=""
+          setInput={vi.fn()}
+          onSubmit={vi.fn((e: FormEvent<HTMLFormElement>) =>
+            e.preventDefault(),
+          )}
+          isStreaming={true}
+          onStop={vi.fn()}
+        />,
+      );
+
+      // Textarea is disabled and should not be focused during streaming
+      expect(textarea).toBeDisabled();
+    });
+  });
+
   describe("editor-like card layout (Phase 8.1)", () => {
     it("should render card container with border and bg-card classes", () => {
       const { container } = renderChatInput();

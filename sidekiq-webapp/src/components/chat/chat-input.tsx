@@ -1,6 +1,7 @@
 "use client";
 
 import type { FormEvent, KeyboardEvent, ReactNode } from "react";
+import { useRef, useEffect } from "react";
 import { Send, Square } from "lucide-react";
 
 import { Button } from "@sidekiq/components/ui/button";
@@ -51,6 +52,15 @@ export function ChatInput({
   modelPicker,
   sidekiq,
 }: ChatInputProps) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Restore focus to textarea after input is cleared (message sent)
+  useEffect(() => {
+    if (input === "" && !isStreaming && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [input, isStreaming]);
+
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     // Enter to send, Shift+Enter for newline
     if (e.key === "Enter" && !e.shiftKey) {
@@ -96,6 +106,7 @@ export function ChatInput({
 
         {/* Textarea */}
         <Textarea
+          ref={textareaRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
