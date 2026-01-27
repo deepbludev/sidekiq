@@ -31,12 +31,11 @@ All v0.1 decisions documented with outcomes.
 
 ### Pending Todos
 
-15 pending todos in `.planning/todos/pending/`:
+13 pending todos in `.planning/todos/pending/`:
 - **Replace dashboard with /chat as default landing page** (ui)
 - **Implement Projects feature** (ui)
 - **Migrate next lint to ESLint CLI** (tooling)
 - **Allow importing/exporting Sidekiq config from/to JSON file** (ui)
-- **Fix Cmd+N shortcut conflicting with browser new window** (ui)
 - **Sidekiq creation agent feature** (ui)
 - **Mid-conversation Sidekiq switching with @mentions** (ui)
 - **Sidekiq voice tone / personality feature** (ui)

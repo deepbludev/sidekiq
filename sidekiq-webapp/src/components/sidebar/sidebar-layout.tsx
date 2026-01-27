@@ -23,8 +23,8 @@ const PANEL_COLLAPSED_KEY = "sidebar-panel-collapsed";
  *
  * **Keyboard shortcuts:**
  * - Cmd/Ctrl+B: Toggle panel collapsed/expanded
- * - Cmd/Ctrl+K: Focus search input in chats panel
- * - Cmd/Ctrl+N: Create new chat
+ * - Cmd/Ctrl+K → C: Create new chat (chord shortcut)
+ * - Cmd/Ctrl+K (no follow-up): Focus search input in chats panel
  * - Cmd/Ctrl+Shift+S: Open Sidekiq picker dialog
  *
  * **Panel toggle mechanisms:**
