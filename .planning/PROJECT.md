@@ -2,7 +2,7 @@
 
 ## What This Is
 
-Sidekiq is a premium AI chat application that provides model-agnostic access to multiple LLM providers (OpenAI, Anthropic, etc.) through a single interface, similar to t3.chat. The core differentiator is "Sidekiqs" — custom AI assistants with specific instructions, names, and descriptions (like OpenAI's GPTs or Google's Gems) that can be shared within teams.
+Sidekiq is a premium AI chat application that provides model-agnostic access to multiple LLM providers (OpenAI, Anthropic, Google, etc.) through a single interface, similar to t3.chat. The core differentiator is "Sidekiqs" — custom AI assistants with specific instructions, names, and descriptions (like OpenAI's GPTs or Google's Gems) that can be shared within teams. Features a Linear-inspired design system with two-tier sidebar navigation, keyboard shortcuts, and a polished dark-mode-first aesthetic.
 
 Target users are small teams and startups who want shared AI workflows, plus individual power users seeking flexibility across providers.
 
@@ -16,8 +16,6 @@ If everything else fails, this must work: selecting a model, creating a Sidekiq 
 
 ### Validated
 
-<!-- Shipped and confirmed working. -->
-
 - ✓ Email/password authentication with validation — existing
 - ✓ GitHub OAuth login — existing
 - ✓ Password reset flow with email tokens (1-hour expiration) — existing
@@ -27,50 +25,63 @@ If everything else fails, this must work: selecting a model, creating a Sidekiq 
 - ✓ PostgreSQL with Drizzle ORM and migrations — existing
 - ✓ UI component library (Radix + Tailwind + shadcn patterns) — existing
 - ✓ Theme support (dark/light/system) — existing
+- ✓ Send message and receive streaming AI response — v0.1
+- ✓ Select LLM model via dropdown near input — v0.1
+- ✓ Model selection persists per thread — v0.1
+- ✓ Create new conversation thread — v0.1
+- ✓ Auto-generated thread title after first exchange — v0.1
+- ✓ Manually edit thread title — v0.1
+- ✓ Delete thread with confirmation — v0.1
+- ✓ Archive thread (soft delete) — v0.1
+- ✓ Pin thread to top — v0.1
+- ✓ Messages persisted with model, tokens, and metadata — v0.1
+- ✓ Optimistic UI with error rollback — v0.1
+- ✓ Streaming with typing indicator — v0.1
+- ✓ Sidebar sorted by lastActivityAt — v0.1
+- ✓ Pinned threads at top — v0.1
+- ✓ Date grouping (Today/Yesterday/This Week/Older) — v0.1
+- ✓ Search threads by title — v0.1
+- ✓ Scroll position preserved — v0.1
+- ✓ Sidekiq visual indicators in sidebar — v0.1
+- ✓ Create Sidekiq with name/desc/instructions — v0.1
+- ✓ Edit Sidekiq — v0.1
+- ✓ Delete Sidekiq — v0.1
+- ✓ Chat with Sidekiq (system message injection) — v0.1
+- ✓ UI indicates active Sidekiq — v0.1
+- ✓ Text initial avatars for Sidekiqs — v0.1
+- ✓ Rate limiting: 25 Sidekiq creations per hour — v0.1
+- ✓ Instructions validated (8000 chars max) — v0.1
+- ✓ Empty state with CTA — v0.1
+- ✓ Create team with name — v0.1
+- ✓ View team members and roles — v0.1
+- ✓ Invite members via email (token-based) — v0.1
+- ✓ Invites expire after 7 days — v0.1
+- ✓ Revoke pending invites — v0.1
+- ✓ Remove team members — v0.1
+- ✓ Invite acceptance flow — v0.1
+- ✓ Dark/Light/System theme toggle — v0.1
+- ✓ Linear-inspired aesthetic with oklch palette — v0.1
+- ✓ Empty states with CTAs — v0.1
+- ✓ Two-tier sidebar with icon rail and contextual panels — v0.1
 
 ### Active
 
-<!-- Current scope. Building toward these. -->
-
-**Core Chat:**
-- [ ] Basic chat UI with sidebar (history) and main chat area
-- [ ] Integration with LLM providers via Vercel AI Gateway (unified API key)
-- [ ] Server-Sent Events (SSE) for streaming AI responses
-- [ ] Message persistence with model, tokens, and metadata tracking
-- [ ] Thread management: create, auto-title generation after first exchange
-- [ ] Model picker (dropdown near input) with persistent selection per thread
-- [ ] Thread actions: delete (permanent), archive (soft delete), pin (sticky top)
-- [ ] Optimistic UI for message sending with error rollback
-- [ ] Empty states with CTAs for new users
-- [ ] Loading states (skeletons, streaming indicators)
-- [ ] Scroll position preservation when switching threads
-- [ ] Sidebar search functionality (search threads by title/content)
-- [ ] Date grouping in sidebar (Today/Yesterday/This Week/Older)
-
-**Sidekiqs (Custom Assistants):**
-- [ ] CRUD pages for Sidekiqs with validation (max 4000 char instructions)
-- [ ] Text initial avatars for Sidekiqs (colored circles with initials)
-- [ ] Chat with a Sidekiq (instructions prepended as system message)
-- [ ] Sidekiq visual indicators in sidebar (icon, badge, subtitle with name)
-- [ ] Rate limiting: max 100 Sidekiqs per user, 10 creations per hour
-
-**Teams:**
-- [ ] Team creation and management pages
-- [ ] Token-based team member invites (email with secure link, 7-day expiration)
-- [ ] Team member management (view members, roles, remove members)
-- [ ] Sidekiq team sharing logic (canTeamEdit flag for permissions)
-- [ ] Team deletion flow (transfers team Sidekiqs to owner)
-
-**UI/UX Polish:**
-- [ ] Glassmorphism aesthetic (translucent backdrops, blurs, subtle gradients)
-- [ ] Micro-animations for message appearance (fade-in/slide-up)
+- [ ] Share Sidekiq with team (teamId assignment)
+- [ ] Team members view and use shared Sidekiqs
+- [ ] Sidekiq owner controls edit permissions (canTeamEdit flag)
+- [ ] Team deletion transfers Sidekiqs to owner
+- [ ] Failed message sends show error toast and remove failed message
+- [ ] Streaming failures detected with retry option
+- [ ] Network errors show user-friendly messages
+- [ ] Rate limit errors show clear feedback with wait time
+- [ ] Micro-animations for message appearance
 - [ ] Smooth transitions between pages
 - [ ] Hover states on all interactive elements
-- [ ] Polished loading states and skeletons
+- [ ] Skeleton loading states for sidebar and chat area
+- [ ] Streaming indicator with cursor animation
+- [ ] 100 Sidekiqs per user limit (subscription-gated)
 
 ### Out of Scope
-
-<!-- Explicit boundaries. Includes reasoning to prevent re-adding. -->
 
 - Payments & Credits — Separate milestone after core features work
 - Conversation branching (edit creates fork) — v2 feature, adds complexity
@@ -80,33 +91,46 @@ If everything else fails, this must work: selecting a model, creating a Sidekiq 
 - Deep Research tool — v2 feature
 - Projects (organize chats) — v2 feature
 - Public Sidekiqs directory — v2 feature
-- Social login (Google) — GitHub OAuth sufficient for v1
+- Social login (Google) — GitHub OAuth sufficient for now
 - Mobile app — Web-first
 - Real-time collaboration — Streaming only to initiating user
 - Sidekiq folders — Nice-to-have, can defer
 
 ## Context
 
-**Technical environment:**
-- Next.js 15 with App Router and React Server Components
-- TypeScript strict mode with Zod runtime validation
-- tRPC 11 for end-to-end type safety
-- PostgreSQL via Drizzle ORM
-- Better Auth for authentication
-- Vercel for deployment
+**Shipped v0.1 with 18,701 lines of TypeScript across 170 files.**
 
-**Prior work:**
-- Database schema already defined for all core entities
-- Auth flows fully implemented (email/password, GitHub OAuth, password reset)
-- tRPC infrastructure ready (context, protected procedures, React Query client)
-- UI component library established (Radix primitives, Tailwind, shadcn patterns)
-- Testing infrastructure (Vitest + Playwright)
+Tech stack: Next.js 15 (App Router), tRPC 11, Drizzle ORM, PostgreSQL, Better Auth, Vercel AI SDK, Tailwind CSS v4, Radix UI.
 
-**Key technical decisions from PRD:**
-- Vercel AI Gateway for unified API key management (no per-provider keys in app)
-- SSE for streaming (not WebSockets)
-- parentMessageId for conversation branching structure (ready for v2)
-- Asynchronous credit deduction after response delivery (ready for payments milestone)
+Design: Linear-inspired with oklch blue-indigo (hue 260) palette, Inter font, 6px base border radius, dark-mode-first. Two-tier sidebar with 48px icon rail and 288px contextual panels.
+
+Architecture: Horizontal layers — api (tRPC routers), components (UI), hooks, lib (utilities). Future consideration: vertical feature slicing.
+
+Testing: Vitest unit tests, Playwright E2E tests.
+
+Known tech debt:
+- Edit/regenerate message actions show "coming soon" placeholders
+- 2 unused ESLint imports
+- 3 stale phase directories in .planning/phases/
+
+## Key Decisions
+
+| Decision | Rationale | Outcome |
+|----------|-----------|---------|
+| Vercel AI Gateway for LLM access | Single API key, unified interface, no provider-specific config | ✓ Good |
+| SSE for streaming (not WebSockets) | Simpler, Vercel AI SDK native support, sufficient for single-user streams | ✓ Good |
+| Branching via parentMessageId | Schema ready for v2 branching feature without migration | — Pending |
+| GitHub OAuth only for v1 | Faster to ship, Google can be added later | ✓ Good |
+| Payments as separate milestone | Ship usable product first, validate core value before monetization | ✓ Good |
+| Runtime system message injection for Sidekiqs | Instructions prepended at chat time, not stored in DB messages | ✓ Good |
+| Model selection priority: thread > sidekiq > user > default | Clear precedence chain for model resolution | ✓ Good |
+| oklch hue 260 (blue-indigo) palette | Linear-inspired, consistent across dark/light themes | ✓ Good |
+| Two-tier sidebar (icon rail + panel) | Scales to future features, clear navigation hierarchy | ✓ Good |
+| Route-based panel switching via usePathname() | No React state for panel selection, URL-driven | ✓ Good |
+| React key prop for ChatInterface remount on Sidekiq switch | Clean state reset without manual cleanup | ✓ Good |
+| deletedSidekiqName column for graceful degradation | Preserves context when Sidekiq is deleted | ✓ Good |
+| DEFER Convex migration | PostgreSQL/Drizzle has no pain points, reconsider later | ✓ Good |
+| Manual psql for ALTER TYPE ADD VALUE | Drizzle transaction constraints prevent enum modifications | ⚠️ Revisit |
 
 ## Constraints
 
@@ -115,17 +139,5 @@ If everything else fails, this must work: selecting a model, creating a Sidekiq 
 - **UI quality**: Polished from start, not "functional then beautiful" — user experience is core value proposition
 - **No payments in v1**: Core features must work before monetization — shipping usable product first
 
-## Key Decisions
-
-<!-- Decisions that constrain future work. Add throughout project lifecycle. -->
-
-| Decision | Rationale | Outcome |
-|----------|-----------|---------|
-| Vercel AI Gateway for LLM access | Single API key, unified interface, no provider-specific config | — Pending |
-| SSE for streaming (not WebSockets) | Simpler, Vercel AI SDK native support, sufficient for single-user streams | — Pending |
-| Branching via parentMessageId | Schema ready for v2 branching feature without migration | — Pending |
-| GitHub OAuth only for v1 | Faster to ship, Google can be added later | — Pending |
-| Payments as separate milestone | Ship usable product first, validate core value before monetization | — Pending |
-
 ---
-*Last updated: 2026-01-22 after initialization*
+*Last updated: 2026-01-26 after v0.1 milestone*
