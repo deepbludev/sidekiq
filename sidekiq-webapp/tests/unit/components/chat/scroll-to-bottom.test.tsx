@@ -3,7 +3,7 @@ import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useRef } from "react";
 
-import { ScrollToBottom } from "@sidekiq/components/chat/scroll-to-bottom";
+import { ScrollToBottom } from "@sidekiq/chats/components/scroll-to-bottom";
 
 /**
  * Test wrapper component that provides a real ref to ScrollToBottom

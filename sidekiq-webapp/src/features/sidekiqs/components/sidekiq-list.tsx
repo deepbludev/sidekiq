@@ -10,7 +10,7 @@ import { Input } from "@sidekiq/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@sidekiq/ui/toggle-group";
 import { cn } from "@sidekiq/shared/lib/utils";
 import { useViewPreference } from "@sidekiq/hooks/use-view-preference";
-import { useSidekiqActions } from "@sidekiq/hooks/use-sidekiq-actions";
+import { useSidekiqActions } from "../hooks/use-sidekiq-actions";
 import { api } from "@sidekiq/shared/trpc/react";
 
 import { SidekiqCard } from "./sidekiq-card";

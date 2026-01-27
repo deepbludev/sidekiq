@@ -7,7 +7,7 @@ import type {
   CreateSidekiqInput,
   DeleteSidekiqInput,
   UpdateSidekiqInput,
-} from "@sidekiq/lib/validations/sidekiq";
+} from "../validations";
 import { api } from "@sidekiq/shared/trpc/react";
 
 /**

@@ -13,8 +13,8 @@ import {
   BreadcrumbSeparator,
 } from "@sidekiq/ui/breadcrumb";
 import { Button } from "@sidekiq/ui/button";
-import { SidekiqForm } from "@sidekiq/components/sidekiq/sidekiq-form";
-import type { SidekiqAvatar } from "@sidekiq/lib/validations/sidekiq";
+import { SidekiqForm } from "@sidekiq/sidekiqs/components/sidekiq-form";
+import type { SidekiqAvatar } from "@sidekiq/sidekiqs/validations";
 import { api } from "@sidekiq/shared/trpc/react";
 
 /**

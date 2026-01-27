@@ -7,7 +7,7 @@ import { cn } from "@sidekiq/shared/lib/utils";
 import { ThreadContextMenu } from "./thread-context-menu";
 import { DeleteThreadDialog } from "./delete-thread-dialog";
 import { RenameThreadInput } from "./rename-thread-input";
-import { useThreadActions } from "@sidekiq/hooks/use-thread-actions";
+import { useThreadActions } from "../hooks/use-thread-actions";
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -10,8 +10,8 @@ import { cn } from "@sidekiq/shared/lib/utils";
 import {
   EMOJI_CATEGORIES,
   searchEmojis,
-} from "@sidekiq/shared/constants/emoji-data";
-import type { EmojiEntry } from "@sidekiq/shared/constants/emoji-data";
+} from "../constants/emoji-data";
+import type { EmojiEntry } from "../constants/emoji-data";
 
 interface EmojiPickerPopoverProps {
   value?: string;

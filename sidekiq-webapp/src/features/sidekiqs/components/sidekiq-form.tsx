@@ -22,11 +22,11 @@ import {
   sidekiqFormSchema,
   type SidekiqFormValues,
   type SidekiqAvatar,
-} from "@sidekiq/lib/validations/sidekiq";
+} from "../validations";
 import { createDefaultAvatar } from "@sidekiq/shared/lib/avatar";
-import { useSidekiqActions } from "@sidekiq/hooks/use-sidekiq-actions";
-import { ModelPicker } from "@sidekiq/components/model-picker/model-picker";
-import { DEFAULT_MODEL } from "@sidekiq/lib/ai/models-metadata";
+import { useSidekiqActions } from "../hooks/use-sidekiq-actions";
+import { ModelPicker } from "@sidekiq/ai/components/model-picker";
+import { DEFAULT_MODEL } from "@sidekiq/ai/api/models-metadata";
 
 import { AvatarPicker } from "./avatar-picker";
 import { ConversationStarters } from "./conversation-starters";

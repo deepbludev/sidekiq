@@ -6,8 +6,8 @@ import { usePathname } from "next/navigation";
 import { cn } from "@sidekiq/shared/lib/utils";
 import { getActiveFeature } from "@sidekiq/shared/lib/sidebar-utils";
 
-import { SidebarPanelChats } from "@sidekiq/components/sidebar/sidebar-panel-chats";
-import { SidebarPanelSidekiqs } from "@sidekiq/components/sidebar/sidebar-panel-sidekiqs";
+import { SidebarPanelChats } from "@sidekiq/chats/components/sidebar-panel-chats";
+import { SidebarPanelSidekiqs } from "@sidekiq/sidekiqs/components/sidebar-panel-sidekiqs";
 import { SidebarPanelTeams } from "@sidekiq/components/sidebar/sidebar-panel-teams";
 
 /**

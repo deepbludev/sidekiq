@@ -16,7 +16,7 @@ const mockUnarchiveThread = vi.fn();
 const mockTogglePin = vi.fn();
 const mockRenameThread = vi.fn();
 
-vi.mock("@sidekiq/hooks/use-thread-actions", () => ({
+vi.mock("@sidekiq/chats/hooks/use-thread-actions", () => ({
   useThreadActions: vi.fn(() => ({
     deleteThread: mockDeleteThread,
     archiveThread: mockArchiveThread,
@@ -31,7 +31,7 @@ vi.mock("@sidekiq/hooks/use-thread-actions", () => ({
 
 // Import after mocks
 import { useRouter } from "next/navigation";
-import { ThreadItem } from "@sidekiq/components/thread/thread-item";
+import { ThreadItem } from "@sidekiq/chats/components/thread-item";
 
 /**
  * Helper to create a mock thread

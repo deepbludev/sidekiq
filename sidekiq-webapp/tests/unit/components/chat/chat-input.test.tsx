@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { ChatInput } from "@sidekiq/components/chat/chat-input";
+import { ChatInput } from "@sidekiq/chats/components/chat-input";
 
 /**
  * Helper to render ChatInput with default props

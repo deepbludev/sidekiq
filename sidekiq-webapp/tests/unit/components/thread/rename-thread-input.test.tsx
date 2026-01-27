@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { RenameThreadInput } from "@sidekiq/components/thread/rename-thread-input";
+import { RenameThreadInput } from "@sidekiq/chats/components/rename-thread-input";
 
 /**
  * Helper to render RenameThreadInput with default props

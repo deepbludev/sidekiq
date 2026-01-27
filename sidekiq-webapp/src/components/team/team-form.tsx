@@ -7,7 +7,7 @@ import { z } from "zod";
 import { Button } from "@sidekiq/ui/button";
 import { Input } from "@sidekiq/ui/input";
 import { Label } from "@sidekiq/ui/label";
-import { AvatarPicker } from "@sidekiq/components/sidekiq/avatar-picker";
+import { AvatarPicker } from "@sidekiq/sidekiqs/components/avatar-picker";
 import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
 import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 

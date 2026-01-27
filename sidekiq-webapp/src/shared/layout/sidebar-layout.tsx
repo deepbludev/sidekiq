@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 
 import { cn } from "@sidekiq/shared/lib/utils";
 import { Separator } from "@sidekiq/ui/separator";
-import { SidekiqPicker } from "@sidekiq/components/sidekiq/sidekiq-picker";
-import { useKeyboardShortcuts } from "@sidekiq/hooks/use-keyboard-shortcuts";
+import { SidekiqPicker } from "@sidekiq/sidekiqs/components/sidekiq-picker";
+import { useKeyboardShortcuts } from "@sidekiq/chats/hooks/use-keyboard-shortcuts";
 
 import { SidebarIconRail } from "./sidebar-icon-rail";
 import { SidebarPanel } from "./sidebar-panel";

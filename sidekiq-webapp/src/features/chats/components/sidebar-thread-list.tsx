@@ -8,14 +8,14 @@ import Fuse, { type FuseResult } from "fuse.js";
 import type { ReactNode } from "react";
 
 import { api } from "@sidekiq/shared/trpc/react";
-import { useScrollPosition } from "@sidekiq/hooks/use-scroll-position";
+import { useScrollPosition } from "../hooks/use-scroll-position";
 import {
   groupThreadsByDate,
   type DateGroup,
   type Thread,
   type GroupedThreads,
 } from "@sidekiq/shared/lib/date-grouping";
-import { ThreadItem } from "@sidekiq/components/thread/thread-item";
+import { ThreadItem } from "./thread-item";
 import { SidebarThreadGroup } from "./sidebar-thread-group";
 import { Skeleton } from "@sidekiq/ui/skeleton";
 

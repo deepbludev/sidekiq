@@ -17,7 +17,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@sidekiq/ui/card";
 import type {
   SidekiqAvatar,
   SidekiqFormValues,
-} from "@sidekiq/lib/validations/sidekiq";
+} from "../validations";
 
 /**
  * Template definition for pre-built Sidekiq configurations.

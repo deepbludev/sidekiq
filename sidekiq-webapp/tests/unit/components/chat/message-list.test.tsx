@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import type { UIMessage } from "ai";
 
 // Mock child components to isolate MessageList testing
-vi.mock("@sidekiq/components/chat/message-item", () => ({
+vi.mock("@sidekiq/chats/components/message-item", () => ({
   MessageItem: ({
     message,
     isStreaming,
@@ -17,7 +17,7 @@ vi.mock("@sidekiq/components/chat/message-item", () => ({
   ),
 }));
 
-vi.mock("@sidekiq/components/chat/empty-state", () => ({
+vi.mock("@sidekiq/chats/components/empty-state", () => ({
   EmptyState: ({
     onPromptSelect,
   }: {
@@ -31,7 +31,7 @@ vi.mock("@sidekiq/components/chat/empty-state", () => ({
   ),
 }));
 
-import { MessageList } from "@sidekiq/components/chat/message-list";
+import { MessageList } from "@sidekiq/chats/components/message-list";
 import userEvent from "@testing-library/user-event";
 
 /**

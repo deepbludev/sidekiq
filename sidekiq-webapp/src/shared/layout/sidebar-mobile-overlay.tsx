@@ -4,8 +4,8 @@ import { PenSquare, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@sidekiq/ui/button";
-import { SidebarPanelChats } from "@sidekiq/components/sidebar/sidebar-panel-chats";
-import { SidebarPanelSidekiqs } from "@sidekiq/components/sidebar/sidebar-panel-sidekiqs";
+import { SidebarPanelChats } from "@sidekiq/chats/components/sidebar-panel-chats";
+import { SidebarPanelSidekiqs } from "@sidekiq/sidekiqs/components/sidebar-panel-sidekiqs";
 
 /**
  * Props for the SidebarMobileOverlay component.

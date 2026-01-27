@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 
-import { SidekiqList } from "@sidekiq/components/sidekiq/sidekiq-list";
-import { DeleteSidekiqDialog } from "@sidekiq/components/sidekiq/delete-sidekiq-dialog";
-import { useSidekiqActions } from "@sidekiq/hooks/use-sidekiq-actions";
+import { SidekiqList } from "@sidekiq/sidekiqs/components/sidekiq-list";
+import { DeleteSidekiqDialog } from "@sidekiq/sidekiqs/components/delete-sidekiq-dialog";
+import { useSidekiqActions } from "@sidekiq/sidekiqs/hooks/use-sidekiq-actions";
 
 interface DeleteDialogState {
   open: boolean;

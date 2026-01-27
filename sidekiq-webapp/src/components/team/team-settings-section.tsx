@@ -12,7 +12,7 @@ import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
 import { TeamMemberList } from "@sidekiq/components/team/team-member-list";
 import { TeamInvitesList } from "@sidekiq/components/team/team-invites-list";
 import { DeleteTeamDialog } from "@sidekiq/components/team/delete-team-dialog";
-import { AvatarPicker } from "@sidekiq/components/sidekiq/avatar-picker";
+import { AvatarPicker } from "@sidekiq/sidekiqs/components/avatar-picker";
 import { api } from "@sidekiq/shared/trpc/react";
 import { toast } from "sonner";
 import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";

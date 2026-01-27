@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { ThreadContextMenu } from "@sidekiq/components/thread/thread-context-menu";
+import { ThreadContextMenu } from "@sidekiq/chats/components/thread-context-menu";
 
 /**
  * Helper to render ThreadContextMenu with default props

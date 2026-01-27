@@ -26,7 +26,7 @@ vi.mock("@streamdown/code", () => ({
   createCodePlugin: vi.fn(() => ({})),
 }));
 
-import { MessageContent } from "@sidekiq/components/chat/message-content";
+import { MessageContent } from "@sidekiq/chats/components/message-content";
 
 describe("MessageContent", () => {
   it("should render content through Streamdown", () => {

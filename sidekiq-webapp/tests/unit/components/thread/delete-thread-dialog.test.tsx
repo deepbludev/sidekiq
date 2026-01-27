@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { DeleteThreadDialog } from "@sidekiq/components/thread/delete-thread-dialog";
+import { DeleteThreadDialog } from "@sidekiq/chats/components/delete-thread-dialog";
 
 /**
  * Helper to render DeleteThreadDialog with default props

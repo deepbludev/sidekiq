@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { sidekiqAvatarSchema } from "./sidekiq";
+import { sidekiqAvatarSchema } from "@sidekiq/sidekiqs/validations";
 
 /**
  * Re-export avatar schema for team use.

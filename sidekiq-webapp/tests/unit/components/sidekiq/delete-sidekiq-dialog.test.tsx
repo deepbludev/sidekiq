@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { DeleteSidekiqDialog } from "@sidekiq/components/sidekiq/delete-sidekiq-dialog";
+import { DeleteSidekiqDialog } from "@sidekiq/sidekiqs/components/delete-sidekiq-dialog";
 
 /**
  * Helper to render DeleteSidekiqDialog with default props

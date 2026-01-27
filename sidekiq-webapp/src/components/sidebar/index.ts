@@ -18,9 +18,8 @@ export { SidebarMobileTabs } from "@sidekiq/shared/layout/sidebar-mobile-tabs";
 export { SidebarMobileOverlay } from "@sidekiq/shared/layout/sidebar-mobile-overlay";
 export { SidebarSearch } from "@sidekiq/shared/layout/sidebar-search";
 
-// Feature-specific panels (move to feature slices in Plans 03-05)
-export { SidebarPanelChats } from "./sidebar-panel-chats";
-export { SidebarPanelSidekiqs } from "./sidebar-panel-sidekiqs";
+// Feature-specific panels
+// Chats panels moved to @sidekiq/chats/components/ (Plan 09-03)
+// Sidekiqs panel moved to @sidekiq/sidekiqs/components/ (Plan 09-04)
+export { SidebarPanelSidekiqs } from "@sidekiq/sidekiqs/components/sidebar-panel-sidekiqs";
 export { SidebarPanelTeams } from "./sidebar-panel-teams";
-export { SidebarThreadList } from "./sidebar-thread-list";
-export { SidebarThreadGroup } from "./sidebar-thread-group";

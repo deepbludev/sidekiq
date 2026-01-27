@@ -10,7 +10,7 @@ import {
   listSidekiqsSchema,
   toggleFavoriteSchema,
   updateSidekiqSchema,
-} from "@sidekiq/lib/validations/sidekiq";
+} from "../validations";
 import {
   createTRPCRouter,
   protectedProcedure,

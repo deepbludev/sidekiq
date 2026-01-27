@@ -3,7 +3,7 @@ import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { TooltipProvider } from "@sidekiq/ui/tooltip";
-import { MessageActions } from "@sidekiq/components/chat/message-actions";
+import { MessageActions } from "@sidekiq/chats/components/message-actions";
 
 // Mock sonner toast
 vi.mock("sonner", () => ({

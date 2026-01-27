@@ -23,7 +23,7 @@ import {
 import { Input } from "@sidekiq/ui/input";
 import { Skeleton } from "@sidekiq/ui/skeleton";
 import { api } from "@sidekiq/shared/trpc/react";
-import { SidekiqAvatar } from "@sidekiq/components/sidekiq/sidekiq-avatar";
+import { SidekiqAvatar } from "./sidekiq-avatar";
 
 /**
  * Sidekiqs panel for the two-tier sidebar.

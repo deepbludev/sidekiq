@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { SidekiqIndicator } from "@sidekiq/components/sidekiq/sidekiq-indicator";
+import { SidekiqIndicator } from "@sidekiq/sidekiqs/components/sidekiq-indicator";
 
 /**
  * Mock Sidekiq data for tests

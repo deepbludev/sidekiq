@@ -1,7 +1,7 @@
 "use client";
 
 import { SidekiqAvatar } from "./sidekiq-avatar";
-import type { SidekiqAvatar as SidekiqAvatarType } from "@sidekiq/lib/validations/sidekiq";
+import type { SidekiqAvatar as SidekiqAvatarType } from "../validations";
 import { cn } from "@sidekiq/shared/lib/utils";
 
 interface SidekiqIndicatorProps {

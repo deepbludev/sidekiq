@@ -5,7 +5,7 @@ import {
   extractTextContent,
   formatTime,
   getCreatedAt,
-} from "@sidekiq/components/chat/message-item";
+} from "@sidekiq/chats/components/message-item";
 
 /**
  * Helper to create a mock UIMessage with text parts

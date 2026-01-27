@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { and, eq, or, isNull } from "drizzle-orm";
 
 import { getSession } from "@sidekiq/server/better-auth/server";
-import { ChatInterface } from "@sidekiq/components/chat/chat-interface";
+import { ChatInterface } from "@sidekiq/chats/components/chat-interface";
 import { db } from "@sidekiq/shared/db";
 import { sidekiqs } from "@sidekiq/shared/db/schema";
 

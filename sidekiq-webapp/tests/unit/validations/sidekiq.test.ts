@@ -9,7 +9,7 @@ import {
   duplicateSidekiqSchema,
   listSidekiqsSchema,
   getSidekiqByIdSchema,
-} from "@sidekiq/lib/validations/sidekiq";
+} from "@sidekiq/sidekiqs/validations";
 
 describe("sidekiqAvatarSchema", () => {
   it("should accept valid initials type with hex color", () => {

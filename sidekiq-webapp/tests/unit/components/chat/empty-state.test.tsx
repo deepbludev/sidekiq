@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { EmptyState } from "@sidekiq/components/chat/empty-state";
+import { EmptyState } from "@sidekiq/chats/components/empty-state";
 
 describe("EmptyState", () => {
   it("should render the welcome heading", () => {

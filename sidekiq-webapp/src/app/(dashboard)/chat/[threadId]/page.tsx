@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 import { getSession } from "@sidekiq/server/better-auth/server";
 import { db } from "@sidekiq/shared/db";
 import { threads, messages } from "@sidekiq/shared/db/schema";
-import { ChatInterface } from "@sidekiq/components/chat/chat-interface";
+import { ChatInterface } from "@sidekiq/chats/components/chat-interface";
 
 /**
  * Props for the existing thread page.
