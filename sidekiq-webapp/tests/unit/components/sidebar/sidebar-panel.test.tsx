@@ -11,15 +11,15 @@ vi.mock("next/navigation", () => ({
 }));
 
 /** Mock child panel components to avoid tRPC/hook dependencies */
-vi.mock("@sidekiq/components/sidebar/sidebar-panel-chats", () => ({
+vi.mock("@sidekiq/chats/components/sidebar-panel-chats", () => ({
   SidebarPanelChats: () => <div data-testid="panel-chats">Chats Panel</div>,
 }));
-vi.mock("@sidekiq/components/sidebar/sidebar-panel-sidekiqs", () => ({
+vi.mock("@sidekiq/sidekiqs/components/sidebar-panel-sidekiqs", () => ({
   SidebarPanelSidekiqs: () => (
     <div data-testid="panel-sidekiqs">Sidekiqs Panel</div>
   ),
 }));
-vi.mock("@sidekiq/components/sidebar/sidebar-panel-teams", () => ({
+vi.mock("@sidekiq/workspace/components/sidebar-panel-teams", () => ({
   SidebarPanelTeams: () => <div data-testid="panel-teams">Teams Panel</div>,
 }));
 
