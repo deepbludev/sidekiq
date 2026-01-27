@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 
 import { getSession } from "@sidekiq/server/better-auth/server";
-import { TooltipProvider } from "@sidekiq/components/ui/tooltip";
-import { SidebarLayout } from "@sidekiq/components/sidebar/sidebar-layout";
-import { SidebarMobileTabs } from "@sidekiq/components/sidebar/sidebar-mobile-tabs";
+import { TooltipProvider } from "@sidekiq/ui/tooltip";
+import { SidebarLayout } from "@sidekiq/shared/layout/sidebar-layout";
+import { SidebarMobileTabs } from "@sidekiq/shared/layout/sidebar-mobile-tabs";
 
 /**
  * Dashboard layout with two-tier sidebar navigation.

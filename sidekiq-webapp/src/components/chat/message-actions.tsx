@@ -4,12 +4,8 @@ import { Copy, Pencil, RefreshCw, Check } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { Button } from "@sidekiq/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@sidekiq/components/ui/tooltip";
+import { Button } from "@sidekiq/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@sidekiq/ui/tooltip";
 import { cn } from "@sidekiq/shared/lib/utils";
 
 interface MessageActionsProps {

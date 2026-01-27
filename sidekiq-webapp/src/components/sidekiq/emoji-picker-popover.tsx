@@ -3,13 +3,9 @@
 import { useMemo, useState } from "react";
 import { Smile } from "lucide-react";
 
-import { Button } from "@sidekiq/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@sidekiq/components/ui/popover";
-import { Input } from "@sidekiq/components/ui/input";
+import { Button } from "@sidekiq/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@sidekiq/ui/popover";
+import { Input } from "@sidekiq/ui/input";
 import { cn } from "@sidekiq/shared/lib/utils";
 import {
   EMOJI_CATEGORIES,

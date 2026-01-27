@@ -4,10 +4,7 @@ import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Monitor } from "lucide-react";
 
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@sidekiq/components/ui/toggle-group";
+import { ToggleGroup, ToggleGroupItem } from "@sidekiq/ui/toggle-group";
 import { cn } from "@sidekiq/shared/lib/utils";
 
 /**

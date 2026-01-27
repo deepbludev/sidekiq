@@ -13,16 +13,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@sidekiq/components/ui/dialog";
-import { Button } from "@sidekiq/components/ui/button";
-import { Input } from "@sidekiq/components/ui/input";
-import { Label } from "@sidekiq/components/ui/label";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@sidekiq/components/ui/tabs";
+} from "@sidekiq/ui/dialog";
+import { Button } from "@sidekiq/ui/button";
+import { Input } from "@sidekiq/ui/input";
+import { Label } from "@sidekiq/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@sidekiq/ui/tabs";
 
 const inviteSchema = z.object({
   email: z.string().email("Please enter a valid email address"),

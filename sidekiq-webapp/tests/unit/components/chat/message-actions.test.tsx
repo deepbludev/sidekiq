@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { TooltipProvider } from "@sidekiq/components/ui/tooltip";
+import { TooltipProvider } from "@sidekiq/ui/tooltip";
 import { MessageActions } from "@sidekiq/components/chat/message-actions";
 
 // Mock sonner toast

@@ -11,10 +11,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@sidekiq/components/ui/alert-dialog";
-import { Input } from "@sidekiq/components/ui/input";
-import { Label } from "@sidekiq/components/ui/label";
-import { Checkbox } from "@sidekiq/components/ui/checkbox";
+} from "@sidekiq/ui/alert-dialog";
+import { Input } from "@sidekiq/ui/input";
+import { Label } from "@sidekiq/ui/label";
+import { Checkbox } from "@sidekiq/ui/checkbox";
 
 interface DeleteSidekiqDialogProps {
   open: boolean;

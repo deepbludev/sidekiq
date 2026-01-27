@@ -4,8 +4,8 @@ import type { FormEvent, KeyboardEvent, ReactNode } from "react";
 import { useRef, useEffect } from "react";
 import { Send, Square } from "lucide-react";
 
-import { Button } from "@sidekiq/components/ui/button";
-import { Textarea } from "@sidekiq/components/ui/textarea";
+import { Button } from "@sidekiq/ui/button";
+import { Textarea } from "@sidekiq/ui/textarea";
 import { SidekiqAvatar } from "@sidekiq/components/sidekiq/sidekiq-avatar";
 import { cn } from "@sidekiq/shared/lib/utils";
 import type { SidekiqAvatar as SidekiqAvatarType } from "@sidekiq/lib/validations/sidekiq";

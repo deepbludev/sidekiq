@@ -5,14 +5,14 @@ import { MessageSquare, MoreHorizontal, Star } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { Button } from "@sidekiq/components/ui/button";
+import { Button } from "@sidekiq/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@sidekiq/components/ui/dropdown-menu";
+} from "@sidekiq/ui/dropdown-menu";
 import { SidekiqAvatar } from "./sidekiq-avatar";
 
 interface SidekiqCardProps {

@@ -4,13 +4,13 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Plus, ChevronDown } from "lucide-react";
 
-import { Button } from "@sidekiq/components/ui/button";
+import { Button } from "@sidekiq/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@sidekiq/components/ui/dropdown-menu";
+} from "@sidekiq/ui/dropdown-menu";
 import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
 import { TeamSettingsSection } from "@sidekiq/components/team/team-settings-section";
 import { TeamEmptyState } from "@sidekiq/components/team/team-empty-state";

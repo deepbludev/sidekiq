@@ -21,8 +21,8 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Plus, Trash2 } from "lucide-react";
 import { nanoid } from "nanoid";
 
-import { Button } from "@sidekiq/components/ui/button";
-import { Input } from "@sidekiq/components/ui/input";
+import { Button } from "@sidekiq/ui/button";
+import { Input } from "@sidekiq/ui/input";
 import { cn } from "@sidekiq/shared/lib/utils";
 
 interface StarterItem {

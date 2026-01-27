@@ -3,13 +3,13 @@
 import { formatDistanceToNow } from "date-fns";
 import { Clock, MoreHorizontal, RefreshCw, Trash2 } from "lucide-react";
 
-import { Button } from "@sidekiq/components/ui/button";
+import { Button } from "@sidekiq/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@sidekiq/components/ui/dropdown-menu";
+} from "@sidekiq/ui/dropdown-menu";
 import { api } from "@sidekiq/shared/trpc/react";
 import { toast } from "sonner";
 

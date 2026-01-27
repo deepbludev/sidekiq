@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { Loader2, Save } from "lucide-react";
 
-import { Button } from "@sidekiq/components/ui/button";
+import { Button } from "@sidekiq/ui/button";
 import {
   Form,
   FormControl,
@@ -15,9 +15,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@sidekiq/components/ui/form";
-import { Input } from "@sidekiq/components/ui/input";
-import { Textarea } from "@sidekiq/components/ui/textarea";
+} from "@sidekiq/ui/form";
+import { Input } from "@sidekiq/ui/input";
+import { Textarea } from "@sidekiq/ui/textarea";
 import {
   sidekiqFormSchema,
   type SidekiqFormValues,

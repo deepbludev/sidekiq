@@ -8,14 +8,14 @@ import {
   CommandGroup,
   CommandInput,
   CommandList,
-} from "@sidekiq/components/ui/command";
+} from "@sidekiq/ui/command";
 import {
   AVAILABLE_MODELS,
   getProviders,
   type ModelConfig,
   type Provider,
 } from "@sidekiq/lib/ai/models-metadata";
-import { getProviderDisplayName } from "@sidekiq/components/icons/provider-icons";
+import { getProviderDisplayName } from "@sidekiq/shared/icons/provider-icons";
 import { ModelItem } from "./model-item";
 
 interface ModelPickerContentProps {

@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@sidekiq/components/ui/card";
+} from "@sidekiq/ui/card";
 
 interface AuthCardProps {
   title: string;

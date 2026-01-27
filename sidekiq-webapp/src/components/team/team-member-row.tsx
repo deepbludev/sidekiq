@@ -10,20 +10,16 @@ import {
   LogOut,
 } from "lucide-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@sidekiq/components/ui/avatar";
-import { Button } from "@sidekiq/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@sidekiq/ui/avatar";
+import { Button } from "@sidekiq/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@sidekiq/components/ui/dropdown-menu";
-import { Badge } from "@sidekiq/components/ui/badge";
+} from "@sidekiq/ui/dropdown-menu";
+import { Badge } from "@sidekiq/ui/badge";
 import {
   canRemoveMember,
   canChangeRole,

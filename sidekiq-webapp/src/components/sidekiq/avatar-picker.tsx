@@ -2,17 +2,10 @@
 
 import { Type, Smile } from "lucide-react";
 
-import { Button } from "@sidekiq/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@sidekiq/components/ui/popover";
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@sidekiq/components/ui/toggle-group";
-import { Label } from "@sidekiq/components/ui/label";
+import { Button } from "@sidekiq/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@sidekiq/ui/popover";
+import { ToggleGroup, ToggleGroupItem } from "@sidekiq/ui/toggle-group";
+import { Label } from "@sidekiq/ui/label";
 import { SidekiqAvatar } from "./sidekiq-avatar";
 import { ColorPicker } from "./color-picker";
 import { EmojiPickerPopover } from "./emoji-picker-popover";

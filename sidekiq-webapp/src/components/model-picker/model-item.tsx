@@ -1,17 +1,13 @@
 "use client";
 
 import { Check, Star } from "lucide-react";
-import { CommandItem } from "@sidekiq/components/ui/command";
-import { ProviderIcon } from "@sidekiq/components/icons/provider-icons";
+import { CommandItem } from "@sidekiq/ui/command";
+import { ProviderIcon } from "@sidekiq/shared/icons/provider-icons";
 import type { ModelConfig } from "@sidekiq/lib/ai/models-metadata";
 import { ModelHoverCard } from "./model-hover-card";
 import { cn } from "@sidekiq/shared/lib/utils";
 // CRITICAL: Import Tooltip components for favorite button
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@sidekiq/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@sidekiq/ui/tooltip";
 
 interface ModelItemProps {
   model: ModelConfig;

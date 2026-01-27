@@ -17,7 +17,7 @@ import {
 } from "@sidekiq/shared/lib/date-grouping";
 import { ThreadItem } from "@sidekiq/components/thread/thread-item";
 import { SidebarThreadGroup } from "./sidebar-thread-group";
-import { Skeleton } from "@sidekiq/components/ui/skeleton";
+import { Skeleton } from "@sidekiq/ui/skeleton";
 
 /**
  * Virtual item type for flattened groups.

@@ -1,16 +1,16 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Badge } from "@sidekiq/components/ui/badge";
+import { Badge } from "@sidekiq/ui/badge";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@sidekiq/components/ui/hover-card";
+} from "@sidekiq/ui/hover-card";
 import {
   ProviderIcon,
   getProviderDisplayName,
-} from "@sidekiq/components/icons/provider-icons";
+} from "@sidekiq/shared/icons/provider-icons";
 import type {
   ModelConfig,
   ModelFeature,

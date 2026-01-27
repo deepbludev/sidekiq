@@ -6,7 +6,7 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuTrigger,
-} from "@sidekiq/components/ui/context-menu";
+} from "@sidekiq/ui/context-menu";
 import {
   Pin,
   PinOff,

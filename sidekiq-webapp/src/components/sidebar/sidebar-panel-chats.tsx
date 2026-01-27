@@ -4,19 +4,19 @@ import { useState, useRef, type RefObject } from "react";
 import { ChevronDown, Check, Settings, Users } from "lucide-react";
 import Link from "next/link";
 
-import { Button } from "@sidekiq/components/ui/button";
+import { Button } from "@sidekiq/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@sidekiq/components/ui/dropdown-menu";
+} from "@sidekiq/ui/dropdown-menu";
 import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
 import { useActiveTeam } from "@sidekiq/hooks/use-active-team";
 import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 
-import { SidebarSearch } from "./sidebar-search";
+import { SidebarSearch } from "@sidekiq/shared/layout/sidebar-search";
 import { SidebarThreadList } from "./sidebar-thread-list";
 
 /**

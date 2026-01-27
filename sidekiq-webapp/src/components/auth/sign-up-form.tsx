@@ -9,8 +9,8 @@ import { useRouter } from "next/navigation";
 
 import { authClient } from "@sidekiq/server/better-auth/client";
 import { signUpSchema, type SignUpInput } from "@sidekiq/lib/validations/auth";
-import { Button } from "@sidekiq/components/ui/button";
-import { Input } from "@sidekiq/components/ui/input";
+import { Button } from "@sidekiq/ui/button";
+import { Input } from "@sidekiq/ui/input";
 import {
   Form,
   FormControl,
@@ -18,7 +18,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@sidekiq/components/ui/form";
+} from "@sidekiq/ui/form";
 
 interface SignUpFormProps {
   callbackURL?: string;

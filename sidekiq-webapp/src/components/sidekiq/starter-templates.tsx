@@ -12,13 +12,8 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import { Button } from "@sidekiq/components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@sidekiq/components/ui/card";
+import { Button } from "@sidekiq/ui/button";
+import { Card, CardDescription, CardHeader, CardTitle } from "@sidekiq/ui/card";
 import type {
   SidekiqAvatar,
   SidekiqFormValues,

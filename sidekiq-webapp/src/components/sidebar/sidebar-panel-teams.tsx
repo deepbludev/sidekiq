@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Plus, Users } from "lucide-react";
 
-import { Button } from "@sidekiq/components/ui/button";
+import { Button } from "@sidekiq/ui/button";
 import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
 import { TeamCreateDialog } from "@sidekiq/components/team/team-create-dialog";
 import { useActiveTeam } from "@sidekiq/hooks/use-active-team";

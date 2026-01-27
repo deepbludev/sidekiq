@@ -3,8 +3,8 @@
 import { ChevronDown } from "lucide-react";
 import { forwardRef } from "react";
 
-import { Button } from "@sidekiq/components/ui/button";
-import { ProviderIcon } from "@sidekiq/components/icons/provider-icons";
+import { Button } from "@sidekiq/ui/button";
+import { ProviderIcon } from "@sidekiq/shared/icons/provider-icons";
 import type { ModelConfig } from "@sidekiq/lib/ai/models-metadata";
 import { cn } from "@sidekiq/shared/lib/utils";
 

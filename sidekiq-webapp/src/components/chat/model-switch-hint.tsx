@@ -1,4 +1,4 @@
-import { Separator } from "@sidekiq/components/ui/separator";
+import { Separator } from "@sidekiq/ui/separator";
 import { getModelConfig } from "@sidekiq/lib/ai/models-metadata";
 
 interface ModelSwitchHintProps {

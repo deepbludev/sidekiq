@@ -4,12 +4,8 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import type { SidekiqAvatar } from "@sidekiq/lib/validations/sidekiq";
 import { SidekiqIndicator } from "@sidekiq/components/sidekiq/sidekiq-indicator";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@sidekiq/components/ui/popover";
-import { Button } from "@sidekiq/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@sidekiq/ui/popover";
+import { Button } from "@sidekiq/ui/button";
 
 interface ChatHeaderProps {
   /** Thread title (null for new threads) */

@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, AvatarFallback } from "@sidekiq/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@sidekiq/ui/avatar";
 import { cn } from "@sidekiq/shared/lib/utils";
 import { getInitials } from "@sidekiq/shared/lib/avatar";
 

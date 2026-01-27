@@ -5,7 +5,7 @@ import { Inter, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 
 import { TRPCReactProvider } from "@sidekiq/shared/trpc/react";
-import { ThemeProvider } from "@sidekiq/components/theme/theme-provider";
+import { ThemeProvider } from "@sidekiq/shared/theme/theme-provider";
 
 export const metadata: Metadata = {
   title: "Sidekiq",

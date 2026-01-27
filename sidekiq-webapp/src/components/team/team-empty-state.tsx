@@ -2,7 +2,7 @@
 
 import { Users, Plus } from "lucide-react";
 
-import { Button } from "@sidekiq/components/ui/button";
+import { Button } from "@sidekiq/ui/button";
 
 interface TeamEmptyStateProps {
   onCreateTeam: () => void;

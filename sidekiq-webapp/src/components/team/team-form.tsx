@@ -4,9 +4,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-import { Button } from "@sidekiq/components/ui/button";
-import { Input } from "@sidekiq/components/ui/input";
-import { Label } from "@sidekiq/components/ui/label";
+import { Button } from "@sidekiq/ui/button";
+import { Input } from "@sidekiq/ui/input";
+import { Label } from "@sidekiq/ui/label";
 import { AvatarPicker } from "@sidekiq/components/sidekiq/avatar-picker";
 import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
 import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";

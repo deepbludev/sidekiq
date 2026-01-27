@@ -5,7 +5,7 @@ import { Github, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { authClient } from "@sidekiq/server/better-auth/client";
-import { Button } from "@sidekiq/components/ui/button";
+import { Button } from "@sidekiq/ui/button";
 
 interface OAuthButtonsProps {
   callbackURL?: string;

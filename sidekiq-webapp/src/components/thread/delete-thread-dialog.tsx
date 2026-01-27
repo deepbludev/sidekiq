@@ -9,7 +9,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@sidekiq/components/ui/alert-dialog";
+} from "@sidekiq/ui/alert-dialog";
 
 interface DeleteThreadDialogProps {
   /** Whether the dialog is open */

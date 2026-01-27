@@ -8,7 +8,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@sidekiq/components/ui/dialog";
+} from "@sidekiq/ui/dialog";
 import {
   TeamForm,
   type TeamFormValues,

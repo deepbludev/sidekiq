@@ -13,15 +13,15 @@ import {
 } from "lucide-react";
 import Fuse from "fuse.js";
 
-import { Button } from "@sidekiq/components/ui/button";
+import { Button } from "@sidekiq/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@sidekiq/components/ui/dropdown-menu";
-import { Input } from "@sidekiq/components/ui/input";
-import { Skeleton } from "@sidekiq/components/ui/skeleton";
+} from "@sidekiq/ui/dropdown-menu";
+import { Input } from "@sidekiq/ui/input";
+import { Skeleton } from "@sidekiq/ui/skeleton";
 import { api } from "@sidekiq/shared/trpc/react";
 import { SidekiqAvatar } from "@sidekiq/components/sidekiq/sidekiq-avatar";
 

@@ -11,7 +11,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@sidekiq/components/ui/dialog";
+} from "@sidekiq/ui/dialog";
 import {
   Command,
   CommandEmpty,
@@ -20,7 +20,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@sidekiq/components/ui/command";
+} from "@sidekiq/ui/command";
 import { SidekiqAvatar } from "./sidekiq-avatar";
 
 interface SidekiqPickerProps {

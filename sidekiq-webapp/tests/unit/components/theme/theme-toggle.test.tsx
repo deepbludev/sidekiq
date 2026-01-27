@@ -12,7 +12,7 @@ vi.mock("next-themes", () => ({
 }));
 
 import { useTheme } from "next-themes";
-import { ThemeToggle } from "@sidekiq/components/theme/theme-toggle";
+import { ThemeToggle } from "@sidekiq/shared/theme/theme-toggle";
 
 describe("ThemeToggle", () => {
   beforeEach(() => {

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { XCircle, Clock, AlertTriangle } from "lucide-react";
 
-import { Button } from "@sidekiq/components/ui/button";
+import { Button } from "@sidekiq/ui/button";
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@sidekiq/components/ui/card";
+} from "@sidekiq/ui/card";
 import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
 import { api } from "@sidekiq/shared/trpc/react";
 import { toast } from "sonner";

@@ -1,12 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@sidekiq/components/ui/popover";
-import { TooltipProvider } from "@sidekiq/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@sidekiq/ui/popover";
+import { TooltipProvider } from "@sidekiq/ui/tooltip";
 import { getModelConfig } from "@sidekiq/lib/ai/models-metadata";
 import { ModelPickerTrigger } from "./model-picker-trigger";
 import { ModelPickerContent } from "./model-picker-content";

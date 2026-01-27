@@ -11,9 +11,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@sidekiq/components/ui/alert-dialog";
-import { Input } from "@sidekiq/components/ui/input";
-import { Label } from "@sidekiq/components/ui/label";
+} from "@sidekiq/ui/alert-dialog";
+import { Input } from "@sidekiq/ui/input";
+import { Label } from "@sidekiq/ui/label";
 
 interface DeleteTeamDialogProps {
   open: boolean;

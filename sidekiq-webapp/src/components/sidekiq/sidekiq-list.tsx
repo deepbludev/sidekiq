@@ -5,12 +5,9 @@ import { Grid3X3, List, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import Fuse from "fuse.js";
 
-import { Button } from "@sidekiq/components/ui/button";
-import { Input } from "@sidekiq/components/ui/input";
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@sidekiq/components/ui/toggle-group";
+import { Button } from "@sidekiq/ui/button";
+import { Input } from "@sidekiq/ui/input";
+import { ToggleGroup, ToggleGroupItem } from "@sidekiq/ui/toggle-group";
 import { cn } from "@sidekiq/shared/lib/utils";
 import { useViewPreference } from "@sidekiq/hooks/use-view-preference";
 import { useSidekiqActions } from "@sidekiq/hooks/use-sidekiq-actions";

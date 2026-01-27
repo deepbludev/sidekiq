@@ -14,8 +14,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@sidekiq/components/ui/dropdown-menu";
-import { Button } from "@sidekiq/components/ui/button";
+} from "@sidekiq/ui/dropdown-menu";
+import { Button } from "@sidekiq/ui/button";
 import { SidekiqAvatar } from "@sidekiq/components/sidekiq/sidekiq-avatar";
 import type { SidekiqAvatar as SidekiqAvatarType } from "@sidekiq/shared/db/schema";
 

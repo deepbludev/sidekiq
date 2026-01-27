@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Settings, Trash2, Users } from "lucide-react";
 
-import { Button } from "@sidekiq/components/ui/button";
-import { Input } from "@sidekiq/components/ui/input";
-import { Label } from "@sidekiq/components/ui/label";
-import { Separator } from "@sidekiq/components/ui/separator";
+import { Button } from "@sidekiq/ui/button";
+import { Input } from "@sidekiq/ui/input";
+import { Label } from "@sidekiq/ui/label";
+import { Separator } from "@sidekiq/ui/separator";
 import { TeamAvatar } from "@sidekiq/components/team/team-avatar";
 import { TeamMemberList } from "@sidekiq/components/team/team-member-list";
 import { TeamInvitesList } from "@sidekiq/components/team/team-invites-list";

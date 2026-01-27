@@ -11,8 +11,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@sidekiq/components/ui/breadcrumb";
-import { Button } from "@sidekiq/components/ui/button";
+} from "@sidekiq/ui/breadcrumb";
+import { Button } from "@sidekiq/ui/button";
 import { SidekiqForm } from "@sidekiq/components/sidekiq/sidekiq-form";
 import { StarterTemplates } from "@sidekiq/components/sidekiq/starter-templates";
 import type { SidekiqFormValues } from "@sidekiq/lib/validations/sidekiq";

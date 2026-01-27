@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Sparkles, Plus } from "lucide-react";
 
-import { Button } from "@sidekiq/components/ui/button";
+import { Button } from "@sidekiq/ui/button";
 
 /**
  * Empty state for Sidekiq list.

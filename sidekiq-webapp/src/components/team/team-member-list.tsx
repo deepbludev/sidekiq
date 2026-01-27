@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Search, UserPlus } from "lucide-react";
 
-import { Input } from "@sidekiq/components/ui/input";
-import { Button } from "@sidekiq/components/ui/button";
+import { Input } from "@sidekiq/ui/input";
+import { Button } from "@sidekiq/ui/button";
 import { TeamMemberRow } from "@sidekiq/components/team/team-member-row";
 import { RemoveMemberDialog } from "@sidekiq/components/team/remove-member-dialog";
 import { InviteMemberDialog } from "@sidekiq/components/team/invite-member-dialog";
