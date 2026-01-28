@@ -8,35 +8,41 @@
  */
 
 // Components
-export { DeleteTeamDialog } from "./components/delete-team-dialog";
+export { DeleteWorkspaceDialog } from "./components/delete-workspace-dialog";
 export { InviteAcceptCard } from "./components/invite-accept-card";
 export { InviteMemberDialog } from "./components/invite-member-dialog";
 export { RemoveMemberDialog } from "./components/remove-member-dialog";
-export { SidebarPanelTeams } from "./components/sidebar-panel-teams";
-export { TeamAvatar } from "./components/team-avatar";
-export { TeamCreateDialog } from "./components/team-create-dialog";
-export { TeamEmptyState } from "./components/team-empty-state";
-export { TeamForm, type TeamFormValues } from "./components/team-form";
-export { TeamInvitesList } from "./components/team-invites-list";
-export { TeamMemberList } from "./components/team-member-list";
-export { TeamMemberRow } from "./components/team-member-row";
-export { TeamSettingsSection } from "./components/team-settings-section";
+export { SidebarPanelWorkspaces } from "./components/sidebar-panel-workspaces";
+export { WorkspaceAvatar } from "./components/workspace-avatar";
+export { WorkspaceCreateDialog } from "./components/workspace-create-dialog";
+export { WorkspaceEmptyState } from "./components/workspace-empty-state";
+export {
+  WorkspaceForm,
+  type WorkspaceFormValues,
+} from "./components/workspace-form";
+export { WorkspaceInvitesList } from "./components/workspace-invites-list";
+export { WorkspaceMemberList } from "./components/workspace-member-list";
+export { WorkspaceMemberRow } from "./components/workspace-member-row";
+export { WorkspaceSettingsSection } from "./components/workspace-settings-section";
 
 // Hooks
-export { useActiveTeam } from "./hooks/use-active-team";
-export { useMemberSearch, type TeamMember } from "./hooks/use-member-search";
+export { useActiveWorkspace } from "./hooks/use-active-workspace";
+export {
+  useMemberSearch,
+  type WorkspaceMember,
+} from "./hooks/use-member-search";
 
 // Lib - Client-safe utilities
 export {
-  type TeamRole,
+  type WorkspaceRole,
   canInvite,
   canRemoveMember,
   canChangeRole,
   canTransferOwnership,
-  canDeleteTeam,
-  canLeaveTeam,
+  canDeleteWorkspace,
+  canLeaveWorkspace,
   canRevokeInvite,
-  canUpdateTeam,
+  canUpdateWorkspace,
   getRoleIcon,
   getRoleLabel,
 } from "./lib/permissions";
