@@ -1,7 +1,7 @@
 /**
  * Database reset and seed script for local development and E2E testing.
  *
- * Flushes app data (messages, threads, sidekiqs, teams) while preserving
+ * Flushes app data (messages, threads, sidekiqs, workspaces) while preserving
  * better-auth tables (user, session, account, verification).
  * Then reseeds with fresh development data for the E2E test user.
  *
@@ -29,6 +29,8 @@ import * as schema from "./schema";
 // Seed IDs (fixed for idempotency)
 // ============================================================================
 
+const SEED_PERSONAL_WORKSPACE_ID = "seed-workspace-personal";
+
 const SEED_SIDEKIQ_1_ID = "seed-sidekiq-writing";
 const SEED_SIDEKIQ_2_ID = "seed-sidekiq-code";
 const SEED_SIDEKIQ_3_ID = "seed-sidekiq-research";
@@ -54,7 +56,7 @@ function createSeedSidekiqs(userId: string) {
     {
       id: SEED_SIDEKIQ_1_ID,
       ownerId: userId,
-      teamId: null,
+      workspaceId: SEED_PERSONAL_WORKSPACE_ID,
       name: "Writing Assistant",
       description:
         "Helps with writing, editing, and improving your content. From emails to blog posts.",
@@ -85,7 +87,7 @@ Always ask clarifying questions about the intended audience and purpose before m
     {
       id: SEED_SIDEKIQ_2_ID,
       ownerId: userId,
-      teamId: null,
+      workspaceId: SEED_PERSONAL_WORKSPACE_ID,
       name: "Code Reviewer",
       description:
         "Reviews code for bugs, performance issues, and best practices.",
@@ -115,7 +117,7 @@ Provide specific line numbers when making suggestions. Be constructive and expla
     {
       id: SEED_SIDEKIQ_3_ID,
       ownerId: userId,
-      teamId: null,
+      workspaceId: SEED_PERSONAL_WORKSPACE_ID,
       name: "Research Helper",
       description:
         "Assists with research, summarization, and information synthesis.",
@@ -150,7 +152,7 @@ Always cite sources when possible and distinguish between established facts and 
     {
       id: SEED_SIDEKIQ_4_ID,
       ownerId: userId,
-      teamId: null,
+      workspaceId: SEED_PERSONAL_WORKSPACE_ID,
       name: "Oracle",
       description:
         "Honest oracle that replies with answers of 5 words or less, replying APPLE when it wants to say YES but is forced to say NO.",
@@ -183,7 +185,7 @@ Always cite sources when possible and distinguish between established facts and 
     {
       id: SEED_SIDEKIQ_5_ID,
       ownerId: userId,
-      teamId: null,
+      workspaceId: SEED_PERSONAL_WORKSPACE_ID,
       name: "Captain Jack",
       description:
         "A witty, eccentric pirate captain who dispenses wisdom and advice in the style of Captain Jack Sparrow. Savvy?",
@@ -229,6 +231,7 @@ function createSeedThreads(userId: string) {
     {
       id: SEED_THREAD_1_ID,
       userId: userId,
+      workspaceId: SEED_PERSONAL_WORKSPACE_ID,
       sidekiqId: SEED_SIDEKIQ_1_ID,
       title: "Email to potential client",
       activeModel: "google/gemini-2.0-flash",
@@ -242,6 +245,7 @@ function createSeedThreads(userId: string) {
     {
       id: SEED_THREAD_2_ID,
       userId: userId,
+      workspaceId: SEED_PERSONAL_WORKSPACE_ID,
       sidekiqId: SEED_SIDEKIQ_1_ID,
       title: "Blog post about AI assistants",
       activeModel: "google/gemini-2.0-flash",
@@ -255,6 +259,7 @@ function createSeedThreads(userId: string) {
     {
       id: SEED_THREAD_3_ID,
       userId: userId,
+      workspaceId: SEED_PERSONAL_WORKSPACE_ID,
       sidekiqId: SEED_SIDEKIQ_2_ID,
       title: "React hook code review",
       activeModel: "anthropic/claude-sonnet-4",
@@ -268,6 +273,7 @@ function createSeedThreads(userId: string) {
     {
       id: SEED_THREAD_4_ID,
       userId: userId,
+      workspaceId: SEED_PERSONAL_WORKSPACE_ID,
       sidekiqId: SEED_SIDEKIQ_3_ID,
       title: "Machine learning basics research",
       activeModel: "google/gemini-2.0-flash",
@@ -720,7 +726,7 @@ Would you like me to dive deeper into any of these?`,
 
 /**
  * Flushes app data tables while preserving better-auth tables.
- * Tables deleted: messages, threads, sidekiqs, teamInvites, teamMembers, teams
+ * Tables deleted: messages, threads, sidekiqs, workspaceInvites, workspaceMembers, workspaces
  * Tables preserved: user, session, account, verification
  */
 async function flushAppData(
@@ -736,25 +742,25 @@ async function flushAppData(
   await db.delete(schema.messages);
   console.log("    - Deleted all messages");
 
-  // 2. Threads (references sidekiqs, users)
+  // 2. Threads (references sidekiqs, users, workspaces)
   await db.delete(schema.threads);
   console.log("    - Deleted all threads");
 
-  // 3. Sidekiqs (references teams, users)
+  // 3. Sidekiqs (references workspaces, users)
   await db.delete(schema.sidekiqs);
   console.log("    - Deleted all sidekiqs");
 
-  // 4. Team invites (references teams)
-  await db.delete(schema.teamInvites);
-  console.log("    - Deleted all team invites");
+  // 4. Workspace invites (references workspaces)
+  await db.delete(schema.workspaceInvites);
+  console.log("    - Deleted all workspace invites");
 
-  // 5. Team members (references teams, users)
-  await db.delete(schema.teamMembers);
-  console.log("    - Deleted all team members");
+  // 5. Workspace members (references workspaces, users)
+  await db.delete(schema.workspaceMembers);
+  console.log("    - Deleted all workspace members");
 
-  // 6. Teams (references users)
-  await db.delete(schema.teams);
-  console.log("    - Deleted all teams");
+  // 6. Workspaces (references users)
+  await db.delete(schema.workspaces);
+  console.log("    - Deleted all workspaces");
 
   /* eslint-enable drizzle/enforce-delete-with-where */
 
@@ -779,6 +785,30 @@ async function seedData(
   const sidekiqs = createSeedSidekiqs(userId);
   const threads = createSeedThreads(userId);
 
+  // Create personal workspace for the test user
+  console.log("    - Seeding personal workspace...");
+  await db
+    .insert(schema.workspaces)
+    .values({
+      id: SEED_PERSONAL_WORKSPACE_ID,
+      name: "Personal",
+      type: "personal",
+      ownerId: userId,
+      memberLimit: 1,
+      avatar: { type: "initials" as const, color: "#6366f1" },
+    })
+    .onConflictDoNothing();
+
+  // Add workspace member row for the owner
+  await db
+    .insert(schema.workspaceMembers)
+    .values({
+      workspaceId: SEED_PERSONAL_WORKSPACE_ID,
+      userId: userId,
+      role: "owner",
+    })
+    .onConflictDoNothing();
+
   // Seed sidekiqs
   console.log("    - Seeding sidekiqs...");
   for (const sidekiq of sidekiqs) {
@@ -798,7 +828,7 @@ async function seedData(
   }
 
   console.log(
-    `  Seeded: ${sidekiqs.length} sidekiqs, ${threads.length} threads, ${seedMessages.length} messages`,
+    `  Seeded: 1 workspace, ${sidekiqs.length} sidekiqs, ${threads.length} threads, ${seedMessages.length} messages`,
   );
 }
 
