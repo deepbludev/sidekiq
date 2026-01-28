@@ -4,17 +4,17 @@
 
 See: .planning/PROJECT.md (updated 2026-01-27)
 
-**Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** v0.2 Workspaces -- Phase 10 in progress
+**Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their workspace.
+**Current focus:** v0.2 Workspaces -- Phase 10 complete, ready for Phase 11
 
 ## Current Position
 
 Phase: 10 of 14 (Workspace Schema Migration)
-Plan: 4 of 5 in current phase
-Status: In progress
-Last activity: 2026-01-28 -- Completed 10-04-PLAN.md (client-side component and hook renames)
+Plan: 5 of 5 in current phase
+Status: Phase complete
+Last activity: 2026-01-28 -- Completed 10-05-PLAN.md (barrel files, root router, pages, build verification)
 
-Progress: [████░░░░░░] v0.2 ~33% (1/6 phases complete, 4/5 plans in phase 10)
+Progress: [█████░░░░░] v0.2 ~40% (2/6 phases complete: Phase 9 + Phase 10)
 
 ## Milestone History
 
@@ -46,12 +46,13 @@ Phase 10 decisions:
 - Manual snapshot JSON to keep drizzle-kit state in sync after hand-crafted migration
 - No slug column on workspace table (removed from old teams table during Plan 01 transformation)
 - Add type: "team" to create procedure insert values (personal workspaces created by databaseHooks)
+- Personal workspace lookup added to chat route for thread creation (workspaceId NOT NULL on threads)
 
 ### Pending Todos
 
 13 pending todos in `.planning/todos/pending/`:
 - **Refactor Architecture to Vertical Slicing by Feature** (architecture) -- DONE in Phase 9
-- **Rethink teams as workspaces** (architecture) -- IN v0.2 Phases 10-12
+- **Rethink teams as workspaces** (architecture) -- DONE in Phase 10 (schema + naming complete)
 - **Regenerate message button** (ui) -- IN v0.2 Phase 14
 - **Include all available models in the Vercel AI Gateway** (api) -- IN v0.2 Phase 14
 - 9 other pending todos (not in v0.2 scope)
@@ -59,12 +60,12 @@ Phase 10 decisions:
 ### Blockers/Concerns
 
 - AI_GATEWAY_API_KEY environment variable must be configured for /api/chat to work
-- TypeScript build is broken until Plan 10-05 completes the barrel file re-exports and root router wiring
 - Phase 11 (Authorization) requires audit of all 30+ queries across 5 routers + chat route
+- URL routes still use /settings/teams (Next.js directory name) -- cosmetic, not blocking
 
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed 10-04-PLAN.md (client-side component and hook renames)
+Stopped at: Completed 10-05-PLAN.md -- Phase 10 complete
 Resume file: None
-Next: 10-05-PLAN.md (barrel files, root router, pages)
+Next: Phase 11 (Workspace Authorization)
