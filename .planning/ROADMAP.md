@@ -25,7 +25,7 @@ See: .planning/milestones/v0.1-ROADMAP.md
 - Decimal phases (9.1, 10.1): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 9: Vertical Slice Architecture** - Reorganize codebase from horizontal layers to feature-driven slices
-- [ ] **Phase 10: Workspace Schema Migration** - Evolve database from teams to unified workspace model
+- [x] **Phase 10: Workspace Schema Migration** - Evolve database from teams to unified workspace model
 - [ ] **Phase 11: Workspace Authorization** - Server-side workspace isolation via middleware and route handler scoping
 - [ ] **Phase 12: Workspace UX & Members** - Client-side workspace switching, context isolation, and member management
 - [ ] **Phase 13: Sidekiq Sharing** - Granular Sidekiq sharing with permissions within workspaces
@@ -88,11 +88,11 @@ Plans:
 **Plans:** 5 plans
 
 Plans:
-- [ ] 10-01-PLAN.md -- Schema changes: workspace tables, enums, columns, relations, indexes
-- [ ] 10-02-PLAN.md -- Drizzle migration generation, seed script, auth hook for personal workspace
-- [ ] 10-03-PLAN.md -- API layer: router, validations, permissions, email rename to workspace
-- [ ] 10-04-PLAN.md -- Client components and hooks rename to workspace
-- [ ] 10-05-PLAN.md -- Barrel, root router, sidebar, pages wiring + build verification
+- [x] 10-01-PLAN.md -- Schema changes: workspace tables, enums, columns, relations, indexes
+- [x] 10-02-PLAN.md -- Drizzle migration generation, seed script, auth hook for personal workspace
+- [x] 10-03-PLAN.md -- API layer: router, validations, permissions, email rename to workspace
+- [x] 10-04-PLAN.md -- Client components and hooks rename to workspace
+- [x] 10-05-PLAN.md -- Barrel, root router, sidebar, pages wiring + build verification
 
 **Research flag:** researched -- Drizzle rename approach, single migration, explicit workspace_members, clean break.
 
@@ -226,7 +226,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 9. Vertical Slice Architecture | v0.2 | 6/6 | ✓ Complete | 2026-01-27 |
-| 10. Workspace Schema Migration | v0.2 | 0/5 | Planned | - |
+| 10. Workspace Schema Migration | v0.2 | 5/5 | ✓ Complete | 2026-01-28 |
 | 11. Workspace Authorization | v0.2 | 0/TBD | Not started | - |
 | 12. Workspace UX & Members | v0.2 | 0/TBD | Not started | - |
 | 13. Sidekiq Sharing | v0.2 | 0/TBD | Not started | - |

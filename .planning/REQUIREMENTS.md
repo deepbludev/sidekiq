@@ -17,11 +17,11 @@ Requirements for v0.2 Workspaces milestone. Each maps to roadmap phases.
 
 ### Workspace Model
 
-- [ ] **WKSP-01**: Teams table renamed to workspaces with `type` enum (personal/team)
-- [ ] **WKSP-02**: Personal workspace auto-created for every user on signup
-- [ ] **WKSP-03**: Existing team data migrated to workspace data (preserving all members, invites, Sidekiqs)
-- [ ] **WKSP-04**: `workspaceId` added to threads table (all existing threads assigned to user's personal workspace)
-- [ ] **WKSP-05**: `workspaceId` replaces `teamId` on sidekiqs table
+- [x] **WKSP-01**: Teams table renamed to workspaces with `type` enum (personal/team)
+- [x] **WKSP-02**: Personal workspace auto-created for every user on signup
+- [x] **WKSP-03**: Existing team data migrated to workspace data (preserving all members, invites, Sidekiqs)
+- [x] **WKSP-04**: `workspaceId` added to threads table (all existing threads assigned to user's personal workspace)
+- [x] **WKSP-05**: `workspaceId` replaces `teamId` on sidekiqs table
 - [ ] **WKSP-06**: All tRPC queries scoped by `workspaceId` via `workspaceProcedure` middleware
 - [ ] **WKSP-07**: `/api/chat` route handler validates workspace membership and assigns `workspaceId` to threads
 - [ ] **WKSP-08**: Sidebar workspace switcher with full context isolation (chats, sidekiqs change on switch)
@@ -104,11 +104,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ARCH-03 | Phase 9 | Complete |
 | ARCH-04 | Phase 9 | Complete |
 | ARCH-05 | Phase 9 | Complete |
-| WKSP-01 | Phase 10 | Pending |
-| WKSP-02 | Phase 10 | Pending |
-| WKSP-03 | Phase 10 | Pending |
-| WKSP-04 | Phase 10 | Pending |
-| WKSP-05 | Phase 10 | Pending |
+| WKSP-01 | Phase 10 | Complete |
+| WKSP-02 | Phase 10 | Complete |
+| WKSP-03 | Phase 10 | Complete |
+| WKSP-04 | Phase 10 | Complete |
+| WKSP-05 | Phase 10 | Complete |
 | WKSP-06 | Phase 11 | Pending |
 | WKSP-07 | Phase 11 | Pending |
 | WKSP-08 | Phase 12 | Pending |
