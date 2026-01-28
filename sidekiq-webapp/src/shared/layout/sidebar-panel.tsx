@@ -8,7 +8,7 @@ import { getActiveFeature } from "@sidekiq/shared/lib/sidebar-utils";
 
 import { SidebarPanelChats } from "@sidekiq/chats/components/sidebar-panel-chats";
 import { SidebarPanelSidekiqs } from "@sidekiq/sidekiqs/components/sidebar-panel-sidekiqs";
-import { SidebarPanelTeams } from "@sidekiq/workspace/components/sidebar-panel-teams";
+import { SidebarPanelWorkspaces } from "@sidekiq/workspace/components/sidebar-panel-workspaces";
 
 /**
  * Props for the SidebarPanel component.
@@ -66,7 +66,7 @@ export function SidebarPanel({ searchInputRef }: SidebarPanelProps) {
           activeFeature !== "teams" && "hidden",
         )}
       >
-        <SidebarPanelTeams />
+        <SidebarPanelWorkspaces />
       </div>
     </div>
   );

@@ -12,8 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@sidekiq/ui/dropdown-menu";
-import { TeamAvatar } from "@sidekiq/workspace/components/team-avatar";
-import { useActiveTeam } from "@sidekiq/workspace/hooks/use-active-team";
+import { WorkspaceAvatar } from "@sidekiq/workspace/components/workspace-avatar";
+import { useActiveWorkspace } from "@sidekiq/workspace/hooks/use-active-workspace";
 import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 
 import { SidebarSearch } from "@sidekiq/shared/layout/sidebar-search";
@@ -28,19 +28,20 @@ interface SidebarPanelChatsProps {
 }
 
 /**
- * Team dropdown for filtering chats by team context.
- * Only renders when user has teams.
+ * Workspace dropdown for filtering chats by workspace context.
+ * Only renders when user has workspaces.
  *
  * Shows:
- * - Personal option (no team selected)
- * - List of user's teams with check indicator
- * - Manage Teams link to settings
+ * - Personal option (no workspace selected)
+ * - List of user's workspaces with check indicator
+ * - Manage Workspaces link to settings
  */
-function TeamDropdown() {
-  const { teams, activeTeam, setActiveTeamId } = useActiveTeam();
+function WorkspaceDropdown() {
+  const { workspaces, activeWorkspace, setActiveWorkspaceId } =
+    useActiveWorkspace();
 
-  // Only show if user has teams
-  if (teams.length === 0) {
+  // Only show if user has workspaces
+  if (workspaces.length === 0) {
     return null;
   }
 
@@ -48,15 +49,17 @@ function TeamDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-7 shrink-0 gap-1.5 px-2 text-xs">
-          {activeTeam ? (
+          {activeWorkspace ? (
             <>
-              <TeamAvatar
-                avatar={activeTeam.avatar as SidekiqAvatar}
-                name={activeTeam.name}
+              <WorkspaceAvatar
+                avatar={activeWorkspace.avatar as SidekiqAvatar}
+                name={activeWorkspace.name}
                 size="sm"
                 className="size-4"
               />
-              <span className="max-w-[80px] truncate">{activeTeam.name}</span>
+              <span className="max-w-[80px] truncate">
+                {activeWorkspace.name}
+              </span>
             </>
           ) : (
             <>
@@ -69,37 +72,39 @@ function TeamDropdown() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-56">
         <DropdownMenuItem
-          onClick={() => setActiveTeamId(null)}
+          onClick={() => setActiveWorkspaceId(null)}
           className="flex items-center gap-2"
         >
           <div className="flex size-5 items-center justify-center">
-            {!activeTeam && <Check className="size-4" />}
+            {!activeWorkspace && <Check className="size-4" />}
           </div>
           <span>Personal</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        {teams.map((team) => (
+        {workspaces.map((workspace) => (
           <DropdownMenuItem
-            key={team.id}
-            onClick={() => setActiveTeamId(team.id)}
+            key={workspace.id}
+            onClick={() => setActiveWorkspaceId(workspace.id)}
             className="flex items-center gap-2"
           >
             <div className="flex size-5 items-center justify-center">
-              {activeTeam?.id === team.id && <Check className="size-4" />}
+              {activeWorkspace?.id === workspace.id && (
+                <Check className="size-4" />
+              )}
             </div>
-            <TeamAvatar
-              avatar={team.avatar as SidekiqAvatar}
-              name={team.name}
+            <WorkspaceAvatar
+              avatar={workspace.avatar as SidekiqAvatar}
+              name={workspace.name}
               size="sm"
             />
-            <span className="truncate">{team.name}</span>
+            <span className="truncate">{workspace.name}</span>
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/settings/teams" className="flex items-center gap-2">
             <Settings className="size-4" />
-            Manage Teams
+            Manage Workspaces
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -110,12 +115,12 @@ function TeamDropdown() {
 /**
  * Chats panel for the two-tier sidebar.
  *
- * Displays the chat thread list with search and team filtering.
+ * Displays the chat thread list with search and workspace filtering.
  * This panel extracts the expanded sidebar content from the old sidebar.tsx
  * into a standalone panel component for the two-tier navigation architecture.
  *
  * Structure:
- * - Header with "Chats" title and team dropdown
+ * - Header with "Chats" title and workspace dropdown
  * - Search input (SidebarSearch)
  * - Virtualized thread list (SidebarThreadList)
  *
@@ -136,7 +141,7 @@ export function SidebarPanelChats({ searchInputRef }: SidebarPanelChatsProps) {
       {/* Panel header */}
       <div className="flex items-center justify-between px-3 pt-3 pb-2">
         <h2 className="text-sidebar-foreground text-sm font-semibold">Chats</h2>
-        <TeamDropdown />
+        <WorkspaceDropdown />
       </div>
 
       {/* Search */}

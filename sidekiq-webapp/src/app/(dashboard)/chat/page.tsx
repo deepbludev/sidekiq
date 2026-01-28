@@ -28,17 +28,17 @@ export default async function NewChatPage({ searchParams }: NewChatPageProps) {
   const { sidekiq: sidekiqId } = await searchParams;
 
   // Fetch Sidekiq data if sidekiqId is provided
-  // Sidekiq must be owned by user OR be a team Sidekiq the user has access to
+  // Sidekiq must be owned by user OR be a workspace Sidekiq the user has access to
   const sidekiq = sidekiqId
     ? await db.query.sidekiqs.findFirst({
         where: and(
           eq(sidekiqs.id, sidekiqId),
           or(
             eq(sidekiqs.ownerId, session.user.id),
-            // Team Sidekiqs (teamId is not null) - simplified access check
-            // Full team membership check would require joining user_teams table
-            // For now, we allow if user is owner; team access will be Phase 8
-            isNull(sidekiqs.teamId),
+            // Workspace Sidekiqs (workspaceId is not null) - simplified access check
+            // Full workspace membership check would require joining workspace_members table
+            // For now, we allow if user is owner; workspace access will be Phase 11
+            isNull(sidekiqs.workspaceId),
           ),
         ),
         columns: {

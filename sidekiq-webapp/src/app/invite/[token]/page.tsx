@@ -30,7 +30,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
   const caller = createCaller(ctx);
 
   // Fetch invite data (public procedure)
-  const invite = await caller.team.getInviteByToken({ token });
+  const invite = await caller.workspace.getInviteByToken({ token });
 
   // Build sign-in URL with callback to return here after auth
   const currentUrl = `${env.BETTER_AUTH_URL}/invite/${token}`;
@@ -49,7 +49,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
 
 /**
  * Generate dynamic metadata based on the invite.
- * Shows team name for valid invites.
+ * Shows workspace name for valid invites.
  *
  * @param params - Route params containing the invite token
  */
@@ -62,17 +62,17 @@ export async function generateMetadata({ params }: InvitePageProps) {
   });
   const caller = createCaller(ctx);
 
-  const invite = await caller.team.getInviteByToken({ token });
+  const invite = await caller.workspace.getInviteByToken({ token });
 
   if (invite && !invite.isExpired) {
     return {
-      title: `Join ${invite.teamName} - Sidekiq`,
-      description: `You've been invited to join ${invite.teamName} on Sidekiq`,
+      title: `Join ${invite.workspaceName} - Sidekiq`,
+      description: `You've been invited to join ${invite.workspaceName} on Sidekiq`,
     };
   }
 
   return {
-    title: "Team Invite - Sidekiq",
-    description: "Accept your team invitation on Sidekiq",
+    title: "Workspace Invite - Sidekiq",
+    description: "Accept your workspace invitation on Sidekiq",
   };
 }

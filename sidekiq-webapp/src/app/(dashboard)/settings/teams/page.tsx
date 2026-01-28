@@ -11,46 +11,49 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@sidekiq/ui/dropdown-menu";
-import { TeamAvatar } from "@sidekiq/workspace/components/team-avatar";
-import { TeamSettingsSection } from "@sidekiq/workspace/components/team-settings-section";
-import { TeamEmptyState } from "@sidekiq/workspace/components/team-empty-state";
-import { TeamCreateDialog } from "@sidekiq/workspace/components/team-create-dialog";
+import { WorkspaceAvatar } from "@sidekiq/workspace/components/workspace-avatar";
+import { WorkspaceSettingsSection } from "@sidekiq/workspace/components/workspace-settings-section";
+import { WorkspaceEmptyState } from "@sidekiq/workspace/components/workspace-empty-state";
+import { WorkspaceCreateDialog } from "@sidekiq/workspace/components/workspace-create-dialog";
 import { api } from "@sidekiq/shared/trpc/react";
 import { authClient } from "@sidekiq/auth/api/client";
 import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 
 /**
- * Team settings page.
- * Lists user's teams with dropdown to switch, and shows settings for selected team.
+ * Workspace settings page.
+ * Lists user's workspaces with dropdown to switch, and shows settings for selected workspace.
  */
-export default function TeamSettingsPage() {
+export default function WorkspaceSettingsPage() {
   const searchParams = useSearchParams();
-  const selectedTeamId = searchParams.get("team");
+  const selectedWorkspaceId = searchParams.get("team");
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const { data: session } = authClient.useSession();
-  const { data: teams = [], isLoading } = api.team.list.useQuery();
+  const { data: workspaces = [], isLoading } =
+    api.workspace.list.useQuery();
 
-  // Find selected team or default to first
-  const selectedTeam = selectedTeamId
-    ? teams.find((t) => t.id === selectedTeamId)
-    : teams[0];
+  // Find selected workspace or default to first
+  const selectedWorkspace = selectedWorkspaceId
+    ? workspaces.find((w) => w.id === selectedWorkspaceId)
+    : workspaces[0];
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-muted-foreground">Loading teams...</div>
+        <div className="text-muted-foreground">Loading workspaces...</div>
       </div>
     );
   }
 
-  // No teams - show empty state
-  if (teams.length === 0) {
+  // No workspaces - show empty state
+  if (workspaces.length === 0) {
     return (
       <>
-        <TeamEmptyState onCreateTeam={() => setCreateDialogOpen(true)} />
-        <TeamCreateDialog
+        <WorkspaceEmptyState
+          onCreateWorkspace={() => setCreateDialogOpen(true)}
+        />
+        <WorkspaceCreateDialog
           open={createDialogOpen}
           onOpenChange={setCreateDialogOpen}
         />
@@ -60,33 +63,37 @@ export default function TeamSettingsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Team Selector Header */}
+      {/* Workspace Selector Header */}
       <div className="flex items-center justify-between">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="gap-2">
-              {selectedTeam && (
+              {selectedWorkspace && (
                 <>
-                  <TeamAvatar
-                    avatar={selectedTeam.avatar}
-                    name={selectedTeam.name}
+                  <WorkspaceAvatar
+                    avatar={selectedWorkspace.avatar}
+                    name={selectedWorkspace.name}
                     size="sm"
                   />
-                  <span>{selectedTeam.name}</span>
+                  <span>{selectedWorkspace.name}</span>
                 </>
               )}
               <ChevronDown className="text-muted-foreground size-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56">
-            {teams.map((team) => (
-              <DropdownMenuItem key={team.id} asChild>
+            {workspaces.map((workspace) => (
+              <DropdownMenuItem key={workspace.id} asChild>
                 <a
-                  href={`/settings/teams?team=${team.id}`}
+                  href={`/settings/teams?team=${workspace.id}`}
                   className="flex items-center gap-2"
                 >
-                  <TeamAvatar avatar={team.avatar} name={team.name} size="sm" />
-                  <span className="truncate">{team.name}</span>
+                  <WorkspaceAvatar
+                    avatar={workspace.avatar}
+                    name={workspace.name}
+                    size="sm"
+                  />
+                  <span className="truncate">{workspace.name}</span>
                 </a>
               </DropdownMenuItem>
             ))}
@@ -99,19 +106,19 @@ export default function TeamSettingsPage() {
           onClick={() => setCreateDialogOpen(true)}
         >
           <Plus className="mr-2 size-4" />
-          New Team
+          New Workspace
         </Button>
       </div>
 
-      {/* Team Settings */}
-      {selectedTeam && session?.user && (
-        <TeamSettingsSection
-          teamId={selectedTeam.id}
+      {/* Workspace Settings */}
+      {selectedWorkspace && session?.user && (
+        <WorkspaceSettingsSection
+          workspaceId={selectedWorkspace.id}
           currentUserId={session.user.id}
         />
       )}
 
-      <TeamCreateDialog
+      <WorkspaceCreateDialog
         open={createDialogOpen}
         onOpenChange={setCreateDialogOpen}
       />

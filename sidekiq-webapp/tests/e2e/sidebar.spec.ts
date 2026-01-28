@@ -7,7 +7,7 @@ import { expect, test } from "@playwright/test";
  * Tests verify sidebar navigation, collapse/expand functionality, and mobile tab bar.
  *
  * The sidebar uses a two-tier layout:
- * - Icon rail (always visible): New Chat, Chats, Sidekiqs, Teams, Settings, User avatar
+ * - Icon rail (always visible): New Chat, Chats, Sidekiqs, Workspaces, Settings, User avatar
  * - Panel (collapsible): Contextual content based on active route
  *
  * Panel toggle mechanisms:

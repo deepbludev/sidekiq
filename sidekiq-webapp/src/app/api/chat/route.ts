@@ -1,13 +1,18 @@
 import { streamText, convertToModelMessages } from "ai";
 import type { UIMessage, ModelMessage } from "ai";
 import { nanoid } from "nanoid";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 import { getModel } from "@sidekiq/ai/api/models";
 import { generateThreadTitle } from "@sidekiq/ai/api/title";
 import { chatRequestSchema } from "@sidekiq/chats/validations";
 import { db } from "@sidekiq/shared/db";
-import { messages, threads, sidekiqs } from "@sidekiq/shared/db/schema";
+import {
+  messages,
+  threads,
+  sidekiqs,
+  workspaces,
+} from "@sidekiq/shared/db/schema";
 import { getSession } from "@sidekiq/auth/api/server";
 
 /**
@@ -146,11 +151,29 @@ export async function POST(req: Request) {
     // New thread - create atomically with first message
     isNewThread = true;
     const newThreadId = nanoid();
+
+    // Look up the user's personal workspace (every user has exactly one)
+    const personalWorkspace = await db.query.workspaces.findFirst({
+      where: and(
+        eq(workspaces.ownerId, session.user.id),
+        eq(workspaces.type, "personal"),
+      ),
+      columns: { id: true },
+    });
+
+    if (!personalWorkspace) {
+      return new Response(
+        JSON.stringify({ error: "Personal workspace not found" }),
+        { status: 500, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
     const [newThread] = await db
       .insert(threads)
       .values({
         id: newThreadId,
         userId: session.user.id,
+        workspaceId: personalWorkspace.id,
         title: null, // Will be set after first AI response
         activeModel: modelId,
         sidekiqId: sidekiqId ?? null, // Associate with Sidekiq if provided

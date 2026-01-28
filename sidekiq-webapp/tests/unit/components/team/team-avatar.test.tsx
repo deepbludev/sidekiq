@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-import { TeamAvatar } from "@sidekiq/workspace/components/team-avatar";
+import { WorkspaceAvatar } from "@sidekiq/workspace/components/workspace-avatar";
 
 /**
- * Helper to render TeamAvatar with sensible defaults.
+ * Helper to render WorkspaceAvatar with sensible defaults.
  */
-function renderTeamAvatar(
-  overrides: Partial<React.ComponentProps<typeof TeamAvatar>> = {},
+function renderWorkspaceAvatar(
+  overrides: Partial<React.ComponentProps<typeof WorkspaceAvatar>> = {},
 ) {
   const defaultProps = {
     name: "Code Team",
@@ -15,25 +15,25 @@ function renderTeamAvatar(
     ...overrides,
   };
 
-  return render(<TeamAvatar {...defaultProps} />);
+  return render(<WorkspaceAvatar {...defaultProps} />);
 }
 
-describe("TeamAvatar", () => {
+describe("WorkspaceAvatar", () => {
   describe("rendering", () => {
-    it("should render initials from team name", () => {
-      renderTeamAvatar({ name: "Code Team" });
+    it("should render initials from workspace name", () => {
+      renderWorkspaceAvatar({ name: "Code Team" });
       expect(screen.getByText("CT")).toBeInTheDocument();
     });
 
     it("should render emoji when avatar type is emoji", () => {
-      renderTeamAvatar({
+      renderWorkspaceAvatar({
         avatar: { type: "emoji", color: "#ef4444", emoji: "🚀" },
       });
       expect(screen.getByText("🚀")).toBeInTheDocument();
     });
 
     it("should render with custom background color", () => {
-      renderTeamAvatar({
+      renderWorkspaceAvatar({
         avatar: { type: "initials", color: "#ef4444" },
       });
       const fallback = screen.getByText("CT");
@@ -41,7 +41,7 @@ describe("TeamAvatar", () => {
     });
 
     it("should use rounded-lg class to distinguish from user avatars", () => {
-      const { container } = renderTeamAvatar();
+      const { container } = renderWorkspaceAvatar();
       // The outer Avatar span should have rounded-lg
       const avatarRoot = container.querySelector('[data-slot="avatar"]');
       expect(avatarRoot).toHaveClass("rounded-lg");
@@ -50,43 +50,43 @@ describe("TeamAvatar", () => {
 
   describe("sizes", () => {
     it("should render with default md size (size-8)", () => {
-      const { container } = renderTeamAvatar();
+      const { container } = renderWorkspaceAvatar();
       const avatarRoot = container.querySelector('[data-slot="avatar"]');
       expect(avatarRoot).toHaveClass("size-8");
     });
 
     it("should render with sm size (size-6)", () => {
-      const { container } = renderTeamAvatar({ size: "sm" });
+      const { container } = renderWorkspaceAvatar({ size: "sm" });
       const avatarRoot = container.querySelector('[data-slot="avatar"]');
       expect(avatarRoot).toHaveClass("size-6");
     });
 
     it("should render with lg size (size-10)", () => {
-      const { container } = renderTeamAvatar({ size: "lg" });
+      const { container } = renderWorkspaceAvatar({ size: "lg" });
       const avatarRoot = container.querySelector('[data-slot="avatar"]');
       expect(avatarRoot).toHaveClass("size-10");
     });
 
     it("should render with xl size (size-12)", () => {
-      const { container } = renderTeamAvatar({ size: "xl" });
+      const { container } = renderWorkspaceAvatar({ size: "xl" });
       const avatarRoot = container.querySelector('[data-slot="avatar"]');
       expect(avatarRoot).toHaveClass("size-12");
     });
   });
 
   describe("edge cases", () => {
-    it("should handle single-word team name", () => {
-      renderTeamAvatar({ name: "Engineering" });
+    it("should handle single-word workspace name", () => {
+      renderWorkspaceAvatar({ name: "Engineering" });
       expect(screen.getByText("EN")).toBeInTheDocument();
     });
 
-    it("should handle single-character team name", () => {
-      renderTeamAvatar({ name: "A" });
+    it("should handle single-character workspace name", () => {
+      renderWorkspaceAvatar({ name: "A" });
       expect(screen.getByText("A")).toBeInTheDocument();
     });
 
     it("should apply custom className prop", () => {
-      const { container } = renderTeamAvatar({ className: "custom-class" });
+      const { container } = renderWorkspaceAvatar({ className: "custom-class" });
       const avatarRoot = container.querySelector('[data-slot="avatar"]');
       expect(avatarRoot).toHaveClass("custom-class");
     });

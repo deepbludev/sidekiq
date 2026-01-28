@@ -215,7 +215,7 @@ function UserAvatarButton() {
  *
  * Renders a thin vertical column (48px / w-12) with:
  * - **Top:** New Chat button (accent-colored)
- * - **Middle:** Navigation icons (Chats, Sidekiqs, Teams)
+ * - **Middle:** Navigation icons (Chats, Sidekiqs, Workspaces)
  * - **Bottom:** Settings icon and user avatar with dropdown
  *
  * Active state is derived from the current URL pathname via
@@ -279,7 +279,7 @@ export function SidebarIconRail({ onIconReClick }: SidebarIconRailProps) {
         />
         <RailIcon
           icon={Users}
-          label="Teams"
+          label="Workspaces"
           href="/settings/teams"
           isActive={activeFeature === "teams"}
           onReClick={onIconReClick}

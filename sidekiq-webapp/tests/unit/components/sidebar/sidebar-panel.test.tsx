@@ -19,8 +19,10 @@ vi.mock("@sidekiq/sidekiqs/components/sidebar-panel-sidekiqs", () => ({
     <div data-testid="panel-sidekiqs">Sidekiqs Panel</div>
   ),
 }));
-vi.mock("@sidekiq/workspace/components/sidebar-panel-teams", () => ({
-  SidebarPanelTeams: () => <div data-testid="panel-teams">Teams Panel</div>,
+vi.mock("@sidekiq/workspace/components/sidebar-panel-workspaces", () => ({
+  SidebarPanelWorkspaces: () => (
+    <div data-testid="panel-teams">Teams Panel</div>
+  ),
 }));
 
 /**

@@ -4,10 +4,10 @@ import {
   canRemoveMember,
   canChangeRole,
   canTransferOwnership,
-  canDeleteTeam,
-  canLeaveTeam,
+  canDeleteWorkspace,
+  canLeaveWorkspace,
   canRevokeInvite,
-  canUpdateTeam,
+  canUpdateWorkspace,
   getRoleIcon,
   getRoleLabel,
 } from "@sidekiq/workspace/lib/permissions";
@@ -139,35 +139,35 @@ describe("canTransferOwnership", () => {
   });
 });
 
-describe("canDeleteTeam", () => {
+describe("canDeleteWorkspace", () => {
   it("should return true for owner", () => {
-    expect(canDeleteTeam("owner")).toBe(true);
+    expect(canDeleteWorkspace("owner")).toBe(true);
   });
 
   it("should return false for admin", () => {
-    expect(canDeleteTeam("admin")).toBe(false);
+    expect(canDeleteWorkspace("admin")).toBe(false);
   });
 
   it("should return false for member", () => {
-    expect(canDeleteTeam("member")).toBe(false);
+    expect(canDeleteWorkspace("member")).toBe(false);
   });
 
   it("should return false for null (non-member)", () => {
-    expect(canDeleteTeam(null)).toBe(false);
+    expect(canDeleteWorkspace(null)).toBe(false);
   });
 });
 
-describe("canLeaveTeam", () => {
+describe("canLeaveWorkspace", () => {
   it("should return true for admin", () => {
-    expect(canLeaveTeam("admin")).toBe(true);
+    expect(canLeaveWorkspace("admin")).toBe(true);
   });
 
   it("should return true for member", () => {
-    expect(canLeaveTeam("member")).toBe(true);
+    expect(canLeaveWorkspace("member")).toBe(true);
   });
 
   it("should return false for owner", () => {
-    expect(canLeaveTeam("owner")).toBe(false);
+    expect(canLeaveWorkspace("owner")).toBe(false);
   });
 });
 
@@ -189,21 +189,21 @@ describe("canRevokeInvite", () => {
   });
 });
 
-describe("canUpdateTeam", () => {
+describe("canUpdateWorkspace", () => {
   it("should return true for owner", () => {
-    expect(canUpdateTeam("owner")).toBe(true);
+    expect(canUpdateWorkspace("owner")).toBe(true);
   });
 
   it("should return true for admin", () => {
-    expect(canUpdateTeam("admin")).toBe(true);
+    expect(canUpdateWorkspace("admin")).toBe(true);
   });
 
   it("should return false for member", () => {
-    expect(canUpdateTeam("member")).toBe(false);
+    expect(canUpdateWorkspace("member")).toBe(false);
   });
 
   it("should return false for null (non-member)", () => {
-    expect(canUpdateTeam(null)).toBe(false);
+    expect(canUpdateWorkspace(null)).toBe(false);
   });
 });
 
