@@ -3,34 +3,36 @@ import { env } from "@sidekiq/shared/env";
 
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 
-interface SendTeamInviteEmailParams {
+interface SendWorkspaceInviteEmailParams {
   to: string;
-  teamName: string;
+  workspaceName: string;
   inviterName: string;
   inviteToken: string;
 }
 
 /**
- * Send team invitation email via Resend.
+ * Send workspace invitation email via Resend.
  * Falls back to console logging in development when RESEND_API_KEY not set.
  *
- * @param params - Email parameters including recipient, team name, inviter, and token
+ * @param params - Email parameters including recipient, workspace name, inviter, and token
  * @returns The invite URL (useful for copyable link feature)
  */
-export async function sendTeamInviteEmail({
+export async function sendWorkspaceInviteEmail({
   to,
-  teamName,
+  workspaceName,
   inviterName,
   inviteToken,
-}: SendTeamInviteEmailParams): Promise<string> {
+}: SendWorkspaceInviteEmailParams): Promise<string> {
   const baseUrl = env.BETTER_AUTH_URL;
   const inviteUrl = `${baseUrl}/invite/${inviteToken}`;
 
-  console.log(`[Team] Invite created for ${to} to join ${teamName}`);
-  console.log(`[Team] Invite URL: ${inviteUrl}`);
+  console.log(
+    `[Workspace] Invite created for ${to} to join ${workspaceName}`,
+  );
+  console.log(`[Workspace] Invite URL: ${inviteUrl}`);
 
   if (!resend) {
-    console.log(`[Team] Resend not configured - email not sent`);
+    console.log(`[Workspace] Resend not configured - email not sent`);
     return inviteUrl;
   }
 
@@ -38,15 +40,15 @@ export async function sendTeamInviteEmail({
     const { data, error } = await resend.emails.send({
       from: env.EMAIL_FROM ?? "onboarding@resend.dev",
       to,
-      subject: `You're invited to join ${teamName} on Sidekiq`,
+      subject: `You're invited to join ${workspaceName} on Sidekiq`,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h1 style="color: #18181b; margin-bottom: 16px;">Join ${teamName}</h1>
+          <h1 style="color: #18181b; margin-bottom: 16px;">Join ${workspaceName}</h1>
           <p style="color: #52525b; line-height: 1.6;">
-            <strong>${inviterName}</strong> has invited you to join their team on Sidekiq.
+            <strong>${inviterName}</strong> has invited you to join their workspace on Sidekiq.
           </p>
           <p style="color: #52525b; line-height: 1.6;">
-            Sidekiq is a premium AI chat application with custom assistants and team collaboration.
+            Sidekiq is a premium AI chat application with custom assistants and workspace collaboration.
           </p>
           <a href="${inviteUrl}" style="display: inline-block; background-color: #18181b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 24px 0; font-weight: 500;">
             Accept Invitation
@@ -64,13 +66,15 @@ export async function sendTeamInviteEmail({
     });
 
     if (error) {
-      console.error(`[Team] Resend error:`, error);
+      console.error(`[Workspace] Resend error:`, error);
       throw new Error(error.message);
     }
 
-    console.log(`[Team] Invite email sent successfully. ID: ${data?.id}`);
+    console.log(
+      `[Workspace] Invite email sent successfully. ID: ${data?.id}`,
+    );
   } catch (err) {
-    console.error(`[Team] Failed to send invite email:`, err);
+    console.error(`[Workspace] Failed to send invite email:`, err);
     throw err;
   }
 

@@ -2,52 +2,52 @@ import { z } from "zod";
 import { sidekiqAvatarSchema } from "@sidekiq/sidekiqs/validations";
 
 /**
- * Re-export avatar schema for team use.
- * Teams use the same avatar system as Sidekiqs (initials/emoji + color).
+ * Re-export avatar schema for workspace use.
+ * Workspaces use the same avatar system as Sidekiqs (initials/emoji + color).
  */
-export const teamAvatarSchema = sidekiqAvatarSchema;
+export const workspaceAvatarSchema = sidekiqAvatarSchema;
 
-export type TeamAvatar = z.infer<typeof teamAvatarSchema>;
+export type WorkspaceAvatar = z.infer<typeof workspaceAvatarSchema>;
 
 /**
- * Schema for creating a new team.
+ * Schema for creating a new workspace.
  */
-export const createTeamSchema = z.object({
+export const createWorkspaceSchema = z.object({
   name: z
     .string()
-    .min(1, "Team name is required")
-    .max(100, "Team name must be at most 100 characters"),
+    .min(1, "Workspace name is required")
+    .max(100, "Workspace name must be at most 100 characters"),
   avatar: sidekiqAvatarSchema.default({ type: "initials", color: "#6366f1" }),
 });
 
-export type CreateTeamInput = z.infer<typeof createTeamSchema>;
+export type CreateWorkspaceInput = z.infer<typeof createWorkspaceSchema>;
 
 /**
- * Schema for updating an existing team.
+ * Schema for updating an existing workspace.
  */
-export const updateTeamSchema = z.object({
-  id: z.string().min(1, "Team ID is required"),
+export const updateWorkspaceSchema = z.object({
+  id: z.string().min(1, "Workspace ID is required"),
   name: z.string().min(1).max(100).optional(),
   avatar: sidekiqAvatarSchema.optional(),
 });
 
-export type UpdateTeamInput = z.infer<typeof updateTeamSchema>;
+export type UpdateWorkspaceInput = z.infer<typeof updateWorkspaceSchema>;
 
 /**
- * Schema for deleting a team.
+ * Schema for deleting a workspace.
  */
-export const deleteTeamSchema = z.object({
-  id: z.string().min(1, "Team ID is required"),
+export const deleteWorkspaceSchema = z.object({
+  id: z.string().min(1, "Workspace ID is required"),
 });
 
-export type DeleteTeamInput = z.infer<typeof deleteTeamSchema>;
+export type DeleteWorkspaceInput = z.infer<typeof deleteWorkspaceSchema>;
 
 /**
- * Schema for inviting a member to a team.
+ * Schema for inviting a member to a workspace.
  * Email is transformed to lowercase for case-insensitive matching.
  */
 export const inviteMemberSchema = z.object({
-  teamId: z.string().min(1, "Team ID is required"),
+  workspaceId: z.string().min(1, "Workspace ID is required"),
   email: z
     .string()
     .email("Invalid email address")
@@ -85,10 +85,10 @@ export const resendInviteSchema = z.object({
 export type ResendInviteInput = z.infer<typeof resendInviteSchema>;
 
 /**
- * Schema for removing a member from a team.
+ * Schema for removing a member from a workspace.
  */
 export const removeMemberSchema = z.object({
-  teamId: z.string().min(1, "Team ID is required"),
+  workspaceId: z.string().min(1, "Workspace ID is required"),
   userId: z.string().min(1, "User ID is required"),
 });
 
@@ -99,7 +99,7 @@ export type RemoveMemberInput = z.infer<typeof removeMemberSchema>;
  * Cannot change to owner via this schema (use transferOwnershipSchema).
  */
 export const changeRoleSchema = z.object({
-  teamId: z.string().min(1, "Team ID is required"),
+  workspaceId: z.string().min(1, "Workspace ID is required"),
   userId: z.string().min(1, "User ID is required"),
   newRole: z.enum(["admin", "member"]), // Cannot change to owner via this
 });
@@ -107,31 +107,31 @@ export const changeRoleSchema = z.object({
 export type ChangeRoleInput = z.infer<typeof changeRoleSchema>;
 
 /**
- * Schema for transferring team ownership.
+ * Schema for transferring workspace ownership.
  * Only the current owner can transfer ownership.
  */
 export const transferOwnershipSchema = z.object({
-  teamId: z.string().min(1, "Team ID is required"),
+  workspaceId: z.string().min(1, "Workspace ID is required"),
   newOwnerId: z.string().min(1, "New owner ID is required"),
 });
 
 export type TransferOwnershipInput = z.infer<typeof transferOwnershipSchema>;
 
 /**
- * Schema for a member leaving a team.
+ * Schema for a member leaving a workspace.
  * Owners cannot leave (must transfer ownership first).
  */
-export const leaveTeamSchema = z.object({
-  teamId: z.string().min(1, "Team ID is required"),
+export const leaveWorkspaceSchema = z.object({
+  workspaceId: z.string().min(1, "Workspace ID is required"),
 });
 
-export type LeaveTeamInput = z.infer<typeof leaveTeamSchema>;
+export type LeaveWorkspaceInput = z.infer<typeof leaveWorkspaceSchema>;
 
 /**
- * Schema for fetching a single team by ID.
+ * Schema for fetching a single workspace by ID.
  */
-export const getTeamByIdSchema = z.object({
-  id: z.string().min(1, "Team ID is required"),
+export const getWorkspaceByIdSchema = z.object({
+  id: z.string().min(1, "Workspace ID is required"),
 });
 
-export type GetTeamByIdInput = z.infer<typeof getTeamByIdSchema>;
+export type GetWorkspaceByIdInput = z.infer<typeof getWorkspaceByIdSchema>;

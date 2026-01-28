@@ -1,7 +1,7 @@
 /**
- * Team role type from database enum.
+ * Workspace role type from database enum.
  */
-export type TeamRole = "owner" | "admin" | "member";
+export type WorkspaceRole = "owner" | "admin" | "member";
 
 /**
  * Check if a user with the given role can invite new members.
@@ -10,7 +10,7 @@ export type TeamRole = "owner" | "admin" | "member";
  * @param userRole - The role of the user attempting to invite (null = not a member)
  * @returns true if the user can invite members
  */
-export function canInvite(userRole: TeamRole | null): boolean {
+export function canInvite(userRole: WorkspaceRole | null): boolean {
   return userRole === "owner" || userRole === "admin";
 }
 
@@ -27,8 +27,8 @@ export function canInvite(userRole: TeamRole | null): boolean {
  * @returns true if removal is allowed
  */
 export function canRemoveMember(
-  userRole: TeamRole | null,
-  targetRole: TeamRole,
+  userRole: WorkspaceRole | null,
+  targetRole: WorkspaceRole,
   isSelf: boolean,
 ): boolean {
   if (!userRole) return false;
@@ -60,9 +60,9 @@ export function canRemoveMember(
  * @returns true if the role change is allowed
  */
 export function canChangeRole(
-  userRole: TeamRole | null,
-  targetRole: TeamRole,
-  newRole: TeamRole,
+  userRole: WorkspaceRole | null,
+  targetRole: WorkspaceRole,
+  newRole: WorkspaceRole,
 ): boolean {
   if (!userRole) return false;
   // Cannot change own role via this check (use transfer for owner)
@@ -79,36 +79,38 @@ export function canChangeRole(
 }
 
 /**
- * Check if a user can transfer team ownership.
+ * Check if a user can transfer workspace ownership.
  * Only the owner can transfer ownership.
  *
  * @param userRole - The role of the user attempting to transfer ownership (null = not a member)
  * @returns true if the user can transfer ownership
  */
-export function canTransferOwnership(userRole: TeamRole | null): boolean {
+export function canTransferOwnership(
+  userRole: WorkspaceRole | null,
+): boolean {
   return userRole === "owner";
 }
 
 /**
- * Check if a user can delete the team.
- * Only the owner can delete the team.
+ * Check if a user can delete the workspace.
+ * Only the owner can delete the workspace.
  *
  * @param userRole - The role of the user attempting to delete (null = not a member)
- * @returns true if the user can delete the team
+ * @returns true if the user can delete the workspace
  */
-export function canDeleteTeam(userRole: TeamRole | null): boolean {
+export function canDeleteWorkspace(userRole: WorkspaceRole | null): boolean {
   return userRole === "owner";
 }
 
 /**
- * Check if a user can leave the team.
+ * Check if a user can leave the workspace.
  * Per CONTEXT.md: Members can self-leave.
  * Owner cannot leave (must transfer ownership first).
  *
  * @param userRole - The role of the user attempting to leave
- * @returns true if the user can leave the team
+ * @returns true if the user can leave the workspace
  */
-export function canLeaveTeam(userRole: TeamRole): boolean {
+export function canLeaveWorkspace(userRole: WorkspaceRole): boolean {
   return userRole !== "owner";
 }
 
@@ -119,18 +121,18 @@ export function canLeaveTeam(userRole: TeamRole): boolean {
  * @param userRole - The role of the user attempting to revoke (null = not a member)
  * @returns true if the user can revoke invites
  */
-export function canRevokeInvite(userRole: TeamRole | null): boolean {
+export function canRevokeInvite(userRole: WorkspaceRole | null): boolean {
   return userRole === "owner" || userRole === "admin";
 }
 
 /**
- * Check if a user can update team settings (name, avatar).
- * Only Owners and Admins can update team settings.
+ * Check if a user can update workspace settings (name, avatar).
+ * Only Owners and Admins can update workspace settings.
  *
  * @param userRole - The role of the user attempting to update (null = not a member)
- * @returns true if the user can update team settings
+ * @returns true if the user can update workspace settings
  */
-export function canUpdateTeam(userRole: TeamRole | null): boolean {
+export function canUpdateWorkspace(userRole: WorkspaceRole | null): boolean {
   return userRole === "owner" || userRole === "admin";
 }
 
@@ -138,10 +140,10 @@ export function canUpdateTeam(userRole: TeamRole | null): boolean {
  * Get display icon for a role.
  * Per CONTEXT.md: crown for owner, shield for admin.
  *
- * @param role - The team role
+ * @param role - The workspace role
  * @returns Icon identifier or null for members
  */
-export function getRoleIcon(role: TeamRole): "crown" | "shield" | null {
+export function getRoleIcon(role: WorkspaceRole): "crown" | "shield" | null {
   if (role === "owner") return "crown";
   if (role === "admin") return "shield";
   return null;
@@ -150,10 +152,10 @@ export function getRoleIcon(role: TeamRole): "crown" | "shield" | null {
 /**
  * Get display label for a role.
  *
- * @param role - The team role
+ * @param role - The workspace role
  * @returns Human-readable role label
  */
-export function getRoleLabel(role: TeamRole): string {
+export function getRoleLabel(role: WorkspaceRole): string {
   if (role === "owner") return "Owner";
   if (role === "admin") return "Admin";
   return "Member";
