@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 
-export interface TeamMember {
+export interface WorkspaceMember {
   userId: string;
   role: "owner" | "admin" | "member";
   user: {
@@ -13,10 +13,10 @@ export interface TeamMember {
 }
 
 /**
- * Hook for searching and highlighting team members.
+ * Hook for searching and highlighting workspace members.
  * Supports fuzzy matching on name and email fields.
  *
- * @param members - Array of team members to search through
+ * @param members - Array of workspace members to search through
  * @returns Object with query state, filtered results, and highlight function
  *
  * @example
@@ -29,7 +29,7 @@ export interface TeamMember {
  * ))}
  * ```
  */
-export function useMemberSearch(members: TeamMember[]) {
+export function useMemberSearch(members: WorkspaceMember[]) {
   const [query, setQuery] = useState("");
 
   const results = useMemo(() => {
