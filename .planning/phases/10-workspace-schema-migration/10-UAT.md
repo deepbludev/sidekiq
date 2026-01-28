@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 10-workspace-schema-migration
 source: [10-01-SUMMARY.md, 10-02-SUMMARY.md, 10-03-SUMMARY.md, 10-04-SUMMARY.md, 10-05-SUMMARY.md]
 started: 2026-01-28T12:00:00Z
@@ -79,9 +79,12 @@ skipped: 6
   reason: "User reported: ERROR [Better Auth]: Failed to create user [Error [PostgresError]: relation \"workspace\" does not exist]"
   severity: blocker
   test: 2
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "Database migration 0003_workspace_migration.sql was created but never applied"
+  artifacts:
+    - path: "sidekiq-webapp/drizzle/0003_workspace_migration.sql"
+      issue: "Migration exists but not applied to database"
+  missing:
+    - "Run pnpm db:migrate to apply the workspace migration"
   debug_session: ""
 
 - truth: "All UI text says 'Workspace' instead of 'Team'"
@@ -89,9 +92,12 @@ skipped: 6
   reason: "User reported: Settings sidebar nav item still says 'Teams' instead of 'Workspaces'"
   severity: minor
   test: 3
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "Settings layout nav item label not updated from 'Teams' to 'Workspaces'"
+  artifacts:
+    - path: "sidekiq-webapp/src/app/(dashboard)/settings/layout.tsx"
+      issue: "Line 12: label: 'Teams' should be 'Workspaces'"
+  missing:
+    - "Change label from 'Teams' to 'Workspaces' in settings/layout.tsx"
   debug_session: ""
 
 - truth: "Workspace creation works and new workspace appears in list"
@@ -99,7 +105,8 @@ skipped: 6
   reason: "User reported: Dialog UI correct but creation fails with 'relation workspace does not exist'"
   severity: blocker
   test: 4
-  root_cause: ""
+  root_cause: "Same as Test 2 - database migration not applied"
   artifacts: []
-  missing: []
+  missing:
+    - "Run pnpm db:migrate to apply the workspace migration"
   debug_session: ""

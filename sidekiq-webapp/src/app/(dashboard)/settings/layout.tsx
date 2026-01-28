@@ -9,7 +9,7 @@ import { cn } from "@sidekiq/shared/lib/utils";
 
 const settingsNav = [
   { href: "/settings", label: "Profile", icon: User, exact: true },
-  { href: "/settings/teams", label: "Teams", icon: Users },
+  { href: "/settings/teams", label: "Workspaces", icon: Users },
   // Future: { href: "/settings/billing", label: "Billing", icon: CreditCard },
 ];
 
