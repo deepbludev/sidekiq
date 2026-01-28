@@ -20,8 +20,8 @@ interface RemoveMemberDialogProps {
 }
 
 /**
- * Confirmation dialog for removing a team member.
- * Simpler than delete team - just requires button click confirmation.
+ * Confirmation dialog for removing a workspace member.
+ * Simpler than delete workspace - just requires button click confirmation.
  *
  * @param props.open - Whether the dialog is open
  * @param props.onOpenChange - Callback when dialog open state changes
@@ -42,8 +42,9 @@ export function RemoveMemberDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Remove {memberName}?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will remove {memberName} from the team. They will no longer
-            have access to team Sidekiqs and can only rejoin via a new invite.
+            This will remove {memberName} from the workspace. They will no
+            longer have access to workspace Sidekiqs and can only rejoin via a
+            new invite.
           </AlertDialogDescription>
         </AlertDialogHeader>
 

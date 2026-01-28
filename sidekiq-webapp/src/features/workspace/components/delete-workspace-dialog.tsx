@@ -15,38 +15,38 @@ import {
 import { Input } from "@sidekiq/ui/input";
 import { Label } from "@sidekiq/ui/label";
 
-interface DeleteTeamDialogProps {
+interface DeleteWorkspaceDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
-  teamName: string;
+  workspaceName: string;
   memberCount: number;
   isDeleting?: boolean;
 }
 
 /**
- * Type-to-confirm deletion dialog for Teams.
+ * Type-to-confirm deletion dialog for Workspaces.
  * Per CONTEXT.md: user must type exact name to confirm.
  * Shows warning about member count and associated data.
  *
  * @param props.open - Whether the dialog is open
  * @param props.onOpenChange - Callback when dialog open state changes
  * @param props.onConfirm - Callback when deletion is confirmed
- * @param props.teamName - Name of the team being deleted
- * @param props.memberCount - Number of members in the team
+ * @param props.workspaceName - Name of the workspace being deleted
+ * @param props.memberCount - Number of members in the workspace
  * @param props.isDeleting - Whether deletion is in progress
  */
-export function DeleteTeamDialog({
+export function DeleteWorkspaceDialog({
   open,
   onOpenChange,
   onConfirm,
-  teamName,
+  workspaceName,
   memberCount,
   isDeleting = false,
-}: DeleteTeamDialogProps) {
+}: DeleteWorkspaceDialogProps) {
   const [confirmText, setConfirmText] = useState("");
 
-  const isConfirmed = confirmText === teamName;
+  const isConfirmed = confirmText === workspaceName;
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
@@ -59,14 +59,17 @@ export function DeleteTeamDialog({
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete &quot;{teamName}&quot;?</AlertDialogTitle>
+          <AlertDialogTitle>
+            Delete &quot;{workspaceName}&quot;?
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. All team data including shared
+            This action cannot be undone. All workspace data including shared
             Sidekiqs will be affected.
             {memberCount > 1 && (
               <span className="text-destructive mt-2 block">
                 Warning: {memberCount - 1} other member
-                {memberCount > 2 ? "s" : ""} will be removed from this team.
+                {memberCount > 2 ? "s" : ""} will be removed from this
+                workspace.
               </span>
             )}
           </AlertDialogDescription>
@@ -74,15 +77,16 @@ export function DeleteTeamDialog({
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="confirm-team-name">
-              Type <span className="font-mono font-semibold">{teamName}</span>{" "}
+            <Label htmlFor="confirm-workspace-name">
+              Type{" "}
+              <span className="font-mono font-semibold">{workspaceName}</span>{" "}
               to confirm
             </Label>
             <Input
-              id="confirm-team-name"
+              id="confirm-workspace-name"
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
-              placeholder={teamName}
+              placeholder={workspaceName}
               disabled={isDeleting}
               autoComplete="off"
             />
@@ -96,7 +100,7 @@ export function DeleteTeamDialog({
             disabled={!isConfirmed || isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isDeleting ? "Deleting..." : "Delete Team"}
+            {isDeleting ? "Deleting..." : "Delete Workspace"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

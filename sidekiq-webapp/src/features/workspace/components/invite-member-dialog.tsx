@@ -32,26 +32,26 @@ interface InviteMemberDialogProps {
     email: string,
     sendEmail: boolean,
   ) => Promise<{ inviteUrl: string }>;
-  teamName: string;
+  workspaceName: string;
   isInviting?: boolean;
 }
 
 /**
- * Dialog for inviting team members.
+ * Dialog for inviting workspace members.
  * Supports both email invite and copyable link generation.
  * Per CONTEXT.md: Both options available.
  *
  * @param props.open - Whether the dialog is open
  * @param props.onOpenChange - Callback when dialog open state changes
  * @param props.onInvite - Callback when invite is triggered (returns invite URL)
- * @param props.teamName - Name of the team to display
+ * @param props.workspaceName - Name of the workspace to display
  * @param props.isInviting - Whether invite is in progress
  */
 export function InviteMemberDialog({
   open,
   onOpenChange,
   onInvite,
-  teamName,
+  workspaceName,
   isInviting = false,
 }: InviteMemberDialogProps) {
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
@@ -106,7 +106,7 @@ export function InviteMemberDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Invite to {teamName}</DialogTitle>
+          <DialogTitle>Invite to {workspaceName}</DialogTitle>
           <DialogDescription>
             Send an email invitation or generate a shareable link.
           </DialogDescription>
@@ -186,7 +186,7 @@ export function InviteMemberDialog({
                   )}
                 </div>
                 <p className="text-muted-foreground text-xs">
-                  We&apos;ll send an email with a link to join the team.
+                  We&apos;ll send an email with a link to join the workspace.
                 </p>
               </TabsContent>
 

@@ -12,14 +12,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@sidekiq/ui/card";
-import { TeamAvatar } from "@sidekiq/workspace/components/team-avatar";
+import { WorkspaceAvatar } from "@sidekiq/workspace/components/workspace-avatar";
 import { api } from "@sidekiq/shared/trpc/react";
 import { toast } from "sonner";
 import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 
 interface InviteData {
-  teamName: string;
-  teamAvatar: SidekiqAvatar;
+  workspaceName: string;
+  workspaceAvatar: SidekiqAvatar;
   email: string;
   isExpired: boolean;
   expiresAt: Date;
@@ -34,7 +34,7 @@ interface InviteAcceptCardProps {
 }
 
 /**
- * Card component for accepting team invitations.
+ * Card component for accepting workspace invitations.
  * Handles various states: valid invite, expired, wrong email, not authenticated.
  *
  * @param token - The invite token from the URL
@@ -52,9 +52,9 @@ export function InviteAcceptCard({
 }: InviteAcceptCardProps) {
   const router = useRouter();
 
-  const acceptMutation = api.team.acceptInvite.useMutation({
+  const acceptMutation = api.workspace.acceptInvite.useMutation({
     onSuccess: (data) => {
-      toast.success(`Welcome to ${data.team.name}!`);
+      toast.success(`Welcome to ${data.workspace.name}!`);
       router.push("/chat");
     },
     onError: (error) => {
@@ -94,8 +94,8 @@ export function InviteAcceptCard({
           </div>
           <CardTitle>Invite Expired</CardTitle>
           <CardDescription>
-            This invitation to join <strong>{invite.teamName}</strong> has
-            expired. Please ask the team owner to send a new invitation.
+            This invitation to join <strong>{invite.workspaceName}</strong> has
+            expired. Please ask the workspace owner to send a new invitation.
           </CardDescription>
         </CardHeader>
         <CardFooter className="justify-center">
@@ -113,16 +113,17 @@ export function InviteAcceptCard({
       <Card className="mx-auto w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4">
-            <TeamAvatar
-              avatar={invite.teamAvatar}
-              name={invite.teamName}
+            <WorkspaceAvatar
+              avatar={invite.workspaceAvatar}
+              name={invite.workspaceName}
               size="xl"
             />
           </div>
-          <CardTitle>Join {invite.teamName}</CardTitle>
+          <CardTitle>Join {invite.workspaceName}</CardTitle>
           <CardDescription>
-            You&apos;ve been invited to join <strong>{invite.teamName}</strong>{" "}
-            on Sidekiq. Sign in or create an account to accept this invitation.
+            You&apos;ve been invited to join{" "}
+            <strong>{invite.workspaceName}</strong> on Sidekiq. Sign in or
+            create an account to accept this invitation.
           </CardDescription>
         </CardHeader>
         <CardContent className="text-muted-foreground text-center text-sm">
@@ -179,16 +180,17 @@ export function InviteAcceptCard({
     <Card className="mx-auto w-full max-w-md">
       <CardHeader className="text-center">
         <div className="mx-auto mb-4">
-          <TeamAvatar
-            avatar={invite.teamAvatar}
-            name={invite.teamName}
+          <WorkspaceAvatar
+            avatar={invite.workspaceAvatar}
+            name={invite.workspaceName}
             size="xl"
           />
         </div>
-        <CardTitle>Join {invite.teamName}</CardTitle>
+        <CardTitle>Join {invite.workspaceName}</CardTitle>
         <CardDescription>
-          You&apos;ve been invited to join <strong>{invite.teamName}</strong> on
-          Sidekiq. Click below to accept and start collaborating with your team.
+          You&apos;ve been invited to join{" "}
+          <strong>{invite.workspaceName}</strong> on Sidekiq. Click below to
+          accept and start collaborating with your workspace.
         </CardDescription>
       </CardHeader>
       <CardFooter className="flex-col gap-2">

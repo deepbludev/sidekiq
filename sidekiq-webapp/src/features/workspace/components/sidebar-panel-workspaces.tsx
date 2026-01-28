@@ -5,34 +5,35 @@ import Link from "next/link";
 import { Plus, Users } from "lucide-react";
 
 import { Button } from "@sidekiq/ui/button";
-import { TeamAvatar } from "@sidekiq/workspace/components/team-avatar";
-import { TeamCreateDialog } from "@sidekiq/workspace/components/team-create-dialog";
-import { useActiveTeam } from "@sidekiq/workspace/hooks/use-active-team";
+import { WorkspaceAvatar } from "@sidekiq/workspace/components/workspace-avatar";
+import { WorkspaceCreateDialog } from "@sidekiq/workspace/components/workspace-create-dialog";
+import { useActiveWorkspace } from "@sidekiq/workspace/hooks/use-active-workspace";
 import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 import { cn } from "@sidekiq/shared/lib/utils";
 
 /**
- * Teams panel for the two-tier sidebar.
+ * Workspaces panel for the two-tier sidebar.
  *
- * Displays the full list of user's teams with active team highlighting,
- * create team functionality, and click-to-manage behavior. This is an
+ * Displays the full list of user's workspaces with active workspace highlighting,
+ * create workspace functionality, and click-to-manage behavior. This is an
  * expanded version designed to fill an entire sidebar panel.
  *
  * Structure:
- * - Header with "Teams" title and create button
- * - Scrollable team list with active team highlighting
- * - Each item: team avatar + name + member count
+ * - Header with "Workspaces" title and create button
+ * - Scrollable workspace list with active workspace highlighting
+ * - Each item: workspace avatar + name + member count
  * - Empty state with create CTA
- * - TeamCreateDialog for new team creation
+ * - WorkspaceCreateDialog for new workspace creation
  *
  * @example
  * ```tsx
- * <SidebarPanelTeams />
+ * <SidebarPanelWorkspaces />
  * ```
  */
-export function SidebarPanelTeams() {
+export function SidebarPanelWorkspaces() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const { teams, activeTeamId, setActiveTeamId, isLoading } = useActiveTeam();
+  const { workspaces, activeWorkspaceId, setActiveWorkspaceId, isLoading } =
+    useActiveWorkspace();
 
   // Return null during loading to avoid layout shift
   if (isLoading) {
@@ -45,7 +46,7 @@ export function SidebarPanelTeams() {
         {/* Panel header */}
         <div className="flex items-center justify-between px-3 pt-3 pb-2">
           <h2 className="text-sidebar-foreground text-sm font-semibold">
-            Teams
+            Workspaces
           </h2>
           <Button
             variant="ghost"
@@ -54,19 +55,21 @@ export function SidebarPanelTeams() {
             onClick={() => setCreateDialogOpen(true)}
           >
             <Plus className="size-4" />
-            <span className="sr-only">Create team</span>
+            <span className="sr-only">Create workspace</span>
           </Button>
         </div>
 
-        {/* Team list */}
+        {/* Workspace list */}
         <div className="flex-1 overflow-auto px-2">
-          {teams.length === 0 ? (
+          {workspaces.length === 0 ? (
             /* Empty state */
             <div className="px-2 py-8 text-center">
               <div className="bg-muted mx-auto mb-3 w-fit rounded-full p-3">
                 <Users className="text-muted-foreground size-5" />
               </div>
-              <p className="text-muted-foreground mb-2 text-sm">No teams yet</p>
+              <p className="text-muted-foreground mb-2 text-sm">
+                No workspaces yet
+              </p>
               <p className="text-muted-foreground/70 mb-3 text-xs">
                 Create one to start collaborating.
               </p>
@@ -77,27 +80,27 @@ export function SidebarPanelTeams() {
                 onClick={() => setCreateDialogOpen(true)}
               >
                 <Users className="mr-2 size-3.5" />
-                Create Team
+                Create Workspace
               </Button>
             </div>
           ) : (
             <div className="space-y-0.5 py-1">
-              {teams.map((team) => (
+              {workspaces.map((workspace) => (
                 <Link
-                  key={team.id}
-                  href={`/settings/teams?team=${team.id}`}
-                  onClick={() => setActiveTeamId(team.id)}
+                  key={workspace.id}
+                  href={`/settings/teams?team=${workspace.id}`}
+                  onClick={() => setActiveWorkspaceId(workspace.id)}
                   className={cn(
                     "hover:bg-sidebar-accent/50 text-sidebar-foreground flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
-                    activeTeamId === team.id && "bg-sidebar-accent",
+                    activeWorkspaceId === workspace.id && "bg-sidebar-accent",
                   )}
                 >
-                  <TeamAvatar
-                    avatar={team.avatar as SidekiqAvatar}
-                    name={team.name}
+                  <WorkspaceAvatar
+                    avatar={workspace.avatar as SidekiqAvatar}
+                    name={workspace.name}
                     size="sm"
                   />
-                  <span className="flex-1 truncate">{team.name}</span>
+                  <span className="flex-1 truncate">{workspace.name}</span>
                 </Link>
               ))}
             </div>
@@ -105,7 +108,7 @@ export function SidebarPanelTeams() {
         </div>
       </div>
 
-      <TeamCreateDialog
+      <WorkspaceCreateDialog
         open={createDialogOpen}
         onOpenChange={setCreateDialogOpen}
       />

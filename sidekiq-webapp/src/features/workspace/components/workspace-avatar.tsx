@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback } from "@sidekiq/ui/avatar";
 import { cn } from "@sidekiq/shared/lib/utils";
 import { getInitials } from "@sidekiq/shared/lib/avatar";
 
-interface TeamAvatarProps {
+interface WorkspaceAvatarProps {
   name: string;
   avatar: {
     type: "initials" | "emoji";
@@ -23,21 +23,21 @@ const sizeClasses = {
 };
 
 /**
- * Avatar component for Teams.
+ * Avatar component for Workspaces.
  * Displays either initials or emoji with customizable background color.
- * Uses rounded-lg (vs rounded-full for user avatars) to distinguish team avatars visually.
+ * Uses rounded-lg (vs rounded-full for user avatars) to distinguish workspace avatars visually.
  *
- * @param name - The team name (used for initials extraction)
+ * @param name - The workspace name (used for initials extraction)
  * @param avatar - Avatar configuration with type, color, and optional emoji
  * @param size - Avatar size: sm (24px), md (32px), lg (40px), xl (48px)
  * @param className - Additional CSS classes
  */
-export function TeamAvatar({
+export function WorkspaceAvatar({
   name,
   avatar,
   size = "md",
   className,
-}: TeamAvatarProps) {
+}: WorkspaceAvatarProps) {
   const initials = getInitials(name);
 
   return (

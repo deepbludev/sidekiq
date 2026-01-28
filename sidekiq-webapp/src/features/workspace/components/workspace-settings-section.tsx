@@ -8,38 +8,38 @@ import { Button } from "@sidekiq/ui/button";
 import { Input } from "@sidekiq/ui/input";
 import { Label } from "@sidekiq/ui/label";
 import { Separator } from "@sidekiq/ui/separator";
-import { TeamAvatar } from "@sidekiq/workspace/components/team-avatar";
-import { TeamMemberList } from "@sidekiq/workspace/components/team-member-list";
-import { TeamInvitesList } from "@sidekiq/workspace/components/team-invites-list";
-import { DeleteTeamDialog } from "@sidekiq/workspace/components/delete-team-dialog";
+import { WorkspaceAvatar } from "@sidekiq/workspace/components/workspace-avatar";
+import { WorkspaceMemberList } from "@sidekiq/workspace/components/workspace-member-list";
+import { WorkspaceInvitesList } from "@sidekiq/workspace/components/workspace-invites-list";
+import { DeleteWorkspaceDialog } from "@sidekiq/workspace/components/delete-workspace-dialog";
 import { AvatarPicker } from "@sidekiq/sidekiqs/components/avatar-picker";
 import { api } from "@sidekiq/shared/trpc/react";
 import { toast } from "sonner";
 import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 import {
-  canDeleteTeam,
-  type TeamRole,
+  canDeleteWorkspace,
+  type WorkspaceRole,
 } from "@sidekiq/workspace/lib/permissions";
 
-interface TeamSettingsSectionProps {
-  /** Team ID to display settings for */
-  teamId: string;
+interface WorkspaceSettingsSectionProps {
+  /** Workspace ID to display settings for */
+  workspaceId: string;
   /** Current user's ID */
   currentUserId: string;
 }
 
 /**
- * Complete team settings section for the settings page.
- * Includes team info, members, invites, and danger zone.
+ * Complete workspace settings section for the settings page.
+ * Includes workspace info, members, invites, and danger zone.
  *
- * Per CONTEXT.md: Team settings inside user settings page.
+ * Per CONTEXT.md: Workspace settings inside user settings page.
  *
  * @param props - Component props
  */
-export function TeamSettingsSection({
-  teamId,
+export function WorkspaceSettingsSection({
+  workspaceId,
   currentUserId,
-}: TeamSettingsSectionProps) {
+}: WorkspaceSettingsSectionProps) {
   const router = useRouter();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingName, setEditingName] = useState(false);
@@ -49,30 +49,32 @@ export function TeamSettingsSection({
   const utils = api.useUtils();
 
   // Queries
-  const { data: team, isLoading: teamLoading } = api.team.getById.useQuery(
-    { id: teamId },
-    { enabled: !!teamId },
+  const { data: workspace, isLoading: workspaceLoading } =
+    api.workspace.getById.useQuery(
+      { id: workspaceId },
+      { enabled: !!workspaceId },
+    );
+
+  const { data: members = [] } = api.workspace.listMembers.useQuery(
+    { id: workspaceId },
+    { enabled: !!workspaceId },
   );
 
-  const { data: members = [] } = api.team.listMembers.useQuery(
-    { id: teamId },
-    { enabled: !!teamId },
-  );
-
-  const { data: invites = [] } = api.team.listInvites.useQuery(
-    { id: teamId },
+  const { data: invites = [] } = api.workspace.listInvites.useQuery(
+    { id: workspaceId },
     {
       enabled:
-        !!teamId && (team?.userRole === "owner" || team?.userRole === "admin"),
+        !!workspaceId &&
+        (workspace?.userRole === "owner" || workspace?.userRole === "admin"),
     },
   );
 
   // Mutations
-  const updateMutation = api.team.update.useMutation({
+  const updateMutation = api.workspace.update.useMutation({
     onSuccess: () => {
-      void utils.team.getById.invalidate({ id: teamId });
-      void utils.team.list.invalidate();
-      toast.success("Team updated");
+      void utils.workspace.getById.invalidate({ id: workspaceId });
+      void utils.workspace.list.invalidate();
+      toast.success("Workspace updated");
       setEditingName(false);
       setEditingAvatar(false);
     },
@@ -81,10 +83,10 @@ export function TeamSettingsSection({
     },
   });
 
-  const deleteMutation = api.team.delete.useMutation({
+  const deleteMutation = api.workspace.delete.useMutation({
     onSuccess: () => {
-      void utils.team.list.invalidate();
-      toast.success("Team deleted");
+      void utils.workspace.list.invalidate();
+      toast.success("Workspace deleted");
       setDeleteDialogOpen(false);
       router.push("/chat");
     },
@@ -93,22 +95,22 @@ export function TeamSettingsSection({
     },
   });
 
-  if (teamLoading || !team) {
+  if (workspaceLoading || !workspace) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="text-muted-foreground">Loading team...</div>
+        <div className="text-muted-foreground">Loading workspace...</div>
       </div>
     );
   }
 
-  const userRole = team.userRole;
+  const userRole = workspace.userRole;
 
   /**
-   * Handle saving team name.
+   * Handle saving workspace name.
    */
   const handleSaveName = () => {
-    if (nameValue.trim() && nameValue !== team.name) {
-      updateMutation.mutate({ id: teamId, name: nameValue.trim() });
+    if (nameValue.trim() && nameValue !== workspace.name) {
+      updateMutation.mutate({ id: workspaceId, name: nameValue.trim() });
     } else {
       setEditingName(false);
     }
@@ -119,14 +121,14 @@ export function TeamSettingsSection({
    * @param avatar - New avatar configuration
    */
   const handleSaveAvatar = (avatar: SidekiqAvatar) => {
-    updateMutation.mutate({ id: teamId, avatar });
+    updateMutation.mutate({ id: workspaceId, avatar });
   };
 
   /**
-   * Handle team deletion.
+   * Handle workspace deletion.
    */
   const handleDelete = () => {
-    deleteMutation.mutate({ id: teamId });
+    deleteMutation.mutate({ id: workspaceId });
   };
 
   /**
@@ -138,11 +140,11 @@ export function TeamSettingsSection({
 
   return (
     <div className="space-y-8">
-      {/* Team Info Section */}
+      {/* Workspace Info Section */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Settings className="size-5" />
-          <h2 className="text-lg font-semibold">Team Settings</h2>
+          <h2 className="text-lg font-semibold">Workspace Settings</h2>
         </div>
 
         <div className="flex items-start gap-6">
@@ -151,9 +153,9 @@ export function TeamSettingsSection({
             <Label>Avatar</Label>
             {editingAvatar ? (
               <AvatarPicker
-                value={team.avatar}
+                value={workspace.avatar}
                 onChange={handleSaveAvatar}
-                name={team.name}
+                name={workspace.name}
               />
             ) : (
               <button
@@ -162,7 +164,11 @@ export function TeamSettingsSection({
                 disabled={userRole !== "owner" && userRole !== "admin"}
                 type="button"
               >
-                <TeamAvatar avatar={team.avatar} name={team.name} size="xl" />
+                <WorkspaceAvatar
+                  avatar={workspace.avatar}
+                  name={workspace.name}
+                  size="xl"
+                />
                 {(userRole === "owner" || userRole === "admin") && (
                   <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
                     <span className="text-xs text-white">Edit</span>
@@ -174,14 +180,14 @@ export function TeamSettingsSection({
 
           {/* Name */}
           <div className="flex-1 space-y-2">
-            <Label htmlFor="team-name">Team Name</Label>
+            <Label htmlFor="workspace-name">Workspace Name</Label>
             {editingName ? (
               <div className="flex gap-2">
                 <Input
-                  id="team-name"
+                  id="workspace-name"
                   value={nameValue}
                   onChange={(e) => setNameValue(e.target.value)}
-                  placeholder="Team name"
+                  placeholder="Workspace name"
                   maxLength={100}
                   autoFocus
                 />
@@ -201,13 +207,13 @@ export function TeamSettingsSection({
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <span className="text-lg">{team.name}</span>
+                <span className="text-lg">{workspace.name}</span>
                 {(userRole === "owner" || userRole === "admin") && (
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                      setNameValue(team.name);
+                      setNameValue(workspace.name);
                       setEditingName(true);
                     }}
                   >
@@ -229,11 +235,11 @@ export function TeamSettingsSection({
           <h2 className="text-lg font-semibold">Members</h2>
         </div>
 
-        <TeamMemberList
-          teamId={teamId}
-          teamName={team.name}
+        <WorkspaceMemberList
+          workspaceId={workspaceId}
+          workspaceName={workspace.name}
           members={members}
-          memberLimit={team.memberLimit}
+          memberLimit={workspace.memberLimit}
           currentUserRole={userRole}
           currentUserId={currentUserId}
           onLeft={handleLeft}
@@ -243,13 +249,16 @@ export function TeamSettingsSection({
           invites.length > 0 && (
             <>
               <Separator className="my-6" />
-              <TeamInvitesList teamId={teamId} invites={invites} />
+              <WorkspaceInvitesList
+                workspaceId={workspaceId}
+                invites={invites}
+              />
             </>
           )}
       </div>
 
       {/* Danger Zone */}
-      {canDeleteTeam(userRole) && (
+      {canDeleteWorkspace(userRole) && (
         <>
           <Separator />
 
@@ -261,9 +270,9 @@ export function TeamSettingsSection({
             <div className="border-destructive/50 rounded-lg border p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-medium">Delete Team</h3>
+                  <h3 className="font-medium">Delete Workspace</h3>
                   <p className="text-muted-foreground text-sm">
-                    Permanently delete this team and all associated data.
+                    Permanently delete this workspace and all associated data.
                   </p>
                 </div>
                 <Button
@@ -271,18 +280,18 @@ export function TeamSettingsSection({
                   onClick={() => setDeleteDialogOpen(true)}
                 >
                   <Trash2 className="mr-2 size-4" />
-                  Delete Team
+                  Delete Workspace
                 </Button>
               </div>
             </div>
           </div>
 
-          <DeleteTeamDialog
+          <DeleteWorkspaceDialog
             open={deleteDialogOpen}
             onOpenChange={setDeleteDialogOpen}
             onConfirm={handleDelete}
-            teamName={team.name}
-            memberCount={team.memberCount}
+            workspaceName={workspace.name}
+            memberCount={workspace.memberCount}
             isDeleting={deleteMutation.isPending}
           />
         </>

@@ -10,39 +10,39 @@ import {
   DialogTitle,
 } from "@sidekiq/ui/dialog";
 import {
-  TeamForm,
-  type TeamFormValues,
-} from "@sidekiq/workspace/components/team-form";
+  WorkspaceForm,
+  type WorkspaceFormValues,
+} from "@sidekiq/workspace/components/workspace-form";
 import { api } from "@sidekiq/shared/trpc/react";
 import { toast } from "sonner";
 
-interface TeamCreateDialogProps {
+interface WorkspaceCreateDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 /**
- * Dialog for creating a new team.
- * Uses TeamForm component for the form fields.
+ * Dialog for creating a new workspace.
+ * Uses WorkspaceForm component for the form fields.
  *
  * @param open - Whether the dialog is open
  * @param onOpenChange - Callback when open state changes
  */
-export function TeamCreateDialog({
+export function WorkspaceCreateDialog({
   open,
   onOpenChange,
-}: TeamCreateDialogProps) {
+}: WorkspaceCreateDialogProps) {
   const router = useRouter();
   const utils = api.useUtils();
 
-  const createMutation = api.team.create.useMutation({
-    onSuccess: (team) => {
-      void utils.team.list.invalidate();
-      if (!team) return;
-      toast.success(`Team "${team.name}" created!`);
+  const createMutation = api.workspace.create.useMutation({
+    onSuccess: (workspace) => {
+      void utils.workspace.list.invalidate();
+      if (!workspace) return;
+      toast.success(`Workspace "${workspace.name}" created!`);
       onOpenChange(false);
-      // Navigate to team settings
-      router.push(`/settings/teams?team=${team.id}`);
+      // Navigate to workspace settings
+      router.push(`/settings/teams?team=${workspace.id}`);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -51,9 +51,9 @@ export function TeamCreateDialog({
 
   /**
    * Handle form submission.
-   * @param values - Form values from TeamForm
+   * @param values - Form values from WorkspaceForm
    */
-  const handleSubmit = async (values: TeamFormValues) => {
+  const handleSubmit = async (values: WorkspaceFormValues) => {
     await createMutation.mutateAsync(values);
   };
 
@@ -61,13 +61,13 @@ export function TeamCreateDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Create a Team</DialogTitle>
+          <DialogTitle>Create a Workspace</DialogTitle>
           <DialogDescription>
-            Teams let you collaborate with others and share Sidekiqs.
+            Workspaces let you collaborate with others and share Sidekiqs.
           </DialogDescription>
         </DialogHeader>
 
-        <TeamForm
+        <WorkspaceForm
           onSubmit={handleSubmit}
           isSubmitting={createMutation.isPending}
         />

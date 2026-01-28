@@ -20,25 +20,28 @@ interface PendingInvite {
   createdAt: Date;
 }
 
-interface TeamInvitesListProps {
-  /** Team ID for API calls */
-  teamId: string;
+interface WorkspaceInvitesListProps {
+  /** Workspace ID for API calls */
+  workspaceId: string;
   /** List of pending invites */
   invites: PendingInvite[];
 }
 
 /**
- * List of pending team invites with revoke and resend actions.
+ * List of pending workspace invites with revoke and resend actions.
  * Displays expiration time and action dropdown for each invite.
  *
  * @param props - Component props
  */
-export function TeamInvitesList({ teamId, invites }: TeamInvitesListProps) {
+export function WorkspaceInvitesList({
+  workspaceId,
+  invites,
+}: WorkspaceInvitesListProps) {
   const utils = api.useUtils();
 
-  const revokeMutation = api.team.revokeInvite.useMutation({
+  const revokeMutation = api.workspace.revokeInvite.useMutation({
     onSuccess: () => {
-      void utils.team.listInvites.invalidate({ id: teamId });
+      void utils.workspace.listInvites.invalidate({ id: workspaceId });
       toast.success("Invite revoked");
     },
     onError: (error) => {
@@ -46,7 +49,7 @@ export function TeamInvitesList({ teamId, invites }: TeamInvitesListProps) {
     },
   });
 
-  const resendMutation = api.team.resendInvite.useMutation({
+  const resendMutation = api.workspace.resendInvite.useMutation({
     onSuccess: (data) => {
       toast.success("Invite resent");
       // Copy new URL to clipboard

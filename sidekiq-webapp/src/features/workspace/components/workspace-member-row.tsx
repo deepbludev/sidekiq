@@ -23,17 +23,17 @@ import { Badge } from "@sidekiq/ui/badge";
 import {
   canRemoveMember,
   canChangeRole,
-  canLeaveTeam,
+  canLeaveWorkspace,
   getRoleLabel,
-  type TeamRole,
+  type WorkspaceRole,
 } from "@sidekiq/workspace/lib/permissions";
-import type { TeamMember } from "@sidekiq/workspace/hooks/use-member-search";
+import type { WorkspaceMember } from "@sidekiq/workspace/hooks/use-member-search";
 
-interface TeamMemberRowProps {
-  /** The team member to display */
-  member: TeamMember;
-  /** Current user's role in the team */
-  currentUserRole: TeamRole;
+interface WorkspaceMemberRowProps {
+  /** The workspace member to display */
+  member: WorkspaceMember;
+  /** Current user's role in the workspace */
+  currentUserRole: WorkspaceRole;
   /** Current user's ID */
   currentUserId: string;
   /** Callback when remove action is triggered */
@@ -47,7 +47,7 @@ interface TeamMemberRowProps {
 }
 
 /**
- * Single row in the team member list.
+ * Single row in the workspace member list.
  * Displays user info, role badge, and action menu based on permissions.
  *
  * Per CONTEXT.md:
@@ -57,7 +57,7 @@ interface TeamMemberRowProps {
  *
  * @param props - Component props
  */
-export function TeamMemberRow({
+export function WorkspaceMemberRow({
   member,
   currentUserRole,
   currentUserId,
@@ -65,7 +65,7 @@ export function TeamMemberRow({
   onChangeRole,
   onLeave,
   highlightMatch = (text) => text,
-}: TeamMemberRowProps) {
+}: WorkspaceMemberRowProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const isSelf = member.userId === currentUserId;
@@ -75,7 +75,7 @@ export function TeamMemberRow({
     member.role,
     member.role === "admin" ? "member" : "admin",
   );
-  const canSelfLeave = isSelf && canLeaveTeam(currentUserRole);
+  const canSelfLeave = isSelf && canLeaveWorkspace(currentUserRole);
 
   const hasActions = canRemove || canChange || canSelfLeave;
 
@@ -177,7 +177,7 @@ export function TeamMemberRow({
                     className="text-destructive focus:text-destructive"
                   >
                     <UserMinus className="mr-2 size-4" />
-                    Remove from Team
+                    Remove from Workspace
                   </DropdownMenuItem>
                 </>
               )}
@@ -192,7 +192,7 @@ export function TeamMemberRow({
                     className="text-destructive focus:text-destructive"
                   >
                     <LogOut className="mr-2 size-4" />
-                    Leave Team
+                    Leave Workspace
                   </DropdownMenuItem>
                 </>
               )}
