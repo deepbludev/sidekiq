@@ -4,10 +4,10 @@ import { nanoid } from "nanoid";
 import { addDays } from "date-fns";
 
 import {
-  createTeamSchema,
-  updateTeamSchema,
-  deleteTeamSchema,
-  getTeamByIdSchema,
+  createWorkspaceSchema,
+  updateWorkspaceSchema,
+  deleteWorkspaceSchema,
+  getWorkspaceByIdSchema,
   inviteMemberSchema,
   acceptInviteSchema,
   revokeInviteSchema,
@@ -15,193 +15,205 @@ import {
   removeMemberSchema,
   changeRoleSchema,
   transferOwnershipSchema,
-  leaveTeamSchema,
+  leaveWorkspaceSchema,
 } from "@sidekiq/workspace/validations";
 import {
   canInvite,
   canRemoveMember,
   canChangeRole,
   canTransferOwnership,
-  canDeleteTeam,
-  canLeaveTeam,
+  canDeleteWorkspace,
+  canLeaveWorkspace,
   canRevokeInvite,
-  type TeamRole,
+  type WorkspaceRole,
 } from "@sidekiq/workspace/lib/permissions";
-import { sendTeamInviteEmail } from "@sidekiq/workspace/api/emails";
+import { sendWorkspaceInviteEmail } from "@sidekiq/workspace/api/emails";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "@sidekiq/shared/trpc/trpc";
 import {
-  teams,
-  teamMembers,
-  teamInvites,
+  workspaces,
+  workspaceMembers,
+  workspaceInvites,
   user,
 } from "@sidekiq/shared/db/schema";
 import { type db as DbType } from "@sidekiq/shared/db";
 
 const INVITE_TOKEN_LENGTH = 32;
 const INVITE_EXPIRY_DAYS = 7;
-const MAX_PENDING_INVITES_PER_TEAM = 20;
+const MAX_PENDING_INVITES_PER_WORKSPACE = 20;
 
 /**
- * Helper to get user's role in a team.
+ * Helper to get user's role in a workspace.
  * Returns null if user is not a member.
  *
  * @param db - Database instance
- * @param teamId - Team ID to check
+ * @param workspaceId - Workspace ID to check
  * @param userId - User ID to check
  * @returns The user's role or null if not a member
  */
-async function getUserTeamRole(
+async function getUserWorkspaceRole(
   db: typeof DbType,
-  teamId: string,
+  workspaceId: string,
   userId: string,
-): Promise<TeamRole | null> {
-  const membership = await db.query.teamMembers.findFirst({
-    where: and(eq(teamMembers.teamId, teamId), eq(teamMembers.userId, userId)),
+): Promise<WorkspaceRole | null> {
+  const membership = await db.query.workspaceMembers.findFirst({
+    where: and(
+      eq(workspaceMembers.workspaceId, workspaceId),
+      eq(workspaceMembers.userId, userId),
+    ),
     columns: { role: true },
   });
   return membership?.role ?? null;
 }
 
 /**
- * Team router - CRUD operations for teams and member management.
+ * Workspace router - CRUD operations for workspaces and member management.
  *
  * All mutations are protected (require authentication) and include
- * role-based permission checks using team-permissions.ts helpers.
+ * role-based permission checks using workspace permissions helpers.
  */
-export const teamRouter = createTRPCRouter({
+export const workspaceRouter = createTRPCRouter({
   /**
-   * List all teams the user is a member of.
-   * Includes owned teams and teams they've joined.
+   * List all workspaces the user is a member of.
+   * Includes owned workspaces and workspaces they've joined.
    *
-   * @returns Array of teams with user's role and join date
+   * @returns Array of workspaces with user's role and join date
    */
   list: protectedProcedure.query(async ({ ctx }) => {
-    const memberships = await ctx.db.query.teamMembers.findMany({
-      where: eq(teamMembers.userId, ctx.session.user.id),
+    const memberships = await ctx.db.query.workspaceMembers.findMany({
+      where: eq(workspaceMembers.userId, ctx.session.user.id),
       with: {
-        team: true,
+        workspace: true,
       },
-      orderBy: [desc(teamMembers.joinedAt)],
+      orderBy: [desc(workspaceMembers.joinedAt)],
     });
 
     return memberships.map((m) => ({
-      ...m.team,
+      ...m.workspace,
       role: m.role,
       joinedAt: m.joinedAt,
     }));
   }),
 
   /**
-   * Get a team by ID with member count.
-   * User must be a member of the team.
+   * Get a workspace by ID with member count.
+   * User must be a member of the workspace.
    *
-   * @param id - Team ID to retrieve
-   * @returns Team object with memberCount and userRole
-   * @throws NOT_FOUND if team doesn't exist or user is not a member
+   * @param id - Workspace ID to retrieve
+   * @returns Workspace object with memberCount and userRole
+   * @throws NOT_FOUND if workspace doesn't exist or user is not a member
    */
   getById: protectedProcedure
-    .input(getTeamByIdSchema)
+    .input(getWorkspaceByIdSchema)
     .query(async ({ ctx, input }) => {
-      const role = await getUserTeamRole(ctx.db, input.id, ctx.session.user.id);
+      const role = await getUserWorkspaceRole(
+        ctx.db,
+        input.id,
+        ctx.session.user.id,
+      );
       if (!role) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Team not found",
+          message: "Workspace not found",
         });
       }
 
-      const team = await ctx.db.query.teams.findFirst({
-        where: eq(teams.id, input.id),
+      const workspace = await ctx.db.query.workspaces.findFirst({
+        where: eq(workspaces.id, input.id),
       });
 
-      if (!team) {
+      if (!workspace) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Team not found",
+          message: "Workspace not found",
         });
       }
 
       // Get member count
       const memberCount = await ctx.db
         .select({ count: sql<number>`count(*)::int` })
-        .from(teamMembers)
-        .where(eq(teamMembers.teamId, input.id));
+        .from(workspaceMembers)
+        .where(eq(workspaceMembers.workspaceId, input.id));
 
       return {
-        ...team,
+        ...workspace,
         memberCount: memberCount[0]?.count ?? 0,
         userRole: role,
       };
     }),
 
   /**
-   * Create a new team.
+   * Create a new workspace.
    * Creator becomes the owner and first member.
    *
-   * @param input - Team data (name, avatar)
-   * @returns Created team object
+   * @param input - Workspace data (name, avatar)
+   * @returns Created workspace object
    */
   create: protectedProcedure
-    .input(createTeamSchema)
+    .input(createWorkspaceSchema)
     .mutation(async ({ ctx, input }) => {
-      const teamId = nanoid();
+      const workspaceId = nanoid();
 
-      const [team] = await ctx.db
-        .insert(teams)
+      const [workspace] = await ctx.db
+        .insert(workspaces)
         .values({
-          id: teamId,
+          id: workspaceId,
           name: input.name,
+          type: "team",
           ownerId: ctx.session.user.id,
           avatar: input.avatar,
         })
         .returning();
 
       // Add creator as owner member
-      await ctx.db.insert(teamMembers).values({
-        teamId,
+      await ctx.db.insert(workspaceMembers).values({
+        workspaceId,
         userId: ctx.session.user.id,
         role: "owner",
       });
 
-      return team;
+      return workspace;
     }),
 
   /**
-   * Update team name and/or avatar.
+   * Update workspace name and/or avatar.
    * Requires owner or admin role.
    *
-   * @param input - Team ID and fields to update
-   * @returns Updated team object
+   * @param input - Workspace ID and fields to update
+   * @returns Updated workspace object
    * @throws FORBIDDEN if user lacks permission
-   * @throws NOT_FOUND if team doesn't exist
+   * @throws NOT_FOUND if workspace doesn't exist
    */
   update: protectedProcedure
-    .input(updateTeamSchema)
+    .input(updateWorkspaceSchema)
     .mutation(async ({ ctx, input }) => {
-      const role = await getUserTeamRole(ctx.db, input.id, ctx.session.user.id);
+      const role = await getUserWorkspaceRole(
+        ctx.db,
+        input.id,
+        ctx.session.user.id,
+      );
       if (!role || (role !== "owner" && role !== "admin")) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Only owners and admins can update team settings",
+          message: "Only owners and admins can update workspace settings",
         });
       }
 
       const { id, ...data } = input;
 
       const [updated] = await ctx.db
-        .update(teams)
+        .update(workspaces)
         .set({ ...data, updatedAt: new Date() })
-        .where(eq(teams.id, id))
+        .where(eq(workspaces.id, id))
         .returning();
 
       if (!updated) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Team not found",
+          message: "Workspace not found",
         });
       }
 
@@ -209,53 +221,61 @@ export const teamRouter = createTRPCRouter({
     }),
 
   /**
-   * Delete a team.
+   * Delete a workspace.
    * Only the owner can delete.
    *
-   * @param input - Team ID
+   * @param input - Workspace ID
    * @returns Success confirmation with deleted ID
    * @throws FORBIDDEN if user is not the owner
    */
   delete: protectedProcedure
-    .input(deleteTeamSchema)
+    .input(deleteWorkspaceSchema)
     .mutation(async ({ ctx, input }) => {
-      const role = await getUserTeamRole(ctx.db, input.id, ctx.session.user.id);
-      if (!role || !canDeleteTeam(role)) {
+      const role = await getUserWorkspaceRole(
+        ctx.db,
+        input.id,
+        ctx.session.user.id,
+      );
+      if (!role || !canDeleteWorkspace(role)) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Only the team owner can delete the team",
+          message: "Only the workspace owner can delete the workspace",
         });
       }
 
       const [deleted] = await ctx.db
-        .delete(teams)
-        .where(eq(teams.id, input.id))
-        .returning({ id: teams.id });
+        .delete(workspaces)
+        .where(eq(workspaces.id, input.id))
+        .returning({ id: workspaces.id });
 
       return { success: true, deletedId: deleted?.id };
     }),
 
   /**
-   * List team members with their roles.
-   * User must be a member of the team.
+   * List workspace members with their roles.
+   * User must be a member of the workspace.
    *
-   * @param id - Team ID
+   * @param id - Workspace ID
    * @returns Array of members with user details, sorted by role hierarchy
-   * @throws NOT_FOUND if team doesn't exist or user is not a member
+   * @throws NOT_FOUND if workspace doesn't exist or user is not a member
    */
   listMembers: protectedProcedure
-    .input(getTeamByIdSchema)
+    .input(getWorkspaceByIdSchema)
     .query(async ({ ctx, input }) => {
-      const role = await getUserTeamRole(ctx.db, input.id, ctx.session.user.id);
+      const role = await getUserWorkspaceRole(
+        ctx.db,
+        input.id,
+        ctx.session.user.id,
+      );
       if (!role) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Team not found",
+          message: "Workspace not found",
         });
       }
 
-      const members = await ctx.db.query.teamMembers.findMany({
-        where: eq(teamMembers.teamId, input.id),
+      const members = await ctx.db.query.workspaceMembers.findMany({
+        where: eq(workspaceMembers.workspaceId, input.id),
         with: {
           user: {
             columns: {
@@ -268,8 +288,8 @@ export const teamRouter = createTRPCRouter({
         },
         orderBy: [
           // Owner first, then admin, then member
-          sql`CASE ${teamMembers.role} WHEN 'owner' THEN 0 WHEN 'admin' THEN 1 ELSE 2 END`,
-          desc(teamMembers.joinedAt),
+          sql`CASE ${workspaceMembers.role} WHEN 'owner' THEN 0 WHEN 'admin' THEN 1 ELSE 2 END`,
+          desc(workspaceMembers.joinedAt),
         ],
       });
 
@@ -282,17 +302,21 @@ export const teamRouter = createTRPCRouter({
     }),
 
   /**
-   * List pending invites for a team.
+   * List pending invites for a workspace.
    * Requires owner or admin role.
    *
-   * @param id - Team ID
+   * @param id - Workspace ID
    * @returns Array of pending invites
    * @throws FORBIDDEN if user lacks permission
    */
   listInvites: protectedProcedure
-    .input(getTeamByIdSchema)
+    .input(getWorkspaceByIdSchema)
     .query(async ({ ctx, input }) => {
-      const role = await getUserTeamRole(ctx.db, input.id, ctx.session.user.id);
+      const role = await getUserWorkspaceRole(
+        ctx.db,
+        input.id,
+        ctx.session.user.id,
+      );
       if (!role || !canInvite(role)) {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -300,14 +324,14 @@ export const teamRouter = createTRPCRouter({
         });
       }
 
-      const invites = await ctx.db.query.teamInvites.findMany({
+      const invites = await ctx.db.query.workspaceInvites.findMany({
         where: and(
-          eq(teamInvites.teamId, input.id),
-          isNull(teamInvites.acceptedAt),
-          isNull(teamInvites.rejectedAt),
-          gt(teamInvites.expiresAt, new Date()),
+          eq(workspaceInvites.workspaceId, input.id),
+          isNull(workspaceInvites.acceptedAt),
+          isNull(workspaceInvites.rejectedAt),
+          gt(workspaceInvites.expiresAt, new Date()),
         ),
-        orderBy: [desc(teamInvites.createdAt)],
+        orderBy: [desc(workspaceInvites.createdAt)],
       });
 
       return invites.map((i) => ({
@@ -319,10 +343,10 @@ export const teamRouter = createTRPCRouter({
     }),
 
   /**
-   * Invite a member to the team.
+   * Invite a member to the workspace.
    * Returns the invite URL for manual sharing.
    *
-   * @param input - teamId, email, and sendEmail flag
+   * @param input - workspaceId, email, and sendEmail flag
    * @returns Invite details including URL
    * @throws FORBIDDEN if user lacks permission
    * @throws CONFLICT if user already a member or invite pending
@@ -331,9 +355,9 @@ export const teamRouter = createTRPCRouter({
   invite: protectedProcedure
     .input(inviteMemberSchema)
     .mutation(async ({ ctx, input }) => {
-      const role = await getUserTeamRole(
+      const role = await getUserWorkspaceRole(
         ctx.db,
-        input.teamId,
+        input.workspaceId,
         ctx.session.user.id,
       );
       if (!role || !canInvite(role)) {
@@ -343,28 +367,28 @@ export const teamRouter = createTRPCRouter({
         });
       }
 
-      // Check team exists and get details
-      const team = await ctx.db.query.teams.findFirst({
-        where: eq(teams.id, input.teamId),
+      // Check workspace exists and get details
+      const workspace = await ctx.db.query.workspaces.findFirst({
+        where: eq(workspaces.id, input.workspaceId),
       });
 
-      if (!team) {
+      if (!workspace) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Team not found",
+          message: "Workspace not found",
         });
       }
 
       // Check member limit
       const memberCount = await ctx.db
         .select({ count: sql<number>`count(*)::int` })
-        .from(teamMembers)
-        .where(eq(teamMembers.teamId, input.teamId));
+        .from(workspaceMembers)
+        .where(eq(workspaceMembers.workspaceId, input.workspaceId));
 
-      if ((memberCount[0]?.count ?? 0) >= team.memberLimit) {
+      if ((memberCount[0]?.count ?? 0) >= workspace.memberLimit) {
         throw new TRPCError({
           code: "PRECONDITION_FAILED",
-          message: `Team has reached the member limit of ${team.memberLimit}`,
+          message: `Workspace has reached the member limit of ${workspace.memberLimit}`,
         });
       }
 
@@ -372,10 +396,10 @@ export const teamRouter = createTRPCRouter({
       const existingMember = await ctx.db
         .select({ userId: user.id })
         .from(user)
-        .innerJoin(teamMembers, eq(teamMembers.userId, user.id))
+        .innerJoin(workspaceMembers, eq(workspaceMembers.userId, user.id))
         .where(
           and(
-            eq(teamMembers.teamId, input.teamId),
+            eq(workspaceMembers.workspaceId, input.workspaceId),
             sql`LOWER(${user.email}) = ${input.email.toLowerCase()}`,
           ),
         );
@@ -383,24 +407,26 @@ export const teamRouter = createTRPCRouter({
       if (existingMember.length > 0) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "This user is already a member of the team",
+          message: "This user is already a member of the workspace",
         });
       }
 
       // Check pending invite count
       const pendingInvites = await ctx.db
         .select({ count: sql<number>`count(*)::int` })
-        .from(teamInvites)
+        .from(workspaceInvites)
         .where(
           and(
-            eq(teamInvites.teamId, input.teamId),
-            isNull(teamInvites.acceptedAt),
-            isNull(teamInvites.rejectedAt),
-            gt(teamInvites.expiresAt, new Date()),
+            eq(workspaceInvites.workspaceId, input.workspaceId),
+            isNull(workspaceInvites.acceptedAt),
+            isNull(workspaceInvites.rejectedAt),
+            gt(workspaceInvites.expiresAt, new Date()),
           ),
         );
 
-      if ((pendingInvites[0]?.count ?? 0) >= MAX_PENDING_INVITES_PER_TEAM) {
+      if (
+        (pendingInvites[0]?.count ?? 0) >= MAX_PENDING_INVITES_PER_WORKSPACE
+      ) {
         throw new TRPCError({
           code: "PRECONDITION_FAILED",
           message:
@@ -409,13 +435,13 @@ export const teamRouter = createTRPCRouter({
       }
 
       // Check if there's already a pending invite for this email
-      const existingInvite = await ctx.db.query.teamInvites.findFirst({
+      const existingInvite = await ctx.db.query.workspaceInvites.findFirst({
         where: and(
-          eq(teamInvites.teamId, input.teamId),
-          sql`LOWER(${teamInvites.email}) = ${input.email.toLowerCase()}`,
-          isNull(teamInvites.acceptedAt),
-          isNull(teamInvites.rejectedAt),
-          gt(teamInvites.expiresAt, new Date()),
+          eq(workspaceInvites.workspaceId, input.workspaceId),
+          sql`LOWER(${workspaceInvites.email}) = ${input.email.toLowerCase()}`,
+          isNull(workspaceInvites.acceptedAt),
+          isNull(workspaceInvites.rejectedAt),
+          gt(workspaceInvites.expiresAt, new Date()),
         ),
       });
 
@@ -431,10 +457,10 @@ export const teamRouter = createTRPCRouter({
       const expiresAt = addDays(new Date(), INVITE_EXPIRY_DAYS);
 
       const [invite] = await ctx.db
-        .insert(teamInvites)
+        .insert(workspaceInvites)
         .values({
           id: nanoid(),
-          teamId: input.teamId,
+          workspaceId: input.workspaceId,
           email: input.email.toLowerCase(),
           token,
           expiresAt,
@@ -444,9 +470,9 @@ export const teamRouter = createTRPCRouter({
       // Send email if requested
       let inviteUrl: string;
       if (input.sendEmail) {
-        inviteUrl = await sendTeamInviteEmail({
+        inviteUrl = await sendWorkspaceInviteEmail({
           to: input.email,
-          teamName: team.name,
+          workspaceName: workspace.name,
           inviterName: ctx.session.user.name,
           inviteToken: token,
         });
@@ -468,11 +494,11 @@ export const teamRouter = createTRPCRouter({
     }),
 
   /**
-   * Accept a team invite.
+   * Accept a workspace invite.
    * User must be authenticated with matching email.
    *
    * @param token - Invite token
-   * @returns The team that was joined
+   * @returns The workspace that was joined
    * @throws NOT_FOUND if invite invalid or expired
    * @throws FORBIDDEN if email doesn't match
    * @throws CONFLICT if already a member
@@ -482,14 +508,14 @@ export const teamRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       // Use transaction to prevent race condition
       return await ctx.db.transaction(async (tx) => {
-        const invite = await tx.query.teamInvites.findFirst({
+        const invite = await tx.query.workspaceInvites.findFirst({
           where: and(
-            eq(teamInvites.token, input.token),
-            isNull(teamInvites.acceptedAt),
-            isNull(teamInvites.rejectedAt),
-            gt(teamInvites.expiresAt, new Date()),
+            eq(workspaceInvites.token, input.token),
+            isNull(workspaceInvites.acceptedAt),
+            isNull(workspaceInvites.rejectedAt),
+            gt(workspaceInvites.expiresAt, new Date()),
           ),
-          with: { team: true },
+          with: { workspace: true },
         });
 
         if (!invite) {
@@ -510,34 +536,34 @@ export const teamRouter = createTRPCRouter({
         }
 
         // Check if already a member
-        const existingMember = await tx.query.teamMembers.findFirst({
+        const existingMember = await tx.query.workspaceMembers.findFirst({
           where: and(
-            eq(teamMembers.teamId, invite.teamId),
-            eq(teamMembers.userId, ctx.session.user.id),
+            eq(workspaceMembers.workspaceId, invite.workspaceId),
+            eq(workspaceMembers.userId, ctx.session.user.id),
           ),
         });
 
         if (existingMember) {
           throw new TRPCError({
             code: "CONFLICT",
-            message: "You are already a member of this team",
+            message: "You are already a member of this workspace",
           });
         }
 
         // Mark invite as accepted
         await tx
-          .update(teamInvites)
+          .update(workspaceInvites)
           .set({ acceptedAt: new Date() })
-          .where(eq(teamInvites.id, invite.id));
+          .where(eq(workspaceInvites.id, invite.id));
 
         // Add member
-        await tx.insert(teamMembers).values({
-          teamId: invite.teamId,
+        await tx.insert(workspaceMembers).values({
+          workspaceId: invite.workspaceId,
           userId: ctx.session.user.id,
           role: "member",
         });
 
-        return { team: invite.team };
+        return { workspace: invite.workspace };
       });
     }),
 
@@ -550,13 +576,13 @@ export const teamRouter = createTRPCRouter({
   getInviteByToken: publicProcedure
     .input(acceptInviteSchema)
     .query(async ({ ctx, input }) => {
-      const invite = await ctx.db.query.teamInvites.findFirst({
+      const invite = await ctx.db.query.workspaceInvites.findFirst({
         where: and(
-          eq(teamInvites.token, input.token),
-          isNull(teamInvites.acceptedAt),
-          isNull(teamInvites.rejectedAt),
+          eq(workspaceInvites.token, input.token),
+          isNull(workspaceInvites.acceptedAt),
+          isNull(workspaceInvites.rejectedAt),
         ),
-        with: { team: true },
+        with: { workspace: true },
       });
 
       if (!invite) {
@@ -566,8 +592,8 @@ export const teamRouter = createTRPCRouter({
       const isExpired = invite.expiresAt < new Date();
 
       return {
-        teamName: invite.team.name,
-        teamAvatar: invite.team.avatar,
+        workspaceName: invite.workspace.name,
+        workspaceAvatar: invite.workspace.avatar,
         email: invite.email,
         isExpired,
         expiresAt: invite.expiresAt,
@@ -585,8 +611,8 @@ export const teamRouter = createTRPCRouter({
   revokeInvite: protectedProcedure
     .input(revokeInviteSchema)
     .mutation(async ({ ctx, input }) => {
-      const invite = await ctx.db.query.teamInvites.findFirst({
-        where: eq(teamInvites.id, input.inviteId),
+      const invite = await ctx.db.query.workspaceInvites.findFirst({
+        where: eq(workspaceInvites.id, input.inviteId),
       });
 
       if (!invite) {
@@ -596,9 +622,9 @@ export const teamRouter = createTRPCRouter({
         });
       }
 
-      const role = await getUserTeamRole(
+      const role = await getUserWorkspaceRole(
         ctx.db,
-        invite.teamId,
+        invite.workspaceId,
         ctx.session.user.id,
       );
       if (!role || !canRevokeInvite(role)) {
@@ -609,8 +635,8 @@ export const teamRouter = createTRPCRouter({
       }
 
       await ctx.db
-        .delete(teamInvites)
-        .where(eq(teamInvites.id, input.inviteId));
+        .delete(workspaceInvites)
+        .where(eq(workspaceInvites.id, input.inviteId));
 
       return { success: true };
     }),
@@ -626,13 +652,13 @@ export const teamRouter = createTRPCRouter({
   resendInvite: protectedProcedure
     .input(resendInviteSchema)
     .mutation(async ({ ctx, input }) => {
-      const invite = await ctx.db.query.teamInvites.findFirst({
+      const invite = await ctx.db.query.workspaceInvites.findFirst({
         where: and(
-          eq(teamInvites.id, input.inviteId),
-          isNull(teamInvites.acceptedAt),
-          isNull(teamInvites.rejectedAt),
+          eq(workspaceInvites.id, input.inviteId),
+          isNull(workspaceInvites.acceptedAt),
+          isNull(workspaceInvites.rejectedAt),
         ),
-        with: { team: true },
+        with: { workspace: true },
       });
 
       if (!invite) {
@@ -642,9 +668,9 @@ export const teamRouter = createTRPCRouter({
         });
       }
 
-      const role = await getUserTeamRole(
+      const role = await getUserWorkspaceRole(
         ctx.db,
-        invite.teamId,
+        invite.workspaceId,
         ctx.session.user.id,
       );
       if (!role || !canInvite(role)) {
@@ -659,14 +685,14 @@ export const teamRouter = createTRPCRouter({
       const newExpiresAt = addDays(new Date(), INVITE_EXPIRY_DAYS);
 
       await ctx.db
-        .update(teamInvites)
+        .update(workspaceInvites)
         .set({ token: newToken, expiresAt: newExpiresAt })
-        .where(eq(teamInvites.id, input.inviteId));
+        .where(eq(workspaceInvites.id, input.inviteId));
 
       // Send email
-      const inviteUrl = await sendTeamInviteEmail({
+      const inviteUrl = await sendWorkspaceInviteEmail({
         to: invite.email,
-        teamName: invite.team.name,
+        workspaceName: invite.workspace.name,
         inviterName: ctx.session.user.name,
         inviteToken: newToken,
       });
@@ -675,9 +701,9 @@ export const teamRouter = createTRPCRouter({
     }),
 
   /**
-   * Remove a member from the team.
+   * Remove a member from the workspace.
    *
-   * @param input - teamId and userId of member to remove
+   * @param input - workspaceId and userId of member to remove
    * @returns Success confirmation
    * @throws NOT_FOUND if member doesn't exist
    * @throws FORBIDDEN if user lacks permission
@@ -685,15 +711,15 @@ export const teamRouter = createTRPCRouter({
   removeMember: protectedProcedure
     .input(removeMemberSchema)
     .mutation(async ({ ctx, input }) => {
-      const actorRole = await getUserTeamRole(
+      const actorRole = await getUserWorkspaceRole(
         ctx.db,
-        input.teamId,
+        input.workspaceId,
         ctx.session.user.id,
       );
-      const targetMember = await ctx.db.query.teamMembers.findFirst({
+      const targetMember = await ctx.db.query.workspaceMembers.findFirst({
         where: and(
-          eq(teamMembers.teamId, input.teamId),
-          eq(teamMembers.userId, input.userId),
+          eq(workspaceMembers.workspaceId, input.workspaceId),
+          eq(workspaceMembers.userId, input.userId),
         ),
       });
 
@@ -716,11 +742,11 @@ export const teamRouter = createTRPCRouter({
       }
 
       await ctx.db
-        .delete(teamMembers)
+        .delete(workspaceMembers)
         .where(
           and(
-            eq(teamMembers.teamId, input.teamId),
-            eq(teamMembers.userId, input.userId),
+            eq(workspaceMembers.workspaceId, input.workspaceId),
+            eq(workspaceMembers.userId, input.userId),
           ),
         );
 
@@ -730,7 +756,7 @@ export const teamRouter = createTRPCRouter({
   /**
    * Change a member's role.
    *
-   * @param input - teamId, userId, and newRole
+   * @param input - workspaceId, userId, and newRole
    * @returns Updated member details
    * @throws NOT_FOUND if member doesn't exist
    * @throws FORBIDDEN if role change not allowed
@@ -738,15 +764,15 @@ export const teamRouter = createTRPCRouter({
   changeRole: protectedProcedure
     .input(changeRoleSchema)
     .mutation(async ({ ctx, input }) => {
-      const actorRole = await getUserTeamRole(
+      const actorRole = await getUserWorkspaceRole(
         ctx.db,
-        input.teamId,
+        input.workspaceId,
         ctx.session.user.id,
       );
-      const targetMember = await ctx.db.query.teamMembers.findFirst({
+      const targetMember = await ctx.db.query.workspaceMembers.findFirst({
         where: and(
-          eq(teamMembers.teamId, input.teamId),
-          eq(teamMembers.userId, input.userId),
+          eq(workspaceMembers.workspaceId, input.workspaceId),
+          eq(workspaceMembers.userId, input.userId),
         ),
       });
 
@@ -768,12 +794,12 @@ export const teamRouter = createTRPCRouter({
       }
 
       const [updated] = await ctx.db
-        .update(teamMembers)
+        .update(workspaceMembers)
         .set({ role: input.newRole })
         .where(
           and(
-            eq(teamMembers.teamId, input.teamId),
-            eq(teamMembers.userId, input.userId),
+            eq(workspaceMembers.workspaceId, input.workspaceId),
+            eq(workspaceMembers.userId, input.userId),
           ),
         )
         .returning();
@@ -785,9 +811,9 @@ export const teamRouter = createTRPCRouter({
     }),
 
   /**
-   * Transfer team ownership to another member.
+   * Transfer workspace ownership to another member.
    *
-   * @param input - teamId and newOwnerId
+   * @param input - workspaceId and newOwnerId
    * @returns Success confirmation
    * @throws FORBIDDEN if not the owner
    * @throws NOT_FOUND if new owner is not a member
@@ -795,9 +821,9 @@ export const teamRouter = createTRPCRouter({
   transferOwnership: protectedProcedure
     .input(transferOwnershipSchema)
     .mutation(async ({ ctx, input }) => {
-      const actorRole = await getUserTeamRole(
+      const actorRole = await getUserWorkspaceRole(
         ctx.db,
-        input.teamId,
+        input.workspaceId,
         ctx.session.user.id,
       );
       if (!actorRole || !canTransferOwnership(actorRole)) {
@@ -808,47 +834,47 @@ export const teamRouter = createTRPCRouter({
       }
 
       // Verify new owner is a member
-      const newOwnerMember = await ctx.db.query.teamMembers.findFirst({
+      const newOwnerMember = await ctx.db.query.workspaceMembers.findFirst({
         where: and(
-          eq(teamMembers.teamId, input.teamId),
-          eq(teamMembers.userId, input.newOwnerId),
+          eq(workspaceMembers.workspaceId, input.workspaceId),
+          eq(workspaceMembers.userId, input.newOwnerId),
         ),
       });
 
       if (!newOwnerMember) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "User is not a member of this team",
+          message: "User is not a member of this workspace",
         });
       }
 
       // Use transaction for atomic ownership transfer
       await ctx.db.transaction(async (tx) => {
-        // Update team ownerId
+        // Update workspace ownerId
         await tx
-          .update(teams)
+          .update(workspaces)
           .set({ ownerId: input.newOwnerId, updatedAt: new Date() })
-          .where(eq(teams.id, input.teamId));
+          .where(eq(workspaces.id, input.workspaceId));
 
         // Change old owner to admin
         await tx
-          .update(teamMembers)
+          .update(workspaceMembers)
           .set({ role: "admin" })
           .where(
             and(
-              eq(teamMembers.teamId, input.teamId),
-              eq(teamMembers.userId, ctx.session.user.id),
+              eq(workspaceMembers.workspaceId, input.workspaceId),
+              eq(workspaceMembers.userId, ctx.session.user.id),
             ),
           );
 
         // Change new owner to owner
         await tx
-          .update(teamMembers)
+          .update(workspaceMembers)
           .set({ role: "owner" })
           .where(
             and(
-              eq(teamMembers.teamId, input.teamId),
-              eq(teamMembers.userId, input.newOwnerId),
+              eq(workspaceMembers.workspaceId, input.workspaceId),
+              eq(workspaceMembers.userId, input.newOwnerId),
             ),
           );
       });
@@ -857,41 +883,42 @@ export const teamRouter = createTRPCRouter({
     }),
 
   /**
-   * Leave a team (self-leave for non-owners).
+   * Leave a workspace (self-leave for non-owners).
    *
-   * @param teamId - Team to leave
+   * @param workspaceId - Workspace to leave
    * @returns Success confirmation
    * @throws NOT_FOUND if not a member
    * @throws FORBIDDEN if user is the owner
    */
   leave: protectedProcedure
-    .input(leaveTeamSchema)
+    .input(leaveWorkspaceSchema)
     .mutation(async ({ ctx, input }) => {
-      const role = await getUserTeamRole(
+      const role = await getUserWorkspaceRole(
         ctx.db,
-        input.teamId,
+        input.workspaceId,
         ctx.session.user.id,
       );
       if (!role) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "You are not a member of this team",
+          message: "You are not a member of this workspace",
         });
       }
 
-      if (!canLeaveTeam(role)) {
+      if (!canLeaveWorkspace(role)) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Owner cannot leave the team. Transfer ownership first.",
+          message:
+            "Owner cannot leave the workspace. Transfer ownership first.",
         });
       }
 
       await ctx.db
-        .delete(teamMembers)
+        .delete(workspaceMembers)
         .where(
           and(
-            eq(teamMembers.teamId, input.teamId),
-            eq(teamMembers.userId, ctx.session.user.id),
+            eq(workspaceMembers.workspaceId, input.workspaceId),
+            eq(workspaceMembers.userId, ctx.session.user.id),
           ),
         );
 
