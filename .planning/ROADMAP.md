@@ -85,9 +85,16 @@ Plans:
 3. Every thread and Sidekiq in the database has a non-null `workspaceId` pointing to a valid workspace
 4. The database schema has workspace and workspace_member tables with proper indexes and foreign keys
 
-**Plans:** TBD
+**Plans:** 5 plans
 
-**Research flag:** needs-research -- Custom SQL migration with 7+ steps, expand-and-contract pattern, backfill edge cases (users with no content, deleted teams, orphaned sidekiqs). Test on production data snapshot.
+Plans:
+- [ ] 10-01-PLAN.md -- Schema changes: workspace tables, enums, columns, relations, indexes
+- [ ] 10-02-PLAN.md -- Drizzle migration generation, seed script, auth hook for personal workspace
+- [ ] 10-03-PLAN.md -- API layer: router, validations, permissions, email rename to workspace
+- [ ] 10-04-PLAN.md -- Client components and hooks rename to workspace
+- [ ] 10-05-PLAN.md -- Barrel, root router, sidebar, pages wiring + build verification
+
+**Research flag:** researched -- Drizzle rename approach, single migration, explicit workspace_members, clean break.
 
 ---
 
@@ -219,7 +226,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 9. Vertical Slice Architecture | v0.2 | 6/6 | ✓ Complete | 2026-01-27 |
-| 10. Workspace Schema Migration | v0.2 | 0/TBD | Not started | - |
+| 10. Workspace Schema Migration | v0.2 | 0/5 | Planned | - |
 | 11. Workspace Authorization | v0.2 | 0/TBD | Not started | - |
 | 12. Workspace UX & Members | v0.2 | 0/TBD | Not started | - |
 | 13. Sidekiq Sharing | v0.2 | 0/TBD | Not started | - |
