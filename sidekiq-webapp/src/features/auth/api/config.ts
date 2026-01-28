@@ -1,9 +1,11 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { nanoid } from "nanoid";
 import { Resend } from "resend";
 
 import { env } from "@sidekiq/shared/env";
 import { db } from "@sidekiq/shared/db";
+import { workspaces, workspaceMembers } from "@sidekiq/shared/db/schema";
 
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 
@@ -62,6 +64,36 @@ export const auth = betterAuth({
     github: {
       clientId: env.BETTER_AUTH_GITHUB_CLIENT_ID,
       clientSecret: env.BETTER_AUTH_GITHUB_CLIENT_SECRET,
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          const workspaceId = nanoid();
+
+          // Create personal workspace for new user
+          await db.insert(workspaces).values({
+            id: workspaceId,
+            name: "Personal",
+            type: "personal",
+            ownerId: user.id,
+            memberLimit: 1,
+            avatar: { type: "initials" as const, color: "#6366f1" },
+          });
+
+          // Create workspace_member row (unified query pattern)
+          await db.insert(workspaceMembers).values({
+            workspaceId,
+            userId: user.id,
+            role: "owner",
+          });
+
+          console.log(
+            `[Auth] Personal workspace created for user ${user.id}`,
+          );
+        },
+      },
     },
   },
 });
