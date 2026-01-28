@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-27)
 ## Current Position
 
 Phase: 10 of 14 (Workspace Schema Migration)
-Plan: 1 of 5 in current phase
+Plan: 3 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-28 -- Completed 10-01-PLAN.md (schema transformation)
+Last activity: 2026-01-28 -- Completed 10-03-PLAN.md (server-side API layer rename)
 
-Progress: [██░░░░░░░░] v0.2 ~20% (1/6 phases complete, 1/5 plans in phase 10)
+Progress: [███░░░░░░░] v0.2 ~30% (1/6 phases complete, 3/5 plans in phase 10)
 
 ## Milestone History
 
@@ -42,6 +42,7 @@ Phase 10 decisions:
 - Partial unique index on (ownerId) WHERE type='personal' for one personal workspace per user
 - canTeamEdit column name kept unchanged (behavioral flag, not table/FK reference)
 - --no-verify commits expected during schema migration until all downstream consumers updated (Plans 02-05)
+- Add type: "team" to create procedure insert values (personal workspaces created by databaseHooks)
 
 ### Pending Todos
 
@@ -61,6 +62,6 @@ Phase 10 decisions:
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed 10-01-PLAN.md (workspace schema transformation)
+Stopped at: Completed 10-03-PLAN.md (server-side API layer rename)
 Resume file: None
-Next: 10-02-PLAN.md (migration generation, seed script, auth hook)
+Next: 10-04-PLAN.md (client-side component and hook renames)
