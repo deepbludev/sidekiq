@@ -42,6 +42,9 @@ Phase 10 decisions:
 - Partial unique index on (ownerId) WHERE type='personal' for one personal workspace per user
 - canTeamEdit column name kept unchanged (behavioral flag, not table/FK reference)
 - --no-verify commits expected during schema migration until all downstream consumers updated (Plans 02-05)
+- Hand-crafted migration SQL (drizzle-kit generate requires interactive prompts not automatable in CI)
+- Manual snapshot JSON to keep drizzle-kit state in sync after hand-crafted migration
+- No slug column on workspace table (removed from old teams table during Plan 01 transformation)
 - Add type: "team" to create procedure insert values (personal workspaces created by databaseHooks)
 
 ### Pending Todos
