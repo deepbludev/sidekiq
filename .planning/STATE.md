@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-27)
 ## Current Position
 
 Phase: 10 of 14 (Workspace Schema Migration)
-Plan: 3 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-28 -- Completed 10-03-PLAN.md (server-side API layer rename)
+Last activity: 2026-01-28 -- Completed 10-04-PLAN.md (client-side component and hook renames)
 
-Progress: [███░░░░░░░] v0.2 ~30% (1/6 phases complete, 3/5 plans in phase 10)
+Progress: [████░░░░░░] v0.2 ~33% (1/6 phases complete, 4/5 plans in phase 10)
 
 ## Milestone History
 
@@ -59,12 +59,12 @@ Phase 10 decisions:
 ### Blockers/Concerns
 
 - AI_GATEWAY_API_KEY environment variable must be configured for /api/chat to work
-- TypeScript build is broken until Plans 10-02 through 10-05 complete the team->workspace rename across codebase
+- TypeScript build is broken until Plan 10-05 completes the barrel file re-exports and root router wiring
 - Phase 11 (Authorization) requires audit of all 30+ queries across 5 routers + chat route
 
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed 10-03-PLAN.md (server-side API layer rename)
+Stopped at: Completed 10-04-PLAN.md (client-side component and hook renames)
 Resume file: None
-Next: 10-04-PLAN.md (client-side component and hook renames)
+Next: 10-05-PLAN.md (barrel files, root router, pages)
