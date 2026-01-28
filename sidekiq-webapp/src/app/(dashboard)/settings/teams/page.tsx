@@ -17,7 +17,6 @@ import { WorkspaceEmptyState } from "@sidekiq/workspace/components/workspace-emp
 import { WorkspaceCreateDialog } from "@sidekiq/workspace/components/workspace-create-dialog";
 import { api } from "@sidekiq/shared/trpc/react";
 import { authClient } from "@sidekiq/auth/api/client";
-import type { SidekiqAvatar } from "@sidekiq/shared/db/schema";
 
 /**
  * Workspace settings page.
@@ -30,8 +29,7 @@ export default function WorkspaceSettingsPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const { data: session } = authClient.useSession();
-  const { data: workspaces = [], isLoading } =
-    api.workspace.list.useQuery();
+  const { data: workspaces = [], isLoading } = api.workspace.list.useQuery();
 
   // Find selected workspace or default to first
   const selectedWorkspace = selectedWorkspaceId

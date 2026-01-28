@@ -25,6 +25,9 @@ vi.mock("@sidekiq/shared/db", () => ({
       sidekiqs: {
         findFirst: vi.fn(),
       },
+      workspaces: {
+        findFirst: vi.fn(),
+      },
     },
     insert: vi.fn(() => ({
       values: vi.fn(() => ({
@@ -106,6 +109,11 @@ describe("POST /api/chat", () => {
     (db.query.sidekiqs.findFirst as Mock).mockResolvedValue({
       ownerId: "user-123",
       instructions: null,
+    });
+
+    // Default workspace mock - user's personal workspace
+    (db.query.workspaces.findFirst as Mock).mockResolvedValue({
+      id: "personal-workspace-123",
     });
 
     // Mock streamText to return a valid response
