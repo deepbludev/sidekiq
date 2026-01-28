@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-27)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their team.
-**Current focus:** v0.2 Workspaces -- Phase 9 complete, Phase 10 next
+**Current focus:** v0.2 Workspaces -- Phase 10 in progress
 
 ## Current Position
 
-Phase: 9 of 14 (Vertical Slice Architecture) -- COMPLETE
-Plan: 6 of 6 in current phase
-Status: Phase complete, verified
-Last activity: 2026-01-27 -- Phase 9 executed (6 plans, 4 waves), verified (7/7 must-haves passed)
+Phase: 10 of 14 (Workspace Schema Migration)
+Plan: 1 of 5 in current phase
+Status: In progress
+Last activity: 2026-01-28 -- Completed 10-01-PLAN.md (schema transformation)
 
-Progress: [██░░░░░░░░] v0.2 ~17% (1/6 phases complete)
+Progress: [██░░░░░░░░] v0.2 ~20% (1/6 phases complete, 1/5 plans in phase 10)
 
 ## Milestone History
 
@@ -37,6 +37,11 @@ Phase 9 decisions:
 - Layout shell in shared/ (cross-cutting), feature panels in feature dirs
 - Sidebar barrel re-exports layout from shared/
 - Server-only code excluded from barrel file exports (client/server boundary)
+Phase 10 decisions:
+- Rename team tables in place (not drop+recreate) for proper migration patterns
+- Partial unique index on (ownerId) WHERE type='personal' for one personal workspace per user
+- canTeamEdit column name kept unchanged (behavioral flag, not table/FK reference)
+- --no-verify commits expected during schema migration until all downstream consumers updated (Plans 02-05)
 
 ### Pending Todos
 
@@ -50,12 +55,12 @@ Phase 9 decisions:
 ### Blockers/Concerns
 
 - AI_GATEWAY_API_KEY environment variable must be configured for /api/chat to work
-- Phase 10 (Schema Migration) needs testing on production data snapshot before execution
+- TypeScript build is broken until Plans 10-02 through 10-05 complete the team->workspace rename across codebase
 - Phase 11 (Authorization) requires audit of all 30+ queries across 5 routers + chat route
 
 ## Session Continuity
 
-Last session: 2026-01-27
-Stopped at: Phase 9 complete and verified
+Last session: 2026-01-28
+Stopped at: Completed 10-01-PLAN.md (workspace schema transformation)
 Resume file: None
-Next: `/gsd:discuss-phase 10` (Workspace Schema Migration)
+Next: 10-02-PLAN.md (migration generation, seed script, auth hook)
