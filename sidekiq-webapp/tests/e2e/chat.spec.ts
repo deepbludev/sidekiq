@@ -258,20 +258,17 @@ test.describe("Empty State Flow", () => {
   });
 
   test("should display all prompt categories", async ({ page }) => {
-    // Check for category headers if empty state is visible
-    // Categories appear as span elements with the category names
-    const creativeCategory = page.locator("span", { hasText: "Creative" });
-    const codingCategory = page.locator("span", { hasText: "Coding" });
-    const researchCategory = page.locator("span", { hasText: "Research" });
-    const writingCategory = page.locator("span", { hasText: "Writing" });
+    // Scope to main content area to avoid matching sidebar elements
+    const main = page.locator("main");
 
-    // First check if empty state is visible (look for the heading)
-    const emptyStateHeading = page.getByText("Start your first conversation");
+    // Check for category headers if empty state is visible
+    const emptyStateHeading = main.getByText("Start your first conversation");
     if (await emptyStateHeading.isVisible().catch(() => false)) {
-      await expect(creativeCategory).toBeVisible();
-      await expect(codingCategory).toBeVisible();
-      await expect(researchCategory).toBeVisible();
-      await expect(writingCategory).toBeVisible();
+      // Categories appear as span elements with exact category names
+      await expect(main.locator("span", { hasText: "Creative" })).toBeVisible();
+      await expect(main.locator("span", { hasText: "Coding" })).toBeVisible();
+      await expect(main.locator("span", { hasText: "Research" })).toBeVisible();
+      await expect(main.locator("span", { hasText: "Writing" })).toBeVisible();
     }
   });
 });

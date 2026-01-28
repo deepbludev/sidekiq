@@ -57,7 +57,12 @@ export function SidebarMobileOverlay({
   };
 
   return (
-    <div className="bg-sidebar animate-in slide-in-from-bottom fixed inset-0 z-50 flex flex-col duration-200 md:hidden">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+      className="bg-sidebar animate-in slide-in-from-bottom fixed inset-0 z-50 flex flex-col duration-200 md:hidden"
+    >
       {/* Header with title, actions, and close button */}
       <div className="border-sidebar-border flex h-14 items-center justify-between border-b px-4">
         <h2 className="text-sidebar-foreground text-sm font-semibold">

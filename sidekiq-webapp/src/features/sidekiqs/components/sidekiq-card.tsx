@@ -161,6 +161,7 @@ function SidekiqCardActions({
         <Button
           variant="ghost"
           size="icon-sm"
+          aria-label="More actions"
           className="opacity-0 group-hover:opacity-100"
         >
           <MoreHorizontal className="size-4" />

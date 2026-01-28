@@ -122,17 +122,23 @@ async function deleteSidekiqByName(page: Page, name: string) {
   await page.waitForLoadState("domcontentloaded");
   await page.waitForTimeout(500);
 
-  // Find the sidekiq card and open its dropdown menu
-  // Hover over the card to make the actions button visible
-  const card = page.locator("div").filter({ hasText: name }).first();
-  await card.hover();
-  await page.waitForTimeout(200);
+  // Scope to main content area to avoid matching sidebar elements
+  const main = page.locator("main");
 
-  // Click the more actions button (three dots)
-  const moreButton = card
-    .getByRole("button")
-    .filter({ has: page.locator("svg") });
-  await moreButton.first().click({ force: true });
+  // Find the card by its h3 heading with the sidekiq name
+  // The `has` filter needs a locator created from `page` (not scoped to main)
+  const card = main
+    .locator(".group")
+    .filter({ has: page.getByRole("heading", { name, level: 3 }) })
+    .first();
+
+  // Hover to reveal the hidden actions button
+  await card.hover();
+  await page.waitForTimeout(300);
+
+  // Click the "More actions" dropdown trigger
+  const moreButton = card.getByRole("button", { name: /more actions/i });
+  await moreButton.click({ force: true });
 
   // Click delete in dropdown
   await page.getByRole("menuitem", { name: /delete/i }).click();
@@ -156,7 +162,8 @@ test.describe("Sidekiq List Page", () => {
   });
 
   test("should display list page heading", async ({ page }) => {
-    const heading = page.getByRole("heading", { name: "Sidekiqs" });
+    // Use h1 specifically to avoid matching the sidebar heading (h2)
+    const heading = page.locator("h1", { hasText: "Sidekiqs" });
     await expect(heading).toBeVisible();
   });
 
@@ -209,27 +216,34 @@ test.describe("Sidekiq List Page", () => {
   });
 
   test("should filter Sidekiqs by search", async ({ page }) => {
-    // Go to list page - test search regardless of existing sidekiqs
+    // Go to list page
     await page.goto("/sidekiqs");
     await page.waitForLoadState("domcontentloaded");
+
+    // Scope to main content area to avoid matching the sidebar search input
+    const main = page.locator("main");
+
+    // Wait for loading to complete: either search input (sidekiqs exist)
+    // or empty state (no sidekiqs) should appear
+    const searchInput = main.getByPlaceholder("Search Sidekiqs...");
+    const emptyState = main.getByText(/create your first sidekiq/i);
+    await expect(searchInput.or(emptyState)).toBeVisible({ timeout: 10000 });
+
+    const hasSearch = await searchInput.isVisible().catch(() => false);
+
+    if (!hasSearch) {
+      // No sidekiqs exist — empty state is already verified visible above
+      return;
+    }
+
+    // Fill the main page search input with a nonsense query
+    await searchInput.fill("ZZZZNOTFOUND12345");
     await page.waitForTimeout(500);
 
-    // Find search input
-    const searchInput = page.getByPlaceholder("Search Sidekiqs...");
-    await expect(searchInput).toBeVisible();
-
-    // Search for something that won't match
-    await searchInput.fill("ZZZZNOTFOUND12345");
-    await page.waitForTimeout(300);
-
-    // Should show "No Sidekiqs match your search" (or empty state if no sidekiqs)
-    const noMatchMessage = page.getByText(/no sidekiqs match your search/i);
-    const emptyState = page.getByText(/no sidekiqs yet/i);
-
-    // Either shows no match message or empty state
-    const hasNoMatch = await noMatchMessage.isVisible().catch(() => false);
-    const hasEmptyState = await emptyState.isVisible().catch(() => false);
-    expect(hasNoMatch || hasEmptyState).toBe(true);
+    // Should show "No Sidekiqs match your search"
+    await expect(main.getByText(/no sidekiqs match your search/i)).toBeVisible({
+      timeout: 5000,
+    });
 
     // Clear search
     await searchInput.fill("");
@@ -556,8 +570,8 @@ test.describe("Delete Sidekiq Flow", () => {
     await page.goto("/sidekiqs");
     await page.waitForLoadState("domcontentloaded");
 
-    // Verify we can see the sidekiq
-    await expect(page.getByText(testName)).toBeVisible();
+    // Verify we can see the sidekiq in main content
+    await expect(page.locator("main").getByText(testName)).toBeVisible();
 
     // Clean up
     await deleteSidekiqByName(page, testName);
@@ -659,8 +673,8 @@ test.describe("Delete Sidekiq Flow", () => {
     await page.waitForLoadState("domcontentloaded");
     await page.waitForTimeout(500);
 
-    // Verify it exists
-    await expect(page.getByText(testName)).toBeVisible();
+    // Verify it exists in main content
+    await expect(page.locator("main").getByText(testName)).toBeVisible();
 
     // Use the delete helper which handles the full flow
     await deleteSidekiqByName(page, testName);
@@ -670,51 +684,46 @@ test.describe("Delete Sidekiq Flow", () => {
     await page.waitForLoadState("domcontentloaded");
     await page.waitForTimeout(500);
 
-    // Sidekiq should no longer be visible
-    await expect(page.getByText(testName)).not.toBeVisible();
+    // Sidekiq should no longer be visible in main content
+    await expect(page.locator("main").getByText(testName)).not.toBeVisible();
   });
 });
 
 test.describe("Sidebar Sidekiqs Section", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/chat");
+    // Navigate to /sidekiqs which activates the Sidekiqs panel in the sidebar
+    await page.goto("/sidekiqs");
     await page.waitForLoadState("domcontentloaded");
   });
 
   test("should display Sidekiqs section in sidebar", async ({ page }) => {
-    // Sidebar should have a Sidekiqs section (the collapsible trigger button)
+    // Sidebar should show the Sidekiqs panel with heading
     const sidebar = page.locator("aside").first();
-    const sidekiqsToggle = sidebar.getByRole("button", { name: /sidekiqs/i });
-    await expect(sidekiqsToggle).toBeVisible();
+    const sidekiqsHeading = sidebar.getByRole("heading", {
+      name: /sidekiqs/i,
+      level: 2,
+    });
+    await expect(sidekiqsHeading).toBeVisible();
   });
 
   test("should show Sidekiqs section content (empty state or items)", async ({
     page,
   }) => {
-    // The Sidekiqs section toggle button
     const sidebar = page.locator("aside").first();
-    const sidekiqsToggle = sidebar.getByRole("button", { name: /sidekiqs/i });
 
-    // Check if toggle exists (section is working)
-    await expect(sidekiqsToggle).toBeVisible();
+    // Wait for the panel heading to confirm Sidekiqs panel is active
+    await expect(
+      sidebar.getByRole("heading", { name: /sidekiqs/i, level: 2 }),
+    ).toBeVisible();
 
-    // Expand if needed by clicking toggle
-    await sidekiqsToggle.click({ force: true });
-    await page.waitForTimeout(300);
-
-    // Check for either empty state elements or sidekiq items
+    // Wait for data to load — either empty state or "See all" link should appear
     const noSidekiqsText = sidebar.getByText(/no sidekiqs yet/i);
-    const createFirstLink = sidebar.getByRole("link", {
-      name: /create first/i,
+    const seeAllLink = sidebar.getByRole("link", { name: /see all/i });
+
+    // Auto-wait for either element using .or()
+    await expect(noSidekiqsText.or(seeAllLink)).toBeVisible({
+      timeout: 10000,
     });
-
-    // Either show empty state OR there are already sidekiqs
-    const hasEmptyText =
-      (await noSidekiqsText.isVisible().catch(() => false)) ||
-      (await createFirstLink.isVisible().catch(() => false));
-
-    // The section toggle existing means sidebar is functional
-    expect(hasEmptyText || (await sidekiqsToggle.isVisible())).toBe(true);
   });
 
   test("should display created Sidekiq in sidebar", async ({ page }) => {
@@ -730,51 +739,22 @@ test.describe("Sidebar Sidekiqs Section", () => {
       throw e;
     }
 
-    // Navigate to chat page (fresh load to ensure sidebar query fetches new data)
-    await page.goto("/chat");
-    await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(1000);
+    // Navigate to /sidekiqs to activate the Sidekiqs sidebar panel
+    await page.goto("/sidekiqs");
+    await page.waitForLoadState("domcontentloaded");
 
-    // Find the sidebar
+    // Wait for the sidebar panel heading
     const sidebar = page.locator("aside").first();
+    await expect(
+      sidebar.getByRole("heading", { name: /sidekiqs/i, level: 2 }),
+    ).toBeVisible({ timeout: 5000 });
 
-    // The Sidekiqs collapsible should be open by default (defaultOpen in component)
-    // Verify the Sidekiqs section toggle exists
-    const sidekiqsToggle = sidebar.getByRole("button", { name: /sidekiqs/i });
-    await expect(sidekiqsToggle).toBeVisible();
-
-    // Ensure the collapsible is expanded by clicking if needed
-    // Check if content is visible by looking for any sidekiq item or "See all" link
-    const contentVisible =
-      (await sidebar
-        .getByText(testName)
-        .isVisible()
-        .catch(() => false)) ||
-      (await sidebar
-        .getByRole("link", { name: /see all/i })
-        .isVisible()
-        .catch(() => false));
-
-    if (!contentVisible) {
-      // Try clicking to expand
-      await sidekiqsToggle.click({ force: true });
-      await page.waitForTimeout(500);
-    }
-
-    // Sidebar shows max 5 sidekiqs (favorites first, then recent)
-    // If there are many sidekiqs, the newly created one might not appear in top 5
-    // Verify either: the sidekiq appears OR the "See all" link exists (confirming section works)
-    const sidekiqInSidebar = sidebar.getByText(testName);
+    // Wait for data to load — the "See all" link appears once sidekiqs are loaded
     const seeAllLink = sidebar.getByRole("link", { name: /see all/i });
+    await expect(seeAllLink).toBeVisible({ timeout: 10000 });
 
-    const sidekiqVisible = await sidekiqInSidebar
-      .isVisible()
-      .catch(() => false);
-    const seeAllVisible = await seeAllLink.isVisible().catch(() => false);
-
-    // Either the sidekiq should be visible, or there should be a "See all" link
-    // (indicating there are more sidekiqs and the section is working)
-    expect(sidekiqVisible || seeAllVisible).toBe(true);
+    // The newly created sidekiq should appear in the sidebar panel list
+    await expect(sidebar.getByText(testName)).toBeVisible();
 
     // Clean up
     await deleteSidekiqByName(page, testName);
@@ -795,20 +775,35 @@ test.describe("Sidebar Sidekiqs Section", () => {
       throw e;
     }
 
-    // Navigate to chat page
-    await page.goto("/chat");
+    // Navigate to /sidekiqs to activate the Sidekiqs sidebar panel
+    await page.goto("/sidekiqs");
     await page.waitForLoadState("domcontentloaded");
-    await page.waitForTimeout(500);
 
-    // Find and expand sidekiqs section using the toggle button
+    // Wait for the sidebar panel to load with sidekiq items
     const sidebar = page.locator("aside").first();
-    const sidekiqsToggle = sidebar.getByRole("button", { name: /sidekiqs/i });
-    await sidekiqsToggle.click({ force: true });
+    await expect(
+      sidebar.getByRole("heading", { name: /sidekiqs/i, level: 2 }),
+    ).toBeVisible({ timeout: 5000 });
+
+    // Wait for the sidekiq to appear in the panel
+    const sidekiqItem = sidebar.getByText(testName);
+    await expect(sidekiqItem).toBeVisible({ timeout: 10000 });
+
+    // Hover the item to reveal the edit dropdown
+    const sidekiqRow = sidebar
+      .locator(".group")
+      .filter({ has: page.getByText(testName) })
+      .first();
+    await sidekiqRow.hover();
     await page.waitForTimeout(300);
 
-    // Click the sidekiq button
-    const sidekiqButton = sidebar.getByText(testName);
-    await sidekiqButton.click({ force: true });
+    // Click the dropdown trigger (MoreHorizontal button)
+    const moreButton = sidekiqRow.locator("button").last();
+    await moreButton.click({ force: true });
+
+    // Click "Edit Sidekiq" in the dropdown
+    const editMenuItem = page.getByRole("menuitem", { name: /edit sidekiq/i });
+    await editMenuItem.click();
 
     // Should navigate to edit page
     await expect(page).toHaveURL(/\/sidekiqs\/[\w-]+\/edit/);
@@ -837,13 +832,14 @@ test.describe("Sidebar Sidekiqs Section", () => {
     await page.waitForLoadState("domcontentloaded");
     await page.waitForTimeout(500);
 
-    // Verify the sidekiq exists on list page
-    await expect(page.getByText(testName)).toBeVisible();
+    // Verify the sidekiq exists on list page (scope to main to avoid sidebar)
+    const main = page.locator("main");
+    await expect(main.getByText(testName)).toBeVisible({ timeout: 10000 });
 
-    // The card should be visible
-    const cardOnList = page
-      .locator("div")
-      .filter({ hasText: testName })
+    // The card should be visible in main content
+    const cardOnList = main
+      .locator(".group")
+      .filter({ has: page.getByRole("heading", { name: testName, level: 3 }) })
       .first();
     await expect(cardOnList).toBeVisible();
 
@@ -928,7 +924,7 @@ test.describe("Sidekiq Chat Integration", () => {
 
     // Get the Sidekiq ID from the current URL (we're on /sidekiqs/{id}/edit)
     const editUrl = page.url();
-    const sidekiqId = (/\/sidekiqs\/([\w-]+)\/edit/.exec(editUrl))?.[1];
+    const sidekiqId = /\/sidekiqs\/([\w-]+)\/edit/.exec(editUrl)?.[1];
     expect(sidekiqId).toBeTruthy();
 
     // Navigate to chat with this Sidekiq
@@ -939,12 +935,15 @@ test.describe("Sidekiq Chat Integration", () => {
     // Verify URL contains the sidekiq query param
     expect(page.url()).toContain(`sidekiq=${sidekiqId}`);
 
-    // Verify chat header shows Sidekiq name (look for SidekiqIndicator with the name)
-    await expect(page.getByText(testName).first()).toBeVisible();
+    // Verify chat header shows Sidekiq name (scope to main to avoid sidebar)
+    const main = page.locator("main");
+    await expect(main.getByText(testName).first()).toBeVisible({
+      timeout: 10000,
+    });
 
     // Verify "Chatting with {name}" badge appears above input
     await expect(
-      page.getByText(`Chatting with`, { exact: false }),
+      main.getByText(`Chatting with`, { exact: false }),
     ).toBeVisible();
 
     // Clean up
@@ -961,19 +960,22 @@ test.describe("Sidekiq Chat Integration", () => {
     await page.keyboard.press("Meta+Shift+S");
     await page.waitForTimeout(300);
 
-    // Verify dialog opens with "Search Sidekiqs..." placeholder
-    const searchInput = page.getByPlaceholder("Search Sidekiqs...");
+    // Verify dialog opens — scope to the dialog to avoid sidebar search input
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+
+    const searchInput = dialog.getByPlaceholder("Search Sidekiqs...");
     await expect(searchInput).toBeVisible();
 
     // Verify "Create new Sidekiq" option is visible
-    await expect(page.getByText("Create new Sidekiq")).toBeVisible();
+    await expect(dialog.getByText("Create new Sidekiq")).toBeVisible();
 
     // Press Escape to close
     await page.keyboard.press("Escape");
     await page.waitForTimeout(200);
 
     // Dialog should be closed
-    await expect(searchInput).not.toBeVisible();
+    await expect(dialog).not.toBeVisible();
   });
 
   test("should select Sidekiq from picker and navigate", async ({ page }) => {
@@ -991,7 +993,7 @@ test.describe("Sidekiq Chat Integration", () => {
 
     // Get the Sidekiq ID from the URL
     const editUrl = page.url();
-    const sidekiqId = (/\/sidekiqs\/([\w-]+)\/edit/.exec(editUrl))?.[1];
+    const sidekiqId = /\/sidekiqs\/([\w-]+)\/edit/.exec(editUrl)?.[1];
     expect(sidekiqId).toBeTruthy();
 
     // Navigate to /chat
@@ -1003,15 +1005,15 @@ test.describe("Sidekiq Chat Integration", () => {
     await page.keyboard.press("Meta+Shift+S");
     await page.waitForTimeout(300);
 
+    // Scope to the dialog to avoid sidebar search input
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+
     // Type part of the Sidekiq name to search
-    const searchInput = page.getByPlaceholder("Search Sidekiqs...");
+    const searchInput = dialog.getByPlaceholder("Search Sidekiqs...");
     await expect(searchInput).toBeVisible();
     await searchInput.fill("Picker Select");
     await page.waitForTimeout(300);
-
-    // Click on the Sidekiq in results - target the CommandItem container
-    // The dialog is inside [role="dialog"] and the items are [cmdk-item]
-    const dialog = page.getByRole("dialog");
     const sidekiqOption = dialog
       .locator("[cmdk-item]")
       .filter({ hasText: testName })
@@ -1047,7 +1049,7 @@ test.describe("Sidekiq Chat Integration", () => {
 
     // Get the Sidekiq ID from the URL
     const editUrl = page.url();
-    const sidekiqId = (/\/sidekiqs\/([\w-]+)\/edit/.exec(editUrl))?.[1];
+    const sidekiqId = /\/sidekiqs\/([\w-]+)\/edit/.exec(editUrl)?.[1];
     expect(sidekiqId).toBeTruthy();
 
     // Navigate to chat with this Sidekiq
@@ -1059,13 +1061,12 @@ test.describe("Sidekiq Chat Integration", () => {
     // Wait for the chat interface to fully load
     await page.waitForTimeout(1500);
 
-    // First verify we have the Sidekiq context loaded - check for "Chatting with" badge
-    const chattingWithBadge = page.getByText("Chatting with", { exact: false });
-    await expect(chattingWithBadge).toBeVisible({ timeout: 5000 });
-
-    // Find the header button by its accessible name pattern (includes initials + name)
-    // The button is inside main and has the sidekiq name in it
+    // Scope to main to avoid sidebar matches
     const main = page.locator("main");
+
+    // First verify we have the Sidekiq context loaded - check for "Chatting with" badge
+    const chattingWithBadge = main.getByText("Chatting with", { exact: false });
+    await expect(chattingWithBadge).toBeVisible({ timeout: 5000 });
     const headerButton = main.getByRole("button", {
       name: new RegExp(testName),
     });
@@ -1132,7 +1133,7 @@ test.describe("Sidekiq Chat Integration", () => {
 
     // Get the Sidekiq ID from the URL
     const editUrl = page.url();
-    const sidekiqId = (/\/sidekiqs\/([\w-]+)\/edit/.exec(editUrl))?.[1];
+    const sidekiqId = /\/sidekiqs\/([\w-]+)\/edit/.exec(editUrl)?.[1];
     expect(sidekiqId).toBeTruthy();
 
     // Navigate to chat with this Sidekiq
@@ -1179,7 +1180,7 @@ test.describe("Sidekiq Chat Integration", () => {
 
     // Get the Sidekiq ID from the URL
     const editUrl = page.url();
-    const sidekiqId = (/\/sidekiqs\/([\w-]+)\/edit/.exec(editUrl))?.[1];
+    const sidekiqId = /\/sidekiqs\/([\w-]+)\/edit/.exec(editUrl)?.[1];
     expect(sidekiqId).toBeTruthy();
 
     // Navigate to chat with this Sidekiq
@@ -1252,7 +1253,7 @@ test.describe("Sidekiq Chat Integration", () => {
 
     // Get the Sidekiq ID from the URL
     const editUrl = page.url();
-    const sidekiqId = (/\/sidekiqs\/([\w-]+)\/edit/.exec(editUrl))?.[1];
+    const sidekiqId = /\/sidekiqs\/([\w-]+)\/edit/.exec(editUrl)?.[1];
     expect(sidekiqId).toBeTruthy();
 
     // Navigate to chat with this Sidekiq and send a message
@@ -1282,7 +1283,7 @@ test.describe("Sidekiq Chat Integration", () => {
 
     // Store the thread URL
     const threadUrl = page.url();
-    const threadId = (/\/chat\/([\w-]+)$/.exec(threadUrl))?.[1];
+    const threadId = /\/chat\/([\w-]+)$/.exec(threadUrl)?.[1];
     expect(threadId).toBeTruthy();
 
     // Wait for stream to complete

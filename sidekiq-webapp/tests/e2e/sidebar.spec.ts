@@ -4,11 +4,23 @@ import { expect, test } from "@playwright/test";
  * Sidebar E2E tests
  *
  * These tests require authentication and use the storage state from auth.setup.ts.
- * Tests verify sidebar navigation, collapse/expand functionality, and mobile drawer.
+ * Tests verify sidebar navigation, collapse/expand functionality, and mobile tab bar.
+ *
+ * The sidebar uses a two-tier layout:
+ * - Icon rail (always visible): New Chat, Chats, Sidekiqs, Teams, Settings, User avatar
+ * - Panel (collapsible): Contextual content based on active route
+ *
+ * Panel toggle mechanisms:
+ * - Cmd/Ctrl+B keyboard shortcut
+ * - Re-clicking the active icon in the rail
  */
 
 test.describe("Sidebar Visibility", () => {
   test.beforeEach(async ({ page }) => {
+    // Ensure sidebar starts expanded
+    await page.addInitScript(() => {
+      localStorage.removeItem("sidebar-panel-collapsed");
+    });
     await page.goto("/chat");
     await page.waitForLoadState("domcontentloaded");
   });
@@ -19,80 +31,81 @@ test.describe("Sidebar Visibility", () => {
     await expect(sidebar).toBeVisible();
   });
 
-  test("should display collapse button", async ({ page }) => {
-    // The collapse button (toggle) should be visible
-    // aria-label is "Collapse sidebar" or "Expand sidebar"
-    const collapseButton = page.getByRole("button", {
-      name: /collapse sidebar|expand sidebar/i,
-    });
-    await expect(collapseButton).toBeVisible();
+  test("should toggle panel via keyboard shortcut", async ({ page }) => {
+    // Panel toggle is done via Cmd+B (Mac) or Ctrl+B
+    const sidebar = page.locator("aside").first();
+
+    // Wait for sidebar to be fully rendered
+    await expect(sidebar).toBeVisible();
+    await page.waitForTimeout(500);
+
+    // Get initial width (expanded)
+    const expandedBox = await sidebar.boundingBox();
+    expect(expandedBox?.width).toBeGreaterThan(200);
+
+    // Press Cmd+B to collapse
+    const isMac = process.platform === "darwin";
+    await page.keyboard.press(isMac ? "Meta+b" : "Control+b");
+
+    // Wait for the 200ms transition to complete
+    await page.waitForTimeout(500);
+
+    // Sidebar should be narrow (icon rail only, w-12 = 48px)
+    const collapsedBox = await sidebar.boundingBox();
+    expect(collapsedBox?.width).toBeLessThan(100);
   });
 
   test("should hide thread list when collapsed", async ({ page }) => {
-    // Find and click the collapse button (aria-label="Collapse sidebar")
-    const collapseButton = page.getByRole("button", {
-      name: /collapse sidebar/i,
-    });
-    // Use force to bypass any dev overlay intercepting clicks
-    await collapseButton.click({ force: true });
-
-    // Wait for the 200ms transition to complete
-    await page.waitForTimeout(300);
-
-    // Thread list should be hidden (sidebar collapsed to icon rail)
-    // After collapse, the full "New Chat" button text should not be visible
-    // The sidebar width should be reduced
     const sidebar = page.locator("aside").first();
-    const sidebarBox = await sidebar.boundingBox();
+    await expect(sidebar).toBeVisible();
+    await page.waitForTimeout(500);
 
-    // Collapsed sidebar should be narrow (w-16 = 64px)
+    // Press Cmd+B to collapse
+    const isMac = process.platform === "darwin";
+    await page.keyboard.press(isMac ? "Meta+b" : "Control+b");
+
+    // Wait for transition
+    await page.waitForTimeout(500);
+
+    // Collapsed sidebar should be narrow (icon rail only)
+    const sidebarBox = await sidebar.boundingBox();
     expect(sidebarBox?.width).toBeLessThan(100);
   });
 
   test("should show thread list when expanded after collapse", async ({
     page,
   }) => {
-    // Clear localStorage to reset sidebar state
-    await page.evaluate(() => localStorage.removeItem("sidebar-collapsed"));
-    await page.reload();
-    await page.waitForLoadState("domcontentloaded");
-    await page.waitForTimeout(500);
-
-    // First collapse (aria-label="Collapse sidebar")
-    const collapseButton = page.getByRole("button", {
-      name: /collapse sidebar/i,
-    });
-    // Use force to bypass any dev overlay intercepting clicks
-    await collapseButton.click({ force: true });
-
-    // Wait for the 200ms transition to complete
-    await page.waitForTimeout(500);
-
-    // Verify collapsed state
     const sidebar = page.locator("aside").first();
+    await expect(sidebar).toBeVisible();
+    await page.waitForTimeout(500);
+
+    const isMac = process.platform === "darwin";
+    const toggleKey = isMac ? "Meta+b" : "Control+b";
+
+    // Collapse
+    await page.keyboard.press(toggleKey);
+    await page.waitForTimeout(500);
+
+    // Verify collapsed
     let sidebarBox = await sidebar.boundingBox();
     expect(sidebarBox?.width).toBeLessThan(100);
 
-    // Now expand (button label changes to "Expand sidebar" when collapsed)
-    const expandButton = page.getByRole("button", { name: /expand sidebar/i });
-    // Wait for button to be visible
-    await expect(expandButton).toBeVisible();
+    // Expand
+    await page.keyboard.press(toggleKey);
+    await page.waitForTimeout(500);
 
-    // Click the expand button - use force: true to bypass Next.js dev overlay
-    await expandButton.click({ force: true });
-
-    // Wait for the 200ms transition to complete with extra buffer
-    await page.waitForTimeout(800);
-
-    // Verify expanded state
+    // Verify expanded (w-[336px])
     sidebarBox = await sidebar.boundingBox();
-    // Expanded sidebar should be wider (w-72 = 288px)
     expect(sidebarBox?.width).toBeGreaterThan(200);
   });
 });
 
 test.describe("Thread List", () => {
   test.beforeEach(async ({ page }) => {
+    // Ensure sidebar starts expanded
+    await page.addInitScript(() => {
+      localStorage.removeItem("sidebar-panel-collapsed");
+    });
     await page.goto("/chat");
     await page.waitForLoadState("domcontentloaded");
   });
@@ -102,25 +115,9 @@ test.describe("Thread List", () => {
     const sidebar = page.locator("aside").first();
     await expect(sidebar).toBeVisible();
 
-    // Look for thread group headers (Pinned, Today, Yesterday, etc.) or threads
-    // Group headers have uppercase text like "TODAY", "YESTERDAY", "PINNED"
-    const todayHeader = sidebar.getByText("TODAY");
-    const yesterdayHeader = sidebar.getByText("YESTERDAY");
-    const pinnedHeader = sidebar.getByText("PINNED");
-    const thisWeekHeader = sidebar.getByText("THIS WEEK");
-
-    // Check if any group header exists or if search input is visible (sidebar is functional)
-    const searchInput = page.getByPlaceholder(/search/i);
-    const hasSearch = await searchInput.isVisible().catch(() => false);
-    const hasToday = await todayHeader.isVisible().catch(() => false);
-    const hasYesterday = await yesterdayHeader.isVisible().catch(() => false);
-    const hasPinned = await pinnedHeader.isVisible().catch(() => false);
-    const hasThisWeek = await thisWeekHeader.isVisible().catch(() => false);
-
-    // Either some group headers exist or search is visible (sidebar is working)
-    expect(
-      hasSearch || hasToday || hasYesterday || hasPinned || hasThisWeek,
-    ).toBe(true);
+    // The search input is always rendered in the expanded chats panel
+    const searchInput = sidebar.getByPlaceholder(/search conversations/i);
+    await expect(searchInput).toBeVisible({ timeout: 5000 });
   });
 
   test("should navigate to thread when clicked", async ({ page }) => {
@@ -154,13 +151,14 @@ test.describe("Thread List", () => {
 
   test("should display search input", async ({ page }) => {
     // Search input should be visible in sidebar
-    const searchInput = page.getByPlaceholder(/search/i);
+    const searchInput = page.getByPlaceholder(/search conversations/i);
     await expect(searchInput).toBeVisible();
   });
 
   test("should focus search input on Cmd+K / Ctrl+K", async ({ page }) => {
-    // Get the search input
-    const searchInput = page.getByPlaceholder(/search/i);
+    // Wait for sidebar panel to render
+    const searchInput = page.getByPlaceholder(/search conversations/i);
+    await expect(searchInput).toBeVisible();
 
     // Press Cmd+K (Mac) or Ctrl+K (Windows/Linux)
     const isMac = process.platform === "darwin";
@@ -184,7 +182,6 @@ test.describe("Mobile Sidebar", () => {
     const sidebar = page.locator("aside").first();
 
     // On mobile, the main sidebar is hidden
-    // Check if it's not visible or has mobile-hidden classes
     const isVisible = await sidebar.isVisible().catch(() => false);
 
     // Either sidebar is hidden or it has zero width
@@ -195,45 +192,49 @@ test.describe("Mobile Sidebar", () => {
     }
   });
 
-  test("should show mobile menu button", async ({ page }) => {
-    // Mobile menu button should be visible (sr-only text is "Toggle sidebar")
-    const menuButton = page.getByRole("button", { name: /toggle sidebar/i });
-    await expect(menuButton).toBeVisible();
+  test("should show mobile tab bar", async ({ page }) => {
+    // Mobile bottom tab bar should be visible with Chats, Sidekiqs, Settings tabs
+    const chatsTab = page.getByRole("button", { name: /chats/i });
+    await expect(chatsTab).toBeVisible();
+
+    const sidekiqsTab = page.getByRole("button", { name: /sidekiqs/i });
+    await expect(sidekiqsTab).toBeVisible();
+
+    const settingsTab = page.getByRole("button", { name: /settings/i });
+    await expect(settingsTab).toBeVisible();
   });
 
-  test("should open drawer when mobile menu button clicked", async ({
-    page,
-  }) => {
-    // Click mobile menu button (sr-only text is "Toggle sidebar")
-    const menuButton = page.getByRole("button", { name: /toggle sidebar/i });
-    await menuButton.click();
+  test("should open overlay when Chats tab clicked", async ({ page }) => {
+    // Click Chats tab in bottom tab bar
+    const chatsTab = page.getByRole("button", { name: /chats/i });
+    await chatsTab.click();
 
-    // Drawer should open (Sheet component)
-    // Look for the drawer/sheet content
-    const drawer = page.locator('[role="dialog"]');
-    await expect(drawer).toBeVisible({ timeout: 5000 });
+    // Overlay should open with dialog role
+    const overlay = page.locator('[role="dialog"]');
+    await expect(overlay).toBeVisible({ timeout: 5000 });
   });
 
-  test("should close drawer when clicking outside", async ({ page }) => {
-    // Open drawer (sr-only text is "Toggle sidebar")
-    const menuButton = page.getByRole("button", { name: /toggle sidebar/i });
-    await menuButton.click();
+  test("should close overlay when close button clicked", async ({ page }) => {
+    // Open Chats overlay
+    const chatsTab = page.getByRole("button", { name: /chats/i });
+    await chatsTab.click();
 
-    // Wait for drawer to be visible
-    const drawer = page.locator('[role="dialog"]');
-    await expect(drawer).toBeVisible({ timeout: 5000 });
+    // Wait for overlay
+    const overlay = page.locator('[role="dialog"]');
+    await expect(overlay).toBeVisible({ timeout: 5000 });
 
-    // Press Escape to close the drawer (more reliable than clicking overlay)
-    await page.keyboard.press("Escape");
+    // Click close button
+    const closeButton = page.getByRole("button", { name: /close overlay/i });
+    await closeButton.click();
 
     // Wait for animation
     await page.waitForTimeout(300);
 
-    // Drawer should be hidden
-    await expect(drawer).toBeHidden({ timeout: 5000 });
+    // Overlay should be hidden
+    await expect(overlay).toBeHidden({ timeout: 5000 });
   });
 
-  test("should close drawer and navigate when thread clicked", async ({
+  test("should close overlay and navigate when thread clicked", async ({
     page,
   }) => {
     // First create a thread on desktop viewport, then test on mobile
@@ -259,22 +260,22 @@ test.describe("Mobile Sidebar", () => {
     await page.goto("/chat");
     await page.waitForLoadState("domcontentloaded");
 
-    // Open mobile drawer (sr-only text is "Toggle sidebar")
-    const menuButton = page.getByRole("button", { name: /toggle sidebar/i });
-    await menuButton.click();
+    // Open Chats overlay via tab bar
+    const chatsTab = page.getByRole("button", { name: /chats/i });
+    await chatsTab.click();
 
-    // Wait for drawer
-    const drawer = page.locator('[role="dialog"]');
-    await expect(drawer).toBeVisible({ timeout: 5000 });
+    // Wait for overlay
+    const overlay = page.locator('[role="dialog"]');
+    await expect(overlay).toBeVisible({ timeout: 5000 });
 
     // If we can find and click the thread
     if (threadId) {
-      const threadItem = drawer.locator(`[data-thread-id="${threadId}"]`);
+      const threadItem = overlay.locator(`[data-thread-id="${threadId}"]`);
       if (await threadItem.isVisible().catch(() => false)) {
         await threadItem.click();
 
-        // Drawer should close
-        await expect(drawer).toBeHidden({ timeout: 5000 });
+        // Overlay should close (auto-closes on pathname change)
+        await expect(overlay).toBeHidden({ timeout: 5000 });
 
         // Should navigate to thread
         await expect(page).toHaveURL(new RegExp(`/chat/${threadId}`));
@@ -303,15 +304,15 @@ test.describe("Sidebar Footer", () => {
   });
 
   test("should display settings link", async ({ page }) => {
-    // Settings button/link should be visible in sidebar
-    const settingsButton = page.getByRole("button", { name: /settings/i });
+    // Settings button/link should be visible in sidebar icon rail
+    const sidebar = page.locator("aside").first();
+    const settingsLink = sidebar.getByRole("link", { name: /settings/i });
 
-    // Settings might be in footer or icon rail
-    const isVisible = await settingsButton.isVisible().catch(() => false);
+    // Settings link in the icon rail
+    const isVisible = await settingsLink.isVisible().catch(() => false);
 
-    // Settings should exist somewhere in the sidebar
     if (isVisible) {
-      await expect(settingsButton).toBeVisible();
+      await expect(settingsLink).toBeVisible();
     }
   });
 });
@@ -325,7 +326,7 @@ test.describe("New Chat Button", () => {
   test("should display New Chat button in expanded sidebar", async ({
     page,
   }) => {
-    // New Chat button should be visible in sidebar header
+    // New Chat button should be visible in the icon rail (aria-label="New Chat")
     const newChatButton = page.getByRole("button", { name: /new chat/i });
     await expect(newChatButton).toBeVisible();
   });
@@ -339,11 +340,13 @@ test.describe("New Chat Button", () => {
     // Wait for navigation to thread
     await page.waitForURL(/\/chat\/[\w-]+/, { timeout: 10000 });
 
-    // Click New Chat
+    // Use dispatchEvent to bypass Next.js dev overlay pointer interception
     const newChatButton = page.getByRole("button", { name: /new chat/i });
-    await newChatButton.click();
+    await newChatButton.dispatchEvent("click");
 
     // Should navigate to /chat (new conversation)
-    await expect(page).toHaveURL("/chat");
+    await expect(page).toHaveURL("http://localhost:3000/chat", {
+      timeout: 5000,
+    });
   });
 });

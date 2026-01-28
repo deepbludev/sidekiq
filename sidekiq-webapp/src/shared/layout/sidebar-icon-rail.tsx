@@ -75,6 +75,7 @@ function RailIcon({
             variant="ghost"
             size="icon"
             onClick={onReClick}
+            aria-label={`${label} (toggle panel)`}
             className={cn(
               "size-9 rounded-md",
               "text-sidebar-foreground/70 hover:text-sidebar-foreground",
@@ -96,6 +97,7 @@ function RailIcon({
           variant="ghost"
           size="icon"
           asChild
+          aria-label={label}
           className={cn(
             "size-9 rounded-md",
             "text-sidebar-foreground/70 hover:text-sidebar-foreground",
@@ -249,6 +251,7 @@ export function SidebarIconRail({ onIconReClick }: SidebarIconRailProps) {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="New Chat"
             onClick={() => router.push("/chat")}
             className="bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 size-8 rounded-md"
           >
