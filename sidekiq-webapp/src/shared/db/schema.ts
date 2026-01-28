@@ -15,7 +15,12 @@ import {
 /**
  * Enums
  */
-export const teamRoleEnum = pgEnum("team_role", ["owner", "admin", "member"]);
+export const workspaceRoleEnum = pgEnum("workspace_role", [
+  "owner",
+  "admin",
+  "member",
+]);
+export const workspaceTypeEnum = pgEnum("workspace_type", ["personal", "team"]);
 export const messageRoleEnum = pgEnum("message_role", [
   "user",
   "assistant",
@@ -106,13 +111,20 @@ export const verification = pgTable("verification", {
 });
 
 /**
- * Teams - For team-based collaboration
+ * Workspaces - Unified organizational unit (personal or team)
+ *
+ * Every user has exactly one personal workspace (enforced by partial unique index).
+ * Team workspaces support collaboration with multiple members.
  */
-export const teams = pgTable(
-  "team",
+export const workspaces = pgTable(
+  "workspace",
   {
     id: text("id").primaryKey(),
     name: varchar("name", { length: 100 }).notNull(),
+    /** Workspace type discriminator: 'personal' for single-user, 'team' for collaborative */
+    type: workspaceTypeEnum("type").notNull(),
+    /** Optional workspace description */
+    description: varchar("description", { length: 500 }),
     ownerId: text("owner_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -121,7 +133,7 @@ export const teams = pgTable(
       .$type<SidekiqAvatar>()
       .default({ type: "initials", color: "#6366f1" })
       .notNull(),
-    /** Maximum number of members allowed in this team */
+    /** Maximum number of members allowed in this workspace */
     memberLimit: integer("member_limit").notNull().default(50),
     createdAt: timestamp("created_at")
       .$defaultFn(() => new Date())
@@ -131,46 +143,52 @@ export const teams = pgTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (t) => [index("team_owner_idx").on(t.ownerId)],
+  (t) => [
+    index("workspace_owner_idx").on(t.ownerId),
+    index("workspace_type_idx").on(t.type),
+    uniqueIndex("workspace_personal_unique")
+      .on(t.ownerId)
+      .where(sql`"type" = 'personal'`),
+  ],
 );
 
 /**
- * Team Members - Junction table for team membership
+ * Workspace Members - Junction table for workspace membership
  */
-export const teamMembers = pgTable(
-  "team_member",
+export const workspaceMembers = pgTable(
+  "workspace_member",
   {
-    teamId: text("team_id")
+    workspaceId: text("workspace_id")
       .notNull()
-      .references(() => teams.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    role: teamRoleEnum("role").notNull().default("member"),
+    role: workspaceRoleEnum("role").notNull().default("member"),
     joinedAt: timestamp("joined_at")
       .$defaultFn(() => new Date())
       .notNull(),
   },
   (t) => [
-    index("team_member_team_idx").on(t.teamId),
-    index("team_member_user_idx").on(t.userId),
-    uniqueIndex("team_member_unique").on(t.teamId, t.userId),
+    index("workspace_member_workspace_idx").on(t.workspaceId),
+    index("workspace_member_user_idx").on(t.userId),
+    uniqueIndex("workspace_member_unique").on(t.workspaceId, t.userId),
   ],
 );
 
 /**
- * Team Invites - Secure token-based team invitations
+ * Workspace Invites - Secure token-based workspace invitations
  */
-export const teamInvites = pgTable(
-  "team_invite",
+export const workspaceInvites = pgTable(
+  "workspace_invite",
   {
     id: text("id").primaryKey(),
-    teamId: text("team_id")
+    workspaceId: text("workspace_id")
       .notNull()
-      .references(() => teams.id, { onDelete: "cascade" }),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     email: varchar("email", { length: 255 }).notNull(),
     token: text("token").notNull().unique(),
-    role: teamRoleEnum("role").notNull().default("member"),
+    role: workspaceRoleEnum("role").notNull().default("member"),
     acceptedAt: timestamp("accepted_at"),
     rejectedAt: timestamp("rejected_at"),
     expiresAt: timestamp("expires_at").notNull(),
@@ -179,9 +197,9 @@ export const teamInvites = pgTable(
       .notNull(),
   },
   (t) => [
-    index("team_invite_team_idx").on(t.teamId),
-    index("team_invite_email_idx").on(t.email),
-    index("team_invite_token_idx").on(t.token),
+    index("workspace_invite_workspace_idx").on(t.workspaceId),
+    index("workspace_invite_email_idx").on(t.email),
+    index("workspace_invite_token_idx").on(t.token),
   ],
 );
 
@@ -195,7 +213,7 @@ export const sidekiqs = pgTable(
     ownerId: text("owner_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    teamId: text("team_id").references(() => teams.id, {
+    workspaceId: text("workspace_id").references(() => workspaces.id, {
       onDelete: "set null",
     }),
     name: varchar("name", { length: 100 }).notNull(),
@@ -231,7 +249,7 @@ export const sidekiqs = pgTable(
   },
   (t) => [
     index("sidekiq_owner_idx").on(t.ownerId),
-    index("sidekiq_team_idx").on(t.teamId),
+    index("sidekiq_workspace_idx").on(t.workspaceId),
     index("sidekiq_favorite_idx").on(t.isFavorite),
     uniqueIndex("sidekiq_owner_name_unique").on(
       t.ownerId,
@@ -250,6 +268,9 @@ export const threads = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    workspaceId: text("workspace_id")
+      .notNull()
+      .references(() => workspaces.id, { onDelete: "cascade" }),
     sidekiqId: text("sidekiq_id").references(() => sidekiqs.id, {
       onDelete: "set null",
     }),
@@ -273,6 +294,7 @@ export const threads = pgTable(
   },
   (t) => [
     index("thread_user_idx").on(t.userId),
+    index("thread_workspace_idx").on(t.workspaceId),
     index("thread_sidekiq_idx").on(t.sidekiqId),
     index("thread_last_activity_idx").on(t.lastActivityAt),
     index("thread_pinned_activity_idx").on(t.isPinned, t.lastActivityAt),
@@ -313,8 +335,8 @@ export const messages = pgTable(
 export const userRelations = relations(user, ({ many }) => ({
   accounts: many(account),
   sessions: many(session),
-  ownedTeams: many(teams),
-  teamMemberships: many(teamMembers),
+  ownedWorkspaces: many(workspaces),
+  workspaceMemberships: many(workspaceMembers),
   sidekiqs: many(sidekiqs),
   threads: many(threads),
 }));
@@ -327,30 +349,53 @@ export const sessionRelations = relations(session, ({ one }) => ({
   user: one(user, { fields: [session.userId], references: [user.id] }),
 }));
 
-export const teamRelations = relations(teams, ({ one, many }) => ({
-  owner: one(user, { fields: [teams.ownerId], references: [user.id] }),
-  members: many(teamMembers),
-  invites: many(teamInvites),
+export const workspaceRelations = relations(workspaces, ({ one, many }) => ({
+  owner: one(user, { fields: [workspaces.ownerId], references: [user.id] }),
+  members: many(workspaceMembers),
+  invites: many(workspaceInvites),
   sidekiqs: many(sidekiqs),
+  threads: many(threads),
 }));
 
-export const teamMemberRelations = relations(teamMembers, ({ one }) => ({
-  team: one(teams, { fields: [teamMembers.teamId], references: [teams.id] }),
-  user: one(user, { fields: [teamMembers.userId], references: [user.id] }),
-}));
+export const workspaceMemberRelations = relations(
+  workspaceMembers,
+  ({ one }) => ({
+    workspace: one(workspaces, {
+      fields: [workspaceMembers.workspaceId],
+      references: [workspaces.id],
+    }),
+    user: one(user, {
+      fields: [workspaceMembers.userId],
+      references: [user.id],
+    }),
+  }),
+);
 
-export const teamInviteRelations = relations(teamInvites, ({ one }) => ({
-  team: one(teams, { fields: [teamInvites.teamId], references: [teams.id] }),
-}));
+export const workspaceInviteRelations = relations(
+  workspaceInvites,
+  ({ one }) => ({
+    workspace: one(workspaces, {
+      fields: [workspaceInvites.workspaceId],
+      references: [workspaces.id],
+    }),
+  }),
+);
 
 export const sidekiqRelations = relations(sidekiqs, ({ one, many }) => ({
   owner: one(user, { fields: [sidekiqs.ownerId], references: [user.id] }),
-  team: one(teams, { fields: [sidekiqs.teamId], references: [teams.id] }),
+  workspace: one(workspaces, {
+    fields: [sidekiqs.workspaceId],
+    references: [workspaces.id],
+  }),
   threads: many(threads),
 }));
 
 export const threadRelations = relations(threads, ({ one, many }) => ({
   user: one(user, { fields: [threads.userId], references: [user.id] }),
+  workspace: one(workspaces, {
+    fields: [threads.workspaceId],
+    references: [workspaces.id],
+  }),
   sidekiq: one(sidekiqs, {
     fields: [threads.sidekiqId],
     references: [sidekiqs.id],
