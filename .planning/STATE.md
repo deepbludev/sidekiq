@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-27)
 Phase: 10 of 14 (Workspace Schema Migration)
 Plan: 5 of 5 in current phase
 Status: Phase complete
-Last activity: 2026-01-28 -- Completed quick-021 (update unit tests for Phase 10 workspace naming)
+Last activity: 2026-01-28 -- Completed quick-022 (workspace E2E test suite)
 
 Progress: [█████░░░░░] v0.2 ~40% (2/6 phases complete: Phase 9 + Phase 10)
 
@@ -68,10 +68,11 @@ Phase 10 decisions:
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 021 | Update the unit test suite at @sidekiq-webapp/tests/unit/ to include the new features that need to be tested in phase 10, use pnpm test:run to run the tests, verify work and fix any issues you encounter | 2026-01-28 | 74e6fef | [021-update-unit-tests-for-phase-10-workspace](./quick/021-update-unit-tests-for-phase-10-workspace/) |
+| 022 | Add workspace E2E test suite covering Phase 10 features (settings, sidebar, terminology, CRUD) | 2026-01-28 | d0a6d09 | [022-update-the-e2e-test-suite-at-sidekiq-web](./quick/022-update-the-e2e-test-suite-at-sidekiq-web/) |
 
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed quick-021 (unit test updates for workspace naming)
+Stopped at: Completed quick-022 (workspace E2E test suite)
 Resume file: None
 Next: Phase 11 (Workspace Authorization)
