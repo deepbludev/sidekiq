@@ -50,20 +50,32 @@ vi.mock("nanoid", () => ({
   nanoid: vi.fn(() => "mock-nanoid"),
 }));
 
+vi.mock("@sidekiq/shared/lib/workspace-auth", () => ({
+  validateWorkspaceMembership: vi.fn(),
+}));
+
 // Import after mocks
 import { POST } from "@sidekiq/app/api/chat/route";
 import { streamText, convertToModelMessages } from "ai";
 import { getModel } from "@sidekiq/ai/api/models";
 import { db } from "@sidekiq/shared/db";
 import { getSession } from "@sidekiq/auth/api/server";
+import { validateWorkspaceMembership } from "@sidekiq/shared/lib/workspace-auth";
 
 /**
- * Helper to create a mock Request object
+ * Helper to create a mock Request object with optional custom headers
  */
-function createMockRequest(body: unknown): Request {
+function createMockRequest(
+  body: unknown,
+  headers?: Record<string, string>,
+): Request {
+  const reqHeaders = new Headers({ "Content-Type": "application/json" });
+  if (headers) {
+    Object.entries(headers).forEach(([k, v]) => reqHeaders.set(k, v));
+  }
   return new Request("http://localhost:3000/api/chat", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: reqHeaders,
     body: JSON.stringify(body),
   });
 }
@@ -98,6 +110,7 @@ describe("POST /api/chat", () => {
     (db.query.threads.findFirst as Mock).mockResolvedValue({
       id: "thread-123",
       userId: "user-123",
+      workspaceId: "personal-workspace-123",
       messageCount: 0,
     });
     (convertToModelMessages as Mock).mockResolvedValue([
@@ -105,15 +118,21 @@ describe("POST /api/chat", () => {
     ]);
     (getModel as Mock).mockReturnValue({ id: "mock-model" });
 
-    // Default sidekiq mock - owned by current user
+    // Default sidekiq mock - in current workspace
     (db.query.sidekiqs.findFirst as Mock).mockResolvedValue({
-      ownerId: "user-123",
+      workspaceId: "personal-workspace-123",
       instructions: null,
     });
 
-    // Default workspace mock - user's personal workspace
+    // Default workspace mock - user's personal workspace (used when no header)
     (db.query.workspaces.findFirst as Mock).mockResolvedValue({
       id: "personal-workspace-123",
+    });
+
+    // Default workspace membership mock - valid membership
+    (validateWorkspaceMembership as Mock).mockResolvedValue({
+      role: "owner",
+      workspaceType: "personal",
     });
 
     // Mock streamText to return a valid response
@@ -163,7 +182,9 @@ describe("POST /api/chat", () => {
     });
 
     it("should proceed when valid session exists", async () => {
-      const req = createMockRequest(validChatBody());
+      const req = createMockRequest(validChatBody(), {
+        "x-workspace-id": "personal-workspace-123",
+      });
       const res = await POST(req);
 
       expect(res.status).toBe(200);
@@ -193,7 +214,7 @@ describe("POST /api/chat", () => {
       });
       const res = await POST(req);
 
-      // Should succeed and create a new thread
+      // Should succeed and create a new thread (falls back to personal workspace)
       expect(res.status).toBe(200);
     });
 
@@ -201,7 +222,7 @@ describe("POST /api/chat", () => {
       const req = createMockRequest(validChatBody({ threadId: "" }));
       const res = await POST(req);
 
-      // Should succeed and create a new thread
+      // Should succeed and create a new thread (falls back to personal workspace)
       expect(res.status).toBe(200);
     });
 
@@ -221,6 +242,7 @@ describe("POST /api/chat", () => {
             },
           ],
         }),
+        { "x-workspace-id": "personal-workspace-123" },
       );
       const res = await POST(req);
 
@@ -234,7 +256,9 @@ describe("POST /api/chat", () => {
     it("should return 404 when thread not found", async () => {
       (db.query.threads.findFirst as Mock).mockResolvedValue(null);
 
-      const req = createMockRequest(validChatBody());
+      const req = createMockRequest(validChatBody(), {
+        "x-workspace-id": "personal-workspace-123",
+      });
       const res = await POST(req);
 
       expect(res.status).toBe(404);
@@ -246,21 +270,26 @@ describe("POST /api/chat", () => {
       (db.query.threads.findFirst as Mock).mockResolvedValue({
         id: "thread-123",
         userId: "other-user-456",
+        workspaceId: "personal-workspace-123",
         messageCount: 0,
       });
 
-      const req = createMockRequest(validChatBody());
+      const req = createMockRequest(validChatBody(), {
+        "x-workspace-id": "personal-workspace-123",
+      });
       const res = await POST(req);
 
       expect(res.status).toBe(403);
       const body = (await res.json()) as ErrorResponse;
-      expect(body.error).toBe("Unauthorized access to thread");
+      expect(body.error).toBe("Access denied");
     });
   });
 
   describe("success path", () => {
     it("should call streamText with correct model", async () => {
-      const req = createMockRequest(validChatBody());
+      const req = createMockRequest(validChatBody(), {
+        "x-workspace-id": "personal-workspace-123",
+      });
       await POST(req);
 
       expect(getModel).toHaveBeenCalledWith(
@@ -277,7 +306,9 @@ describe("POST /api/chat", () => {
     });
 
     it("should save user message immediately", async () => {
-      const req = createMockRequest(validChatBody());
+      const req = createMockRequest(validChatBody(), {
+        "x-workspace-id": "personal-workspace-123",
+      });
       await POST(req);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -288,7 +319,9 @@ describe("POST /api/chat", () => {
     });
 
     it("should return streaming response", async () => {
-      const req = createMockRequest(validChatBody());
+      const req = createMockRequest(validChatBody(), {
+        "x-workspace-id": "personal-workspace-123",
+      });
       const res = await POST(req);
 
       expect(res.status).toBe(200);
@@ -305,7 +338,9 @@ describe("POST /api/chat", () => {
       };
       (streamText as Mock).mockReturnValue(mockResult);
 
-      const req = createMockRequest(validChatBody());
+      const req = createMockRequest(validChatBody(), {
+        "x-workspace-id": "personal-workspace-123",
+      });
       await POST(req);
 
       expect(mockConsume).toHaveBeenCalled();
@@ -315,7 +350,9 @@ describe("POST /api/chat", () => {
       const body = validChatBody();
       delete (body as Record<string, unknown>).model;
 
-      const req = createMockRequest(body);
+      const req = createMockRequest(body, {
+        "x-workspace-id": "personal-workspace-123",
+      });
       await POST(req);
 
       // Should use DEFAULT_MODEL from the schema default
@@ -340,12 +377,14 @@ describe("POST /api/chat", () => {
       expect(body.error).toBe("Sidekiq not found");
     });
 
-    it("should return 403 when sidekiq belongs to different user", async () => {
+    it("should return 403 when sidekiq belongs to different workspace", async () => {
       (db.query.sidekiqs.findFirst as Mock).mockResolvedValue({
-        ownerId: "other-user-456",
+        workspaceId: "other-workspace-456",
         instructions: null,
       });
 
+      // No header -> falls back to personal workspace "personal-workspace-123"
+      // sidekiq.workspaceId "other-workspace-456" !== "personal-workspace-123" -> 403
       const req = createMockRequest(
         validChatBody({ sidekiqId: "sidekiq-123", threadId: undefined }),
       );
@@ -353,12 +392,12 @@ describe("POST /api/chat", () => {
 
       expect(res.status).toBe(403);
       const body = (await res.json()) as ErrorResponse;
-      expect(body.error).toBe("Unauthorized access to Sidekiq");
+      expect(body.error).toBe("Access denied");
     });
 
-    it("should proceed when valid sidekiqId owned by user", async () => {
+    it("should proceed when valid sidekiqId in same workspace", async () => {
       (db.query.sidekiqs.findFirst as Mock).mockResolvedValue({
-        ownerId: "user-123",
+        workspaceId: "personal-workspace-123",
         instructions: "You are a helpful assistant.",
       });
 
@@ -373,9 +412,9 @@ describe("POST /api/chat", () => {
 
   describe("sidekiq system message injection", () => {
     it("should call streamText with system message when sidekiq has instructions", async () => {
-      // Mock sidekiq with instructions
+      // Mock sidekiq with instructions (first call for authorization, second for system message)
       (db.query.sidekiqs.findFirst as Mock).mockResolvedValue({
-        ownerId: "user-123",
+        workspaceId: "personal-workspace-123",
         instructions: "You are a helpful coding assistant.",
       });
 
@@ -404,7 +443,7 @@ describe("POST /api/chat", () => {
     it("should call streamText without system message when sidekiq has no instructions", async () => {
       // Mock sidekiq without instructions
       (db.query.sidekiqs.findFirst as Mock).mockResolvedValue({
-        ownerId: "user-123",
+        workspaceId: "personal-workspace-123",
         instructions: null,
       });
 
@@ -432,19 +471,21 @@ describe("POST /api/chat", () => {
       (db.query.threads.findFirst as Mock).mockResolvedValue({
         id: "thread-123",
         userId: "user-123",
+        workspaceId: "personal-workspace-123",
         messageCount: 2,
         sidekiqId: "thread-sidekiq-456",
       });
 
       // Mock sidekiq for the thread's sidekiqId
       (db.query.sidekiqs.findFirst as Mock).mockResolvedValue({
-        ownerId: "user-123",
+        workspaceId: "personal-workspace-123",
         instructions: "You are a thread-specific assistant.",
       });
 
       // Request WITHOUT sidekiqId (existing thread should use its own)
       const req = createMockRequest(
         validChatBody({ threadId: "thread-123", sidekiqId: undefined }),
+        { "x-workspace-id": "personal-workspace-123" },
       );
       await POST(req);
 
@@ -470,6 +511,7 @@ describe("POST /api/chat", () => {
     it("should return 500 when personal workspace not found for new thread", async () => {
       (db.query.workspaces.findFirst as Mock).mockResolvedValue(null);
 
+      // No header -> falls back to personal workspace lookup -> returns null -> 500
       const req = createMockRequest(validChatBody({ threadId: undefined }));
       const res = await POST(req);
 
@@ -497,16 +539,99 @@ describe("POST /api/chat", () => {
       expect(insertMockReturn.values).toHaveBeenCalled();
     });
 
-    it("should not look up personal workspace for existing threads", async () => {
+    it("should not look up personal workspace for existing threads with workspace header", async () => {
       // Clear mock call history after beforeEach
       (db.query.workspaces.findFirst as Mock).mockClear();
 
-      const req = createMockRequest(validChatBody());
+      // With x-workspace-id header, the route uses validateWorkspaceMembership
+      // and does NOT call db.query.workspaces.findFirst
+      const req = createMockRequest(validChatBody(), {
+        "x-workspace-id": "personal-workspace-123",
+      });
       const res = await POST(req);
 
       expect(res.status).toBe(200);
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(db.query.workspaces.findFirst).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("workspace authorization", () => {
+    it("should return 403 when x-workspace-id header is invalid (not a member)", async () => {
+      (validateWorkspaceMembership as Mock).mockResolvedValue(null);
+
+      const req = createMockRequest(validChatBody(), {
+        "x-workspace-id": "invalid-workspace",
+      });
+      const res = await POST(req);
+
+      expect(res.status).toBe(403);
+      const body = (await res.json()) as ErrorResponse;
+      expect(body.error).toBe("Access denied");
+    });
+
+    it("should use workspace from x-workspace-id header when membership is valid", async () => {
+      (validateWorkspaceMembership as Mock).mockResolvedValue({
+        role: "member",
+        workspaceType: "team",
+      });
+      // No sidekiq
+      (db.query.sidekiqs.findFirst as Mock).mockResolvedValue(null);
+
+      const req = createMockRequest(
+        validChatBody({ threadId: undefined, sidekiqId: undefined }),
+        { "x-workspace-id": "team-workspace-456" },
+      );
+      const res = await POST(req);
+
+      expect(res.status).toBe(200);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(db.insert).toHaveBeenCalled();
+    });
+
+    it("should return 403 when existing thread workspace does not match active workspace", async () => {
+      (validateWorkspaceMembership as Mock).mockResolvedValue({
+        role: "owner",
+        workspaceType: "personal",
+      });
+      (db.query.threads.findFirst as Mock).mockResolvedValue({
+        id: "thread-123",
+        userId: "user-123",
+        workspaceId: "other-workspace-789",
+        messageCount: 0,
+      });
+
+      const req = createMockRequest(validChatBody(), {
+        "x-workspace-id": "personal-workspace-123",
+      });
+      const res = await POST(req);
+
+      expect(res.status).toBe(403);
+      const body = (await res.json()) as ErrorResponse;
+      expect(body.error).toBe("Access denied");
+    });
+
+    it("should return 403 when sidekiq workspace does not match active workspace", async () => {
+      (validateWorkspaceMembership as Mock).mockResolvedValue({
+        role: "owner",
+        workspaceType: "personal",
+      });
+      (db.query.sidekiqs.findFirst as Mock).mockResolvedValue({
+        workspaceId: "different-workspace-999",
+      });
+
+      const req = createMockRequest(
+        validChatBody({
+          sidekiqId: "sidekiq-123",
+          threadId: undefined,
+        }),
+        { "x-workspace-id": "personal-workspace-123" },
+      );
+      const res = await POST(req);
+
+      expect(res.status).toBe(403);
+      const body = (await res.json()) as ErrorResponse;
+      expect(body.error).toBe("Access denied");
     });
   });
 });
