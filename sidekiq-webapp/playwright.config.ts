@@ -23,7 +23,8 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
-      testIgnore: /(chat|thread|model-selection|sidebar|sidekiq)\.spec\.ts/,
+      testIgnore:
+        /(chat|thread|model-selection|sidebar|sidekiq|workspace)\.spec\.ts/,
     },
     // Tests that require authentication
     {
@@ -32,7 +33,8 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         storageState: "tests/.auth/user.json",
       },
-      testMatch: /(chat|thread|model-selection|sidebar|sidekiq)\.spec\.ts/,
+      testMatch:
+        /(chat|thread|model-selection|sidebar|sidekiq|workspace)\.spec\.ts/,
       dependencies: ["setup"],
     },
   ],
