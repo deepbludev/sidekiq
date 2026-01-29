@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-27)
 ## Current Position
 
 Phase: 11 of 14 (Workspace Authorization)
-Plan: 1 of N in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-01-29 -- Completed 11-01-PLAN.md (workspace authorization infrastructure)
+Last activity: 2026-01-29 -- Completed 11-02-PLAN.md (router workspace scoping)
 
-Progress: [█████░░░░░] v0.2 ~40% (2/6 phases complete: Phase 9 + Phase 10)
+Progress: [██████░░░░] v0.2 ~47% (2/6 phases complete + 2/3 plans in Phase 11)
 
 ## Milestone History
 
@@ -52,6 +52,10 @@ Phase 11 decisions:
 - Invalid workspace header falls back to personal workspace (not 403) for graceful degradation
 - localStorage read per-request in headers function, not cached in React state
 - Self-healing personal workspace creation mirrors databaseHooks pattern exactly
+- Thread list filters by workspaceId (team members see all workspace threads -- intentional semantics change)
+- Thread/sidekiq mutations retain userId/ownerId checks (only creator can modify)
+- Sidekiq name uniqueness scoped to workspace (not user) to prevent duplicates in team workspaces
+- Any workspace member can duplicate any workspace sidekiq (not restricted to owner)
 
 ### Pending Todos
 
@@ -80,6 +84,6 @@ Phase 11 decisions:
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Completed 11-01-PLAN.md (workspace authorization infrastructure)
+Stopped at: Completed 11-02-PLAN.md (router workspace scoping)
 Resume file: None
-Next: Phase 11 Plan 02 (router scoping)
+Next: Phase 11 Plan 03 (chat route integration)
