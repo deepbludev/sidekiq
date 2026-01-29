@@ -83,10 +83,11 @@ Phase 11 decisions:
 | 022 | Add workspace E2E test suite covering Phase 10 features (settings, sidebar, terminology, CRUD) | 2026-01-28 | d0a6d09 | [022-update-the-e2e-test-suite-at-sidekiq-web](./quick/022-update-the-e2e-test-suite-at-sidekiq-web/) |
 | 023 | Fix shiki package externalization warning in Next.js build | 2026-01-29 | a0f8cf1 | [023-investigate-and-fix-shiki-package-extern](./quick/023-investigate-and-fix-shiki-package-extern/) |
 | 024 | Run E2E test suite and fix mobile sidebar close button test (Next.js dev overlay) | 2026-01-29 | de51262 | [024-run-pnpm-test-e2e-and-fix-any-issue-you-](./quick/024-run-pnpm-test-e2e-and-fix-any-issue-you-/) |
+| 025 | Update unit test suite for Phase 11 workspace authorization (fix 25 failures + 4 new tests) | 2026-01-29 | a0e5e4f | [025-update-unit-test-suite-for-phase-12](./quick/025-update-unit-test-suite-for-phase-12/) |
 
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Completed Phase 11 (Workspace Authorization) -- all 3 plans executed, verified 23/23 must-haves
+Stopped at: Completed quick task 025 -- unit tests updated for Phase 11 workspace auth (671 passing, 0 failures)
 Resume file: None
 Next: Phase 12 (Workspace UX & Members)
