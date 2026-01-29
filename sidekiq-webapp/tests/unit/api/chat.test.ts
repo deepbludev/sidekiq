@@ -465,4 +465,48 @@ describe("POST /api/chat", () => {
       });
     });
   });
+
+  describe("personal workspace lookup", () => {
+    it("should return 500 when personal workspace not found for new thread", async () => {
+      (db.query.workspaces.findFirst as Mock).mockResolvedValue(null);
+
+      const req = createMockRequest(validChatBody({ threadId: undefined }));
+      const res = await POST(req);
+
+      expect(res.status).toBe(500);
+      const body = (await res.json()) as ErrorResponse;
+      expect(body.error).toBe("Personal workspace not found");
+    });
+
+    it("should assign workspaceId from personal workspace when creating new thread", async () => {
+      (db.query.workspaces.findFirst as Mock).mockResolvedValue({
+        id: "personal-ws-789",
+      });
+
+      const req = createMockRequest(validChatBody({ threadId: undefined }));
+      const res = await POST(req);
+
+      expect(res.status).toBe(200);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(db.insert).toHaveBeenCalled();
+
+      // Verify the insert().values() chain was called (thread creation with workspace context)
+      const insertMockReturn = (db.insert as Mock).mock.results[0]?.value as {
+        values: Mock;
+      };
+      expect(insertMockReturn.values).toHaveBeenCalled();
+    });
+
+    it("should not look up personal workspace for existing threads", async () => {
+      // Clear mock call history after beforeEach
+      (db.query.workspaces.findFirst as Mock).mockClear();
+
+      const req = createMockRequest(validChatBody());
+      const res = await POST(req);
+
+      expect(res.status).toBe(200);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(db.query.workspaces.findFirst).not.toHaveBeenCalled();
+    });
+  });
 });
