@@ -113,9 +113,14 @@ Plans:
 2. The `/api/chat` route handler rejects requests with an invalid or unauthorized `workspaceId` and all new threads are created with the correct `workspaceId`
 3. A shared `validateWorkspaceMembership()` helper is used by both tRPC middleware and the chat route handler, ensuring consistent authorization logic
 
-**Plans:** TBD
+**Plans:** 3 plans
 
-**Research flag:** needs-research -- Security-critical phase. Every query across 5+ routers and 8+ chat route DB operations must be audited for workspace filtering. Chat route integration is non-standard (not tRPC).
+Plans:
+- [ ] 11-01-PLAN.md -- Shared workspace auth helper, workspaceProcedure middleware, client header injection
+- [ ] 11-02-PLAN.md -- Thread and sidekiq router migration to workspaceProcedure
+- [ ] 11-03-PLAN.md -- Chat route workspace validation, SSR page authorization, query invalidation
+
+**Research flag:** researched -- Full codebase audit complete. 14 procedures + chat route + 2 SSR pages audited for workspace filtering.
 
 ---
 
@@ -227,7 +232,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14
 |-------|-----------|----------------|--------|-----------|
 | 9. Vertical Slice Architecture | v0.2 | 6/6 | ✓ Complete | 2026-01-27 |
 | 10. Workspace Schema Migration | v0.2 | 5/5 | ✓ Complete | 2026-01-28 |
-| 11. Workspace Authorization | v0.2 | 0/TBD | Not started | - |
+| 11. Workspace Authorization | v0.2 | 0/3 | Not started | - |
 | 12. Workspace UX & Members | v0.2 | 0/TBD | Not started | - |
 | 13. Sidekiq Sharing | v0.2 | 0/TBD | Not started | - |
 | 14. Chat & Model Enhancements | v0.2 | 0/TBD | Not started | - |
