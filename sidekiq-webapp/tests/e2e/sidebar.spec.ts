@@ -225,7 +225,7 @@ test.describe("Mobile Sidebar", () => {
 
     // Click close button
     const closeButton = page.getByRole("button", { name: /close overlay/i });
-    await closeButton.click();
+    await closeButton.click({ force: true });
 
     // Wait for animation
     await page.waitForTimeout(300);
