@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-27)
 Phase: 10 of 14 (Workspace Schema Migration)
 Plan: 5 of 5 in current phase
 Status: Phase complete
-Last activity: 2026-01-29 -- Completed quick-023 (fix shiki package externalization warning)
+Last activity: 2026-01-29 -- Completed quick-024 (run E2E tests and fix failures)
 
 Progress: [█████░░░░░] v0.2 ~40% (2/6 phases complete: Phase 9 + Phase 10)
 
@@ -70,10 +70,11 @@ Phase 10 decisions:
 | 021 | Update the unit test suite at @sidekiq-webapp/tests/unit/ to include the new features that need to be tested in phase 10, use pnpm test:run to run the tests, verify work and fix any issues you encounter | 2026-01-28 | 74e6fef | [021-update-unit-tests-for-phase-10-workspace](./quick/021-update-unit-tests-for-phase-10-workspace/) |
 | 022 | Add workspace E2E test suite covering Phase 10 features (settings, sidebar, terminology, CRUD) | 2026-01-28 | d0a6d09 | [022-update-the-e2e-test-suite-at-sidekiq-web](./quick/022-update-the-e2e-test-suite-at-sidekiq-web/) |
 | 023 | Fix shiki package externalization warning in Next.js build | 2026-01-29 | a0f8cf1 | [023-investigate-and-fix-shiki-package-extern](./quick/023-investigate-and-fix-shiki-package-extern/) |
+| 024 | Run E2E test suite and fix mobile sidebar close button test (Next.js dev overlay) | 2026-01-29 | de51262 | [024-run-pnpm-test-e2e-and-fix-any-issue-you-](./quick/024-run-pnpm-test-e2e-and-fix-any-issue-you-/) |
 
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Completed quick-023 (fix shiki package externalization warning)
+Stopped at: Completed quick-024 (run E2E tests and fix failures)
 Resume file: None
 Next: Phase 11 (Workspace Authorization)
