@@ -193,9 +193,7 @@ describe("inviteMemberSchema", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0]?.message).toBe(
-        "Workspace ID is required",
-      );
+      expect(result.error.issues[0]?.message).toBe("Workspace ID is required");
     }
   });
 
@@ -244,9 +242,7 @@ describe("acceptInviteSchema", () => {
     const result = acceptInviteSchema.safeParse({ token: "" });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0]?.message).toBe(
-        "Invite token is required",
-      );
+      expect(result.error.issues[0]?.message).toBe("Invite token is required");
     }
   });
 
@@ -312,9 +308,7 @@ describe("removeMemberSchema", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0]?.message).toBe(
-        "Workspace ID is required",
-      );
+      expect(result.error.issues[0]?.message).toBe("Workspace ID is required");
     }
   });
 
@@ -395,9 +389,7 @@ describe("changeRoleSchema", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0]?.message).toBe(
-        "Workspace ID is required",
-      );
+      expect(result.error.issues[0]?.message).toBe("Workspace ID is required");
     }
   });
 
@@ -430,9 +422,7 @@ describe("transferOwnershipSchema", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0]?.message).toBe(
-        "Workspace ID is required",
-      );
+      expect(result.error.issues[0]?.message).toBe("Workspace ID is required");
     }
   });
 
@@ -443,9 +433,7 @@ describe("transferOwnershipSchema", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0]?.message).toBe(
-        "New owner ID is required",
-      );
+      expect(result.error.issues[0]?.message).toBe("New owner ID is required");
     }
   });
 
@@ -476,9 +464,7 @@ describe("leaveWorkspaceSchema", () => {
     const result = leaveWorkspaceSchema.safeParse({ workspaceId: "" });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0]?.message).toBe(
-        "Workspace ID is required",
-      );
+      expect(result.error.issues[0]?.message).toBe("Workspace ID is required");
     }
   });
 

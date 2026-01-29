@@ -86,7 +86,9 @@ describe("WorkspaceAvatar", () => {
     });
 
     it("should apply custom className prop", () => {
-      const { container } = renderWorkspaceAvatar({ className: "custom-class" });
+      const { container } = renderWorkspaceAvatar({
+        className: "custom-class",
+      });
       const avatarRoot = container.querySelector('[data-slot="avatar"]');
       expect(avatarRoot).toHaveClass("custom-class");
     });
