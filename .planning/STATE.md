@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-27)
 ## Current Position
 
 Phase: 11 of 14 (Workspace Authorization)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-01-29 -- Completed 11-02-PLAN.md (router workspace scoping)
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-01-29 -- Completed 11-03-PLAN.md (chat route and SSR workspace authorization)
 
-Progress: [██████░░░░] v0.2 ~47% (2/6 phases complete + 2/3 plans in Phase 11)
+Progress: [██████░░░░] v0.2 ~50% (3/6 phases complete: Phase 9 + Phase 10 + Phase 11)
 
 ## Milestone History
 
@@ -56,6 +56,10 @@ Phase 11 decisions:
 - Thread/sidekiq mutations retain userId/ownerId checks (only creator can modify)
 - Sidekiq name uniqueness scoped to workspace (not user) to prevent duplicates in team workspaces
 - Any workspace member can duplicate any workspace sidekiq (not restricted to owner)
+- Chat route uses explicit validateWorkspaceMembership (not resolveWorkspaceId) for HTTP response control -- 403 on invalid workspace
+- SSR pages infer workspace from data being accessed (thread/sidekiq record), not from headers
+- Thread SSR page removes userId filter -- workspace membership replaces direct ownership check
+- Chat route keeps both workspace and userId checks on existing threads (defense in depth)
 
 ### Pending Todos
 
@@ -69,7 +73,6 @@ Phase 11 decisions:
 ### Blockers/Concerns
 
 - AI_GATEWAY_API_KEY environment variable must be configured for /api/chat to work
-- Phase 11 (Authorization) requires audit of all 30+ queries across 5 routers + chat route
 - URL routes still use /settings/teams (Next.js directory name) -- cosmetic, not blocking
 
 ### Quick Tasks Completed
@@ -84,6 +87,6 @@ Phase 11 decisions:
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Completed 11-02-PLAN.md (router workspace scoping)
+Stopped at: Completed 11-03-PLAN.md (chat route and SSR workspace authorization)
 Resume file: None
-Next: Phase 11 Plan 03 (chat route integration)
+Next: Phase 12 (Role Enforcement)
