@@ -13,7 +13,7 @@ import {
 } from "../validations";
 import {
   createTRPCRouter,
-  protectedProcedure,
+  workspaceProcedure,
 } from "@sidekiq/shared/trpc/trpc";
 import { sidekiqs, threads } from "@sidekiq/shared/db/schema";
 
@@ -70,8 +70,9 @@ const createRateLimiter = new RateLimiter(1000, 60 * 60 * 1000);
 /**
  * Sidekiq router - CRUD operations for custom AI assistants.
  *
- * All mutations are protected (require authentication) and include
- * ownership verification via ownerId check in WHERE clauses.
+ * All procedures are workspace-scoped via workspaceProcedure, ensuring data
+ * isolation between workspaces. Mutations additionally verify creator ownership
+ * via ownerId check in WHERE clauses.
  */
 export const sidekiqRouter = createTRPCRouter({
   /**
@@ -80,9 +81,9 @@ export const sidekiqRouter = createTRPCRouter({
    *
    * @returns Array of sidekiq objects with metadata for display
    */
-  list: protectedProcedure.input(listSidekiqsSchema).query(async ({ ctx }) => {
+  list: workspaceProcedure.input(listSidekiqsSchema).query(async ({ ctx }) => {
     return ctx.db.query.sidekiqs.findMany({
-      where: eq(sidekiqs.ownerId, ctx.session.user.id),
+      where: eq(sidekiqs.workspaceId, ctx.workspaceId),
       orderBy: [
         desc(sidekiqs.isFavorite),
         desc(sidekiqs.lastUsedAt),
@@ -109,13 +110,13 @@ export const sidekiqRouter = createTRPCRouter({
    * @returns Full sidekiq object
    * @throws NOT_FOUND if sidekiq doesn't exist or doesn't belong to user
    */
-  getById: protectedProcedure
+  getById: workspaceProcedure
     .input(getSidekiqByIdSchema)
     .query(async ({ ctx, input }) => {
       const sidekiq = await ctx.db.query.sidekiqs.findFirst({
         where: and(
           eq(sidekiqs.id, input.id),
-          eq(sidekiqs.ownerId, ctx.session.user.id),
+          eq(sidekiqs.workspaceId, ctx.workspaceId),
         ),
       });
 
@@ -139,7 +140,7 @@ export const sidekiqRouter = createTRPCRouter({
    * @throws TOO_MANY_REQUESTS if rate limit exceeded
    * @throws CONFLICT if name already exists for user
    */
-  create: protectedProcedure
+  create: workspaceProcedure
     .input(createSidekiqSchema)
     .mutation(async ({ ctx, input }) => {
       // Rate limiting check
@@ -154,10 +155,10 @@ export const sidekiqRouter = createTRPCRouter({
         });
       }
 
-      // Check name uniqueness (case-insensitive)
+      // Check name uniqueness per workspace (case-insensitive)
       const existing = await ctx.db.query.sidekiqs.findFirst({
         where: and(
-          eq(sidekiqs.ownerId, ctx.session.user.id),
+          eq(sidekiqs.workspaceId, ctx.workspaceId),
           sql`LOWER(${sidekiqs.name}) = LOWER(${input.name})`,
         ),
       });
@@ -174,6 +175,7 @@ export const sidekiqRouter = createTRPCRouter({
         .values({
           id: nanoid(),
           ownerId: ctx.session.user.id,
+          workspaceId: ctx.workspaceId,
           name: input.name,
           description: input.description ?? null,
           instructions: input.instructions,
@@ -195,16 +197,16 @@ export const sidekiqRouter = createTRPCRouter({
    * @throws NOT_FOUND if sidekiq doesn't exist or doesn't belong to user
    * @throws CONFLICT if new name already exists for user
    */
-  update: protectedProcedure
+  update: workspaceProcedure
     .input(updateSidekiqSchema)
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input;
 
-      // Check name uniqueness if name is being changed
+      // Check name uniqueness per workspace if name is being changed
       if (data.name) {
         const existing = await ctx.db.query.sidekiqs.findFirst({
           where: and(
-            eq(sidekiqs.ownerId, ctx.session.user.id),
+            eq(sidekiqs.workspaceId, ctx.workspaceId),
             sql`LOWER(${sidekiqs.name}) = LOWER(${data.name})`,
             sql`${sidekiqs.id} != ${id}`,
           ),
@@ -222,7 +224,11 @@ export const sidekiqRouter = createTRPCRouter({
         .update(sidekiqs)
         .set({ ...data, updatedAt: new Date() })
         .where(
-          and(eq(sidekiqs.id, id), eq(sidekiqs.ownerId, ctx.session.user.id)),
+          and(
+            eq(sidekiqs.id, id),
+            eq(sidekiqs.workspaceId, ctx.workspaceId),
+            eq(sidekiqs.ownerId, ctx.session.user.id),
+          ),
         )
         .returning();
 
@@ -244,7 +250,7 @@ export const sidekiqRouter = createTRPCRouter({
    * @returns Success confirmation with deleted ID
    * @throws NOT_FOUND if sidekiq doesn't exist or doesn't belong to user
    */
-  delete: protectedProcedure
+  delete: workspaceProcedure
     .input(deleteSidekiqSchema)
     .mutation(async ({ ctx, input }) => {
       const { id, deleteThreads } = input;
@@ -253,6 +259,7 @@ export const sidekiqRouter = createTRPCRouter({
       const sidekiqToDelete = await ctx.db.query.sidekiqs.findFirst({
         where: and(
           eq(sidekiqs.id, id),
+          eq(sidekiqs.workspaceId, ctx.workspaceId),
           eq(sidekiqs.ownerId, ctx.session.user.id),
         ),
         columns: { name: true },
@@ -272,6 +279,7 @@ export const sidekiqRouter = createTRPCRouter({
           .where(
             and(
               eq(threads.sidekiqId, id),
+              eq(threads.workspaceId, ctx.workspaceId),
               eq(threads.userId, ctx.session.user.id),
             ),
           );
@@ -286,7 +294,11 @@ export const sidekiqRouter = createTRPCRouter({
       const [deleted] = await ctx.db
         .delete(sidekiqs)
         .where(
-          and(eq(sidekiqs.id, id), eq(sidekiqs.ownerId, ctx.session.user.id)),
+          and(
+            eq(sidekiqs.id, id),
+            eq(sidekiqs.workspaceId, ctx.workspaceId),
+            eq(sidekiqs.ownerId, ctx.session.user.id),
+          ),
         )
         .returning({ id: sidekiqs.id });
 
@@ -301,12 +313,13 @@ export const sidekiqRouter = createTRPCRouter({
    * @returns Updated sidekiq with id and isFavorite status
    * @throws NOT_FOUND if sidekiq doesn't exist or doesn't belong to user
    */
-  toggleFavorite: protectedProcedure
+  toggleFavorite: workspaceProcedure
     .input(toggleFavoriteSchema)
     .mutation(async ({ ctx, input }) => {
       const sidekiq = await ctx.db.query.sidekiqs.findFirst({
         where: and(
           eq(sidekiqs.id, input.id),
+          eq(sidekiqs.workspaceId, ctx.workspaceId),
           eq(sidekiqs.ownerId, ctx.session.user.id),
         ),
         columns: { isFavorite: true },
@@ -325,6 +338,7 @@ export const sidekiqRouter = createTRPCRouter({
         .where(
           and(
             eq(sidekiqs.id, input.id),
+            eq(sidekiqs.workspaceId, ctx.workspaceId),
             eq(sidekiqs.ownerId, ctx.session.user.id),
           ),
         )
@@ -341,13 +355,14 @@ export const sidekiqRouter = createTRPCRouter({
    * @returns Newly created sidekiq copy
    * @throws NOT_FOUND if original sidekiq doesn't exist or doesn't belong to user
    */
-  duplicate: protectedProcedure
+  duplicate: workspaceProcedure
     .input(duplicateSidekiqSchema)
     .mutation(async ({ ctx, input }) => {
+      // Any workspace member can duplicate any workspace sidekiq
       const original = await ctx.db.query.sidekiqs.findFirst({
         where: and(
           eq(sidekiqs.id, input.id),
-          eq(sidekiqs.ownerId, ctx.session.user.id),
+          eq(sidekiqs.workspaceId, ctx.workspaceId),
         ),
       });
 
@@ -358,14 +373,14 @@ export const sidekiqRouter = createTRPCRouter({
         });
       }
 
-      // Generate unique name: "Copy of [Name]" or "Copy of [Name] (2)" etc.
+      // Generate unique name per workspace: "Copy of [Name]" or "Copy of [Name] (2)" etc.
       let copyName = `Copy of ${original.name}`;
       let counter = 1;
 
       while (true) {
         const exists = await ctx.db.query.sidekiqs.findFirst({
           where: and(
-            eq(sidekiqs.ownerId, ctx.session.user.id),
+            eq(sidekiqs.workspaceId, ctx.workspaceId),
             sql`LOWER(${sidekiqs.name}) = LOWER(${copyName})`,
           ),
         });
@@ -381,6 +396,7 @@ export const sidekiqRouter = createTRPCRouter({
         .values({
           id: nanoid(),
           ownerId: ctx.session.user.id,
+          workspaceId: ctx.workspaceId,
           name: copyName,
           description: original.description,
           instructions: original.instructions,
