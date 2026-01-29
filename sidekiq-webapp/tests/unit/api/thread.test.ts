@@ -1,6 +1,16 @@
 import { describe, expect, it, vi, beforeEach, type Mock } from "vitest";
 import { TRPCError } from "@trpc/server";
 
+// Mock workspace-auth to bypass resolveWorkspaceId DB calls in workspaceProcedure
+vi.mock("@sidekiq/shared/lib/workspace-auth", () => ({
+  validateWorkspaceMembership: vi
+    .fn()
+    .mockResolvedValue({ role: "owner", workspaceType: "personal" }),
+  resolveWorkspaceId: vi
+    .fn()
+    .mockResolvedValue({ workspaceId: "workspace-123", role: "owner" }),
+}));
+
 // Mock modules before importing
 vi.mock("@sidekiq/shared/db", () => ({
   db: {
