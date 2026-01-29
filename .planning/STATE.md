@@ -63,6 +63,12 @@ Phase 10 decisions:
 - Phase 11 (Authorization) requires audit of all 30+ queries across 5 routers + chat route
 - URL routes still use /settings/teams (Next.js directory name) -- cosmetic, not blocking
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 021 | Update the unit test suite at @sidekiq-webapp/tests/unit/ to include the new features that need to be tested in phase 10, use pnpm test:run to run the tests, verify work and fix any issues you encounter | 2026-01-28 | 74e6fef | [021-update-unit-tests-for-phase-10-workspace](./quick/021-update-unit-tests-for-phase-10-workspace/) |
+
 ## Session Continuity
 
 Last session: 2026-01-28
