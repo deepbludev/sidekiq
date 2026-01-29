@@ -3,7 +3,7 @@ import { and, desc, eq } from "drizzle-orm";
 
 import {
   createTRPCRouter,
-  protectedProcedure,
+  workspaceProcedure,
 } from "@sidekiq/shared/trpc/trpc";
 import { threads } from "@sidekiq/shared/db/schema";
 import {
@@ -19,8 +19,10 @@ import {
 /**
  * Thread router - CRUD operations for conversation threads.
  *
- * All mutations are protected (require authentication) and include
- * ownership verification via userId check in WHERE clauses.
+ * All procedures are workspace-scoped via workspaceProcedure, ensuring data
+ * isolation per workspace. Queries filter by workspaceId so team members see
+ * all workspace threads. Mutations additionally verify userId to ensure only
+ * the thread creator can modify their threads.
  */
 export const threadRouter = createTRPCRouter({
   /**
@@ -30,13 +32,13 @@ export const threadRouter = createTRPCRouter({
    * @param threadId - ID of the thread to get title for
    * @returns Object with title (string or null)
    */
-  getTitle: protectedProcedure
+  getTitle: workspaceProcedure
     .input(getTitleInputSchema)
     .query(async ({ ctx, input }) => {
       const thread = await ctx.db.query.threads.findFirst({
         where: and(
           eq(threads.id, input.threadId),
-          eq(threads.userId, ctx.session.user.id),
+          eq(threads.workspaceId, ctx.workspaceId),
         ),
         columns: { title: true },
       });
@@ -52,16 +54,16 @@ export const threadRouter = createTRPCRouter({
    * @param includeArchived - Whether to include archived threads (default: false)
    * @returns Array of thread objects with metadata and optional sidekiq relation
    */
-  list: protectedProcedure
+  list: workspaceProcedure
     .input(listThreadsInputSchema)
     .query(async ({ ctx, input }) => {
       const includeArchived = input?.includeArchived ?? false;
 
       const result = await ctx.db.query.threads.findMany({
         where: includeArchived
-          ? eq(threads.userId, ctx.session.user.id)
+          ? eq(threads.workspaceId, ctx.workspaceId)
           : and(
-              eq(threads.userId, ctx.session.user.id),
+              eq(threads.workspaceId, ctx.workspaceId),
               eq(threads.isArchived, false),
             ),
         orderBy: [desc(threads.isPinned), desc(threads.lastActivityAt)],
@@ -97,7 +99,7 @@ export const threadRouter = createTRPCRouter({
    * @returns Success confirmation with deleted ID
    * @throws NOT_FOUND if thread doesn't exist or doesn't belong to user
    */
-  delete: protectedProcedure
+  delete: workspaceProcedure
     .input(deleteThreadInputSchema)
     .mutation(async ({ ctx, input }) => {
       const [deleted] = await ctx.db
@@ -105,6 +107,7 @@ export const threadRouter = createTRPCRouter({
         .where(
           and(
             eq(threads.id, input.threadId),
+            eq(threads.workspaceId, ctx.workspaceId),
             eq(threads.userId, ctx.session.user.id),
           ),
         )
@@ -128,7 +131,7 @@ export const threadRouter = createTRPCRouter({
    * @returns Updated thread with id and isArchived status
    * @throws NOT_FOUND if thread doesn't exist or doesn't belong to user
    */
-  archive: protectedProcedure
+  archive: workspaceProcedure
     .input(archiveThreadInputSchema)
     .mutation(async ({ ctx, input }) => {
       const [updated] = await ctx.db
@@ -140,6 +143,7 @@ export const threadRouter = createTRPCRouter({
         .where(
           and(
             eq(threads.id, input.threadId),
+            eq(threads.workspaceId, ctx.workspaceId),
             eq(threads.userId, ctx.session.user.id),
           ),
         )
@@ -163,7 +167,7 @@ export const threadRouter = createTRPCRouter({
    * @returns Updated thread with id and isArchived status
    * @throws NOT_FOUND if thread doesn't exist or doesn't belong to user
    */
-  unarchive: protectedProcedure
+  unarchive: workspaceProcedure
     .input(unarchiveThreadInputSchema)
     .mutation(async ({ ctx, input }) => {
       const [updated] = await ctx.db
@@ -175,6 +179,7 @@ export const threadRouter = createTRPCRouter({
         .where(
           and(
             eq(threads.id, input.threadId),
+            eq(threads.workspaceId, ctx.workspaceId),
             eq(threads.userId, ctx.session.user.id),
           ),
         )
@@ -198,13 +203,14 @@ export const threadRouter = createTRPCRouter({
    * @returns Updated thread with id and isPinned status
    * @throws NOT_FOUND if thread doesn't exist or doesn't belong to user
    */
-  togglePin: protectedProcedure
+  togglePin: workspaceProcedure
     .input(togglePinInputSchema)
     .mutation(async ({ ctx, input }) => {
       // First, get the current pin status
       const thread = await ctx.db.query.threads.findFirst({
         where: and(
           eq(threads.id, input.threadId),
+          eq(threads.workspaceId, ctx.workspaceId),
           eq(threads.userId, ctx.session.user.id),
         ),
         columns: { isPinned: true },
@@ -227,6 +233,7 @@ export const threadRouter = createTRPCRouter({
         .where(
           and(
             eq(threads.id, input.threadId),
+            eq(threads.workspaceId, ctx.workspaceId),
             eq(threads.userId, ctx.session.user.id),
           ),
         )
@@ -250,7 +257,7 @@ export const threadRouter = createTRPCRouter({
    * @returns Updated thread with id and title
    * @throws NOT_FOUND if thread doesn't exist or doesn't belong to user
    */
-  rename: protectedProcedure
+  rename: workspaceProcedure
     .input(renameThreadInputSchema)
     .mutation(async ({ ctx, input }) => {
       const [updated] = await ctx.db
@@ -262,6 +269,7 @@ export const threadRouter = createTRPCRouter({
         .where(
           and(
             eq(threads.id, input.threadId),
+            eq(threads.workspaceId, ctx.workspaceId),
             eq(threads.userId, ctx.session.user.id),
           ),
         )

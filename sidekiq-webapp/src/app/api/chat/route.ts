@@ -14,6 +14,7 @@ import {
   workspaces,
 } from "@sidekiq/shared/db/schema";
 import { getSession } from "@sidekiq/auth/api/server";
+import { validateWorkspaceMembership } from "@sidekiq/shared/lib/workspace-auth";
 
 /**
  * Extract text content from a UIMessage's parts.
@@ -67,6 +68,44 @@ export async function POST(req: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
+  // 1b. Resolve workspace from header
+  const headerWorkspaceId = req.headers.get("x-workspace-id");
+  let workspaceId: string;
+
+  if (headerWorkspaceId) {
+    const membership = await validateWorkspaceMembership(
+      db,
+      headerWorkspaceId,
+      session.user.id,
+    );
+    if (!membership) {
+      console.warn(
+        `[Auth] Unauthorized workspace access in chat: userId=${session.user.id}, workspaceId=${headerWorkspaceId}, timestamp=${new Date().toISOString()}`,
+      );
+      return new Response(JSON.stringify({ error: "Access denied" }), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    workspaceId = headerWorkspaceId;
+  } else {
+    // Fallback to personal workspace when no header (graceful degradation)
+    const personalWs = await db.query.workspaces.findFirst({
+      where: and(
+        eq(workspaces.ownerId, session.user.id),
+        eq(workspaces.type, "personal"),
+      ),
+      columns: { id: true },
+    });
+    if (!personalWs) {
+      return new Response(
+        JSON.stringify({ error: "Personal workspace not found" }),
+        { status: 500, headers: { "Content-Type": "application/json" } },
+      );
+    }
+    workspaceId = personalWs.id;
+  }
+
   // 2. Parse and validate request body
   const body: unknown = await req.json();
   const parseResult = chatRequestSchema.safeParse(body);
@@ -91,25 +130,25 @@ export async function POST(req: Request) {
     sidekiqId,
   } = parseResult.data;
 
-  // 2b. Verify sidekiq ownership if sidekiqId is provided (security check)
+  // 2b. Verify sidekiq belongs to active workspace (security check)
   if (sidekiqId) {
-    const sidekiqOwnership = await db.query.sidekiqs.findFirst({
+    const sidekiqRecord = await db.query.sidekiqs.findFirst({
       where: eq(sidekiqs.id, sidekiqId),
-      columns: { ownerId: true },
+      columns: { workspaceId: true },
     });
 
-    if (!sidekiqOwnership) {
+    if (!sidekiqRecord) {
       return new Response(JSON.stringify({ error: "Sidekiq not found" }), {
         status: 404,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    if (sidekiqOwnership.ownerId !== session.user.id) {
-      return new Response(
-        JSON.stringify({ error: "Unauthorized access to Sidekiq" }),
-        { status: 403, headers: { "Content-Type": "application/json" } },
-      );
+    if (sidekiqRecord.workspaceId !== workspaceId) {
+      return new Response(JSON.stringify({ error: "Access denied" }), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
     }
   }
 
@@ -131,11 +170,20 @@ export async function POST(req: Request) {
       });
     }
 
+    // Verify thread belongs to the active workspace
+    if (existingThread.workspaceId !== workspaceId) {
+      return new Response(JSON.stringify({ error: "Access denied" }), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Verify thread creator (user-level ownership within the workspace)
     if (existingThread.userId !== session.user.id) {
-      return new Response(
-        JSON.stringify({ error: "Unauthorized access to thread" }),
-        { status: 403, headers: { "Content-Type": "application/json" } },
-      );
+      return new Response(JSON.stringify({ error: "Access denied" }), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     // Auto-unarchive if archived thread receives new message
@@ -152,28 +200,13 @@ export async function POST(req: Request) {
     isNewThread = true;
     const newThreadId = nanoid();
 
-    // Look up the user's personal workspace (every user has exactly one)
-    const personalWorkspace = await db.query.workspaces.findFirst({
-      where: and(
-        eq(workspaces.ownerId, session.user.id),
-        eq(workspaces.type, "personal"),
-      ),
-      columns: { id: true },
-    });
-
-    if (!personalWorkspace) {
-      return new Response(
-        JSON.stringify({ error: "Personal workspace not found" }),
-        { status: 500, headers: { "Content-Type": "application/json" } },
-      );
-    }
-
+    // Use the workspace from the validated header (or personal workspace fallback)
     const [newThread] = await db
       .insert(threads)
       .values({
         id: newThreadId,
         userId: session.user.id,
-        workspaceId: personalWorkspace.id,
+        workspaceId, // Use resolved workspaceId instead of hardcoded personal lookup
         title: null, // Will be set after first AI response
         activeModel: modelId,
         sidekiqId: sidekiqId ?? null, // Associate with Sidekiq if provided
