@@ -22,8 +22,8 @@ Requirements for v0.2 Workspaces milestone. Each maps to roadmap phases.
 - [x] **WKSP-03**: Existing team data migrated to workspace data (preserving all members, invites, Sidekiqs)
 - [x] **WKSP-04**: `workspaceId` added to threads table (all existing threads assigned to user's personal workspace)
 - [x] **WKSP-05**: `workspaceId` replaces `teamId` on sidekiqs table
-- [ ] **WKSP-06**: All tRPC queries scoped by `workspaceId` via `workspaceProcedure` middleware
-- [ ] **WKSP-07**: `/api/chat` route handler validates workspace membership and assigns `workspaceId` to threads
+- [x] **WKSP-06**: All tRPC queries scoped by `workspaceId` via `workspaceProcedure` middleware
+- [x] **WKSP-07**: `/api/chat` route handler validates workspace membership and assigns `workspaceId` to threads
 - [ ] **WKSP-08**: Sidebar workspace switcher with full context isolation (chats, sidekiqs change on switch)
 - [ ] **WKSP-09**: Active workspace persisted in localStorage with fallback to personal workspace
 - [ ] **WKSP-10**: TanStack Query cache invalidated on workspace switch
@@ -109,8 +109,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WKSP-03 | Phase 10 | Complete |
 | WKSP-04 | Phase 10 | Complete |
 | WKSP-05 | Phase 10 | Complete |
-| WKSP-06 | Phase 11 | Pending |
-| WKSP-07 | Phase 11 | Pending |
+| WKSP-06 | Phase 11 | Complete |
+| WKSP-07 | Phase 11 | Complete |
 | WKSP-08 | Phase 12 | Pending |
 | WKSP-09 | Phase 12 | Pending |
 | WKSP-10 | Phase 12 | Pending |

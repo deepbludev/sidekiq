@@ -26,7 +26,7 @@ See: .planning/milestones/v0.1-ROADMAP.md
 
 - [x] **Phase 9: Vertical Slice Architecture** - Reorganize codebase from horizontal layers to feature-driven slices
 - [x] **Phase 10: Workspace Schema Migration** - Evolve database from teams to unified workspace model
-- [ ] **Phase 11: Workspace Authorization** - Server-side workspace isolation via middleware and route handler scoping
+- [x] **Phase 11: Workspace Authorization** - Server-side workspace isolation via middleware and route handler scoping
 - [ ] **Phase 12: Workspace UX & Members** - Client-side workspace switching, context isolation, and member management
 - [ ] **Phase 13: Sidekiq Sharing** - Granular Sidekiq sharing with permissions within workspaces
 - [ ] **Phase 14: Chat & Model Enhancements** - Message regeneration and expanded model discovery
@@ -116,9 +116,9 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 11-01-PLAN.md -- Shared workspace auth helper, workspaceProcedure middleware, client header injection
-- [ ] 11-02-PLAN.md -- Thread and sidekiq router migration to workspaceProcedure
-- [ ] 11-03-PLAN.md -- Chat route workspace validation, SSR page authorization, query invalidation
+- [x] 11-01-PLAN.md -- Shared workspace auth helper, workspaceProcedure middleware, client header injection
+- [x] 11-02-PLAN.md -- Thread and sidekiq router migration to workspaceProcedure
+- [x] 11-03-PLAN.md -- Chat route workspace validation, SSR page authorization, query invalidation
 
 **Research flag:** researched -- Full codebase audit complete. 14 procedures + chat route + 2 SSR pages audited for workspace filtering.
 
@@ -232,7 +232,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14
 |-------|-----------|----------------|--------|-----------|
 | 9. Vertical Slice Architecture | v0.2 | 6/6 | ✓ Complete | 2026-01-27 |
 | 10. Workspace Schema Migration | v0.2 | 5/5 | ✓ Complete | 2026-01-28 |
-| 11. Workspace Authorization | v0.2 | 0/3 | Not started | - |
+| 11. Workspace Authorization | v0.2 | 3/3 | ✓ Complete | 2026-01-29 |
 | 12. Workspace UX & Members | v0.2 | 0/TBD | Not started | - |
 | 13. Sidekiq Sharing | v0.2 | 0/TBD | Not started | - |
 | 14. Chat & Model Enhancements | v0.2 | 0/TBD | Not started | - |
