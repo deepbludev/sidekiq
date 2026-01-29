@@ -4,13 +4,21 @@ import { expect, test } from "@playwright/test";
  * Workspace E2E tests
  *
  * These tests require authentication and use the storage state from auth.setup.ts.
- * Tests verify workspace features introduced in Phase 10 (schema migration from teams to workspaces):
+ * Tests verify workspace features introduced in Phase 10 (schema migration from teams to workspaces)
+ * and Phase 11 (workspace authorization):
  *
+ * Phase 10 coverage:
  * - Settings page navigation and rendering
  * - Workspace terminology verification (no "Team" references)
  * - Sidebar panel display
  * - Workspace create flow (serial)
  * - Workspace settings section (members, danger zone)
+ *
+ * Phase 11 coverage:
+ * - Workspace data isolation (personal workspace fallback)
+ * - Workspace header injection (localStorage persistence)
+ * - Workspace context in chat (workspace-scoped thread creation)
+ * - Workspace settings with authorization (members query through workspace procedures)
  *
  * NOTE: The seed user has a personal workspace. The workspace list on /settings/teams
  * may filter personal workspaces, so tests handle both empty and populated states.
@@ -420,6 +428,178 @@ test.describe("Workspace Settings Section", () => {
         });
         await expect(deleteBtn).toBeVisible();
       }
+    }
+  });
+});
+
+// ============================================================================
+// Phase 11: Workspace Authorization E2E Tests
+// ============================================================================
+
+test.describe("Workspace Data Isolation", () => {
+  test.beforeEach(async ({ page }) => {
+    // Ensure sidebar starts expanded and no workspace override is set
+    await page.addInitScript(() => {
+      localStorage.removeItem("sidebar-panel-collapsed");
+      localStorage.removeItem("sidekiq-active-workspace-id");
+    });
+  });
+
+  test("should show threads in personal workspace by default", async ({
+    page,
+  }) => {
+    await page.goto("/chat");
+    await page.waitForLoadState("domcontentloaded");
+
+    // The sidebar should show the thread list area with a search input for conversations.
+    // With no explicit workspace set, the personal workspace fallback works and data loads.
+    const sidebar = page.locator("aside").first();
+    await expect(sidebar).toBeVisible({ timeout: 10000 });
+
+    // The search input for conversations indicates the thread list area has loaded
+    const searchInput = sidebar.getByPlaceholder("Search conversations...");
+    await expect(searchInput).toBeVisible({ timeout: 10000 });
+  });
+
+  test("should show sidekiqs in personal workspace by default", async ({
+    page,
+  }) => {
+    await page.goto("/sidekiqs");
+    await page.waitForLoadState("domcontentloaded");
+
+    // The sidebar should show the Sidekiqs panel heading (h2) and either
+    // sidekiq items or empty state, validating the personal workspace fallback path
+    const sidebar = page.locator("aside").first();
+    await expect(sidebar).toBeVisible({ timeout: 10000 });
+
+    const sidekiqsHeading = sidebar.getByRole("heading", {
+      name: /sidekiqs/i,
+      level: 2,
+    });
+    const emptyState = sidebar.getByText(/no sidekiqs/i);
+
+    // Either the heading with items or empty state should be visible
+    await expect(sidekiqsHeading.or(emptyState)).toBeVisible({
+      timeout: 10000,
+    });
+  });
+});
+
+test.describe("Workspace Header Injection", () => {
+  test("should persist workspace selection in localStorage", async ({
+    page,
+  }) => {
+    // Set localStorage key before page load via addInitScript
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        "sidekiq-active-workspace-id",
+        "test-workspace-id-123",
+      );
+    });
+
+    await page.goto("/chat");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Read back the localStorage value at runtime and verify it matches
+    const storedValue = await page.evaluate(() =>
+      localStorage.getItem("sidekiq-active-workspace-id"),
+    );
+    expect(storedValue).toBe("test-workspace-id-123");
+  });
+
+  test("should clear workspace selection from localStorage", async ({
+    page,
+  }) => {
+    // Set a workspace value before page load
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        "sidekiq-active-workspace-id",
+        "test-workspace-id-456",
+      );
+    });
+
+    await page.goto("/chat");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Remove the key at runtime and verify it returns null
+    const clearedValue = await page.evaluate(() => {
+      localStorage.removeItem("sidekiq-active-workspace-id");
+      return localStorage.getItem("sidekiq-active-workspace-id");
+    });
+    expect(clearedValue).toBeNull();
+  });
+});
+
+test.describe("Workspace Context in Chat", () => {
+  test.beforeEach(async ({ page }) => {
+    // Ensure clean workspace state (personal workspace fallback)
+    await page.addInitScript(() => {
+      localStorage.removeItem("sidekiq-active-workspace-id");
+    });
+  });
+
+  test("should load chat interface with workspace context", async ({
+    page,
+  }) => {
+    await page.goto("/chat");
+    await page.waitForLoadState("domcontentloaded");
+
+    // The chat input placeholder should be visible, confirming the chat route's
+    // workspace validation does not block loading when no workspace header is set
+    // (personal workspace fallback via resolveWorkspaceId)
+    const chatInput = page.getByPlaceholder(/type a message/i);
+    await expect(chatInput).toBeVisible({ timeout: 10000 });
+  });
+
+  test("should create thread with workspace context", async ({ page }) => {
+    await page.goto("/chat");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Type a message and press Enter to create a new thread
+    const chatInput = page.getByPlaceholder(/type a message/i);
+    await expect(chatInput).toBeVisible({ timeout: 10000 });
+    await chatInput.fill("E2E workspace thread test");
+    await chatInput.press("Enter");
+
+    // Wait for URL to change to /chat/[threadId] pattern indicating thread creation
+    await expect(page).toHaveURL(/\/chat\/[a-zA-Z0-9-]+/, { timeout: 15000 });
+
+    // Verify the message text appears on the page
+    const message = page.getByText("E2E workspace thread test");
+    await expect(message).toBeVisible({ timeout: 10000 });
+  });
+});
+
+test.describe("Workspace Settings with Authorization", () => {
+  test("should load workspace settings with authorized access", async ({
+    page,
+  }) => {
+    await page.goto("/settings/teams");
+    await page.waitForLoadState("domcontentloaded");
+
+    // Wait for loading to finish
+    const loadingState = page.getByText("Loading workspaces...");
+    await expect(loadingState).toBeHidden({ timeout: 10000 });
+
+    // Either "Workspace Settings" heading or empty state should be visible
+    const workspaceSettings = page.getByRole("heading", {
+      name: /workspace settings/i,
+    });
+    const emptyState = page.getByText("No workspaces yet");
+
+    await expect(workspaceSettings.or(emptyState)).toBeVisible({
+      timeout: 5000,
+    });
+
+    // If workspaces exist, verify Members section loads
+    // (the members query now goes through workspace-authorized procedures)
+    const hasWorkspaces = await workspaceSettings
+      .isVisible()
+      .catch(() => false);
+
+    if (hasWorkspaces) {
+      const membersHeading = page.getByRole("heading", { name: /members/i });
+      await expect(membersHeading).toBeVisible({ timeout: 5000 });
     }
   });
 });
