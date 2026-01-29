@@ -13,6 +13,7 @@ import { ZodError } from "zod";
 
 import { auth } from "@sidekiq/auth/api";
 import { db } from "@sidekiq/shared/db";
+import { resolveWorkspaceId } from "@sidekiq/shared/lib/workspace-auth";
 
 /**
  * 1. CONTEXT
@@ -133,3 +134,36 @@ export const protectedProcedure = t.procedure
       },
     });
   });
+
+/**
+ * Workspace-scoped procedure.
+ *
+ * Extends `protectedProcedure` with workspace membership validation.
+ * Reads the `x-workspace-id` header from the request, validates that the
+ * authenticated user is a member of that workspace, and injects `workspaceId`
+ * and `workspaceRole` into the tRPC context.
+ *
+ * Falls back to the user's personal workspace if the header is missing or
+ * the workspace is invalid (user not a member). Invalid workspace access
+ * attempts are logged for security auditing.
+ *
+ * @see resolveWorkspaceId in `@sidekiq/shared/lib/workspace-auth`
+ */
+export const workspaceProcedure = protectedProcedure.use(
+  async ({ ctx, next }) => {
+    const headerWorkspaceId = ctx.headers.get("x-workspace-id");
+
+    const resolved = await resolveWorkspaceId(
+      ctx.db,
+      headerWorkspaceId,
+      ctx.session.user.id,
+    );
+
+    return next({
+      ctx: {
+        workspaceId: resolved.workspaceId,
+        workspaceRole: resolved.role,
+      },
+    });
+  },
+);

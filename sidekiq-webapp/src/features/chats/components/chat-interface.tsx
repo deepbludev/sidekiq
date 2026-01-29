@@ -190,6 +190,18 @@ export function ChatInterface({
     () =>
       new DefaultChatTransport({
         api: "/api/chat",
+        headers: () => {
+          const headers: Record<string, string> = {};
+          if (typeof window !== "undefined") {
+            const workspaceId = localStorage.getItem(
+              "sidekiq-active-workspace-id",
+            );
+            if (workspaceId) {
+              headers["x-workspace-id"] = workspaceId;
+            }
+          }
+          return headers;
+        },
         body: () => {
           const currentThreadId = activeThreadIdRef.current;
           if (currentThreadId) {

@@ -55,6 +55,18 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
           headers: () => {
             const headers = new Headers();
             headers.set("x-trpc-source", "nextjs-react");
+            // Inject active workspace ID from localStorage on every request.
+            // Read directly from localStorage (not React state) so the headers
+            // function always picks up the latest value even though the tRPC
+            // client is created once in useState.
+            if (typeof window !== "undefined") {
+              const workspaceId = localStorage.getItem(
+                "sidekiq-active-workspace-id",
+              );
+              if (workspaceId) {
+                headers.set("x-workspace-id", workspaceId);
+              }
+            }
             return headers;
           },
         }),
