@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-01-27)
 
 **Core value:** Users can chat with any LLM through custom assistants (Sidekiqs) that can be shared with their workspace.
-**Current focus:** v0.2 Workspaces -- Phase 10 complete, ready for Phase 11
+**Current focus:** v0.2 Workspaces -- Phase 11 in progress
 
 ## Current Position
 
-Phase: 10 of 14 (Workspace Schema Migration)
-Plan: 5 of 5 in current phase
-Status: Phase complete
-Last activity: 2026-01-29 -- Completed quick-024 (run E2E tests and fix failures)
+Phase: 11 of 14 (Workspace Authorization)
+Plan: 1 of N in current phase
+Status: In progress
+Last activity: 2026-01-29 -- Completed 11-01-PLAN.md (workspace authorization infrastructure)
 
 Progress: [█████░░░░░] v0.2 ~40% (2/6 phases complete: Phase 9 + Phase 10)
 
@@ -47,6 +47,11 @@ Phase 10 decisions:
 - No slug column on workspace table (removed from old teams table during Plan 01 transformation)
 - Add type: "team" to create procedure insert values (personal workspaces created by databaseHooks)
 - Personal workspace lookup added to chat route for thread creation (workspaceId NOT NULL on threads)
+Phase 11 decisions:
+- resolveWorkspaceId never throws -- always resolves via graceful fallback (header -> personal -> self-heal)
+- Invalid workspace header falls back to personal workspace (not 403) for graceful degradation
+- localStorage read per-request in headers function, not cached in React state
+- Self-healing personal workspace creation mirrors databaseHooks pattern exactly
 
 ### Pending Todos
 
@@ -75,6 +80,6 @@ Phase 10 decisions:
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Completed quick-024 (run E2E tests and fix failures)
+Stopped at: Completed 11-01-PLAN.md (workspace authorization infrastructure)
 Resume file: None
-Next: Phase 11 (Workspace Authorization)
+Next: Phase 11 Plan 02 (router scoping)
