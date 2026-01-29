@@ -35,6 +35,7 @@ interface UseActiveWorkspaceResult {
  * - Persists active workspace to localStorage
  * - Validates stored workspace ID against user's workspaces
  * - Falls back to null if stored workspace is invalid
+ * - Invalidates workspace-scoped queries on workspace switch
  *
  * Per CONTEXT.md: Active workspace selection persists across sessions.
  *
@@ -56,6 +57,9 @@ export function useActiveWorkspace(): UseActiveWorkspaceResult {
     string | null
   >(null);
   const [isInitialized, setIsInitialized] = useState(false);
+
+  // tRPC utils for query invalidation on workspace switch
+  const utils = api.useUtils();
 
   // Fetch user's workspaces
   const { data: workspaces = [], isLoading } = api.workspace.list.useQuery();
@@ -86,7 +90,7 @@ export function useActiveWorkspace(): UseActiveWorkspaceResult {
     }
   }, [activeWorkspaceId, workspaces, isLoading, isInitialized]);
 
-  // Set active workspace with localStorage persistence
+  // Set active workspace with localStorage persistence and query invalidation
   const setActiveWorkspaceId = useCallback(
     (workspaceId: string | null) => {
       if (workspaceId) {
@@ -95,8 +99,13 @@ export function useActiveWorkspace(): UseActiveWorkspaceResult {
         localStorage.removeItem(ACTIVE_WORKSPACE_KEY);
       }
       setActiveWorkspaceIdState(workspaceId);
+
+      // Invalidate workspace-scoped queries so they refetch with new x-workspace-id header
+      void utils.thread.list.invalidate();
+      void utils.sidekiq.list.invalidate();
+      // Note: workspace.list is intentionally NOT invalidated (it's user-global, not workspace-scoped)
     },
-    [],
+    [utils],
   );
 
   // Find active workspace data

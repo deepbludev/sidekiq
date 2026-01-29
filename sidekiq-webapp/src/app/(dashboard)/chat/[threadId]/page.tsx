@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
-import { and, eq, asc } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import type { UIMessage } from "ai";
 import type { Metadata } from "next";
 
 import { getSession } from "@sidekiq/auth/api/server";
 import { db } from "@sidekiq/shared/db";
 import { threads, messages } from "@sidekiq/shared/db/schema";
+import { validateWorkspaceMembership } from "@sidekiq/shared/lib/workspace-auth";
 import { ChatInterface } from "@sidekiq/chats/components/chat-interface";
 
 /**
@@ -37,11 +38,26 @@ export async function generateMetadata({
   }
 
   const thread = await db.query.threads.findFirst({
-    where: and(eq(threads.id, threadId), eq(threads.userId, session.user.id)),
-    columns: { title: true },
+    where: eq(threads.id, threadId),
+    columns: { title: true, workspaceId: true },
   });
 
-  const title = thread?.title ?? "New Chat";
+  if (!thread) {
+    return { title: "Sidekiq" };
+  }
+
+  // Verify user is a member of the thread's workspace
+  const membership = await validateWorkspaceMembership(
+    db,
+    thread.workspaceId,
+    session.user.id,
+  );
+
+  if (!membership) {
+    return { title: "Sidekiq" };
+  }
+
+  const title = thread.title ?? "New Chat";
   return { title: `${title} - Sidekiq` };
 }
 
@@ -49,7 +65,7 @@ export async function generateMetadata({
  * Existing Thread page
  *
  * Server component that loads an existing thread with its messages.
- * Verifies ownership and redirects to /chat if thread not found or access denied.
+ * Verifies workspace membership and redirects to /chat if thread not found or access denied.
  *
  * Archived threads can still be viewed (isArchived doesn't prevent viewing).
  */
@@ -61,15 +77,16 @@ export default async function ThreadPage({ params }: ThreadPageProps) {
     redirect("/sign-in");
   }
 
-  // Load thread with ownership check and sidekiq relation for context restoration
+  // Load thread by ID (no userId filter -- workspace membership is the access check)
   const thread = await db.query.threads.findFirst({
-    where: and(eq(threads.id, threadId), eq(threads.userId, session.user.id)),
+    where: eq(threads.id, threadId),
     columns: {
       id: true,
       title: true,
       isArchived: true,
       activeModel: true,
       sidekiqId: true,
+      workspaceId: true, // Need this for membership check
     },
     with: {
       sidekiq: {
@@ -85,8 +102,18 @@ export default async function ThreadPage({ params }: ThreadPageProps) {
     },
   });
 
-  // Redirect to new chat if thread not found or doesn't belong to user
   if (!thread) {
+    redirect("/chat");
+  }
+
+  // Verify user is a member of the thread's workspace
+  const membership = await validateWorkspaceMembership(
+    db,
+    thread.workspaceId,
+    session.user.id,
+  );
+
+  if (!membership) {
     redirect("/chat");
   }
 

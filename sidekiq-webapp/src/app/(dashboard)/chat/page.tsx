@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
-import { and, eq, or, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 import { getSession } from "@sidekiq/auth/api/server";
 import { ChatInterface } from "@sidekiq/chats/components/chat-interface";
 import { db } from "@sidekiq/shared/db";
 import { sidekiqs } from "@sidekiq/shared/db/schema";
+import { validateWorkspaceMembership } from "@sidekiq/shared/lib/workspace-auth";
 
 interface NewChatPageProps {
   searchParams: Promise<{ sidekiq?: string }>;
@@ -28,19 +29,9 @@ export default async function NewChatPage({ searchParams }: NewChatPageProps) {
   const { sidekiq: sidekiqId } = await searchParams;
 
   // Fetch Sidekiq data if sidekiqId is provided
-  // Sidekiq must be owned by user OR be a workspace Sidekiq the user has access to
   const sidekiq = sidekiqId
     ? await db.query.sidekiqs.findFirst({
-        where: and(
-          eq(sidekiqs.id, sidekiqId),
-          or(
-            eq(sidekiqs.ownerId, session.user.id),
-            // Workspace Sidekiqs (workspaceId is not null) - simplified access check
-            // Full workspace membership check would require joining workspace_members table
-            // For now, we allow if user is owner; workspace access will be Phase 11
-            isNull(sidekiqs.workspaceId),
-          ),
-        ),
+        where: eq(sidekiqs.id, sidekiqId),
         columns: {
           id: true,
           name: true,
@@ -48,8 +39,34 @@ export default async function NewChatPage({ searchParams }: NewChatPageProps) {
           avatar: true,
           conversationStarters: true,
           defaultModel: true,
+          workspaceId: true, // Need this for membership check
         },
       })
+    : null;
+
+  // If sidekiq found, verify user is a member of its workspace
+  if (sidekiq?.workspaceId) {
+    const membership = await validateWorkspaceMembership(
+      db,
+      sidekiq.workspaceId,
+      session.user.id,
+    );
+    if (!membership) {
+      // User is not a member of this sidekiq's workspace -- show new chat without sidekiq
+      return <ChatInterface key="no-sidekiq" threadId={null} sidekiq={null} />;
+    }
+  }
+
+  // Strip workspaceId before passing to ChatInterface (it only needs display fields)
+  const sidekiqForChat = sidekiq
+    ? {
+        id: sidekiq.id,
+        name: sidekiq.name,
+        description: sidekiq.description,
+        avatar: sidekiq.avatar,
+        conversationStarters: sidekiq.conversationStarters,
+        defaultModel: sidekiq.defaultModel,
+      }
     : null;
 
   // No thread ID - this is the "new chat" state
@@ -57,9 +74,9 @@ export default async function NewChatPage({ searchParams }: NewChatPageProps) {
   // Key prop forces remount when Sidekiq changes, resetting all internal state (model selection, etc.)
   return (
     <ChatInterface
-      key={sidekiq?.id ?? "no-sidekiq"}
+      key={sidekiqForChat?.id ?? "no-sidekiq"}
       threadId={null}
-      sidekiq={sidekiq}
+      sidekiq={sidekiqForChat}
     />
   );
 }
